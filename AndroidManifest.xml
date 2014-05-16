@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.freetzi.idclxvii.sharpfixandroid"
+    android:versionCode="1"
+    android:versionName="1.0" >
+	
+	<!-- Give users the choice whether to install the application on SD Card or Internal Memory
+	manifest .....
+	android:installLocation="" >
+	Values are: auto, preferExternal,	 
+	-->
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="17" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	
+	<!-- Prevent users from deleting database records
+	<application 
+		android:manageSpaceActivity=".MainActivity" 
+		> 
+	-->
+    <application
+        
+        android:allowBackup="true"
+        android:icon="@drawable/logo2"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:name="com.freetzi.idclxvii.sharpfixandroid.SharpFixApplicationClass" >
+        
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.MainMenuActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFddActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFdActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFdRulesActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFiltersActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuServicesActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuAboutActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.ViewRuleActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity"
+            android:label="@string/app_name" >
+        </activity><service 
+            android:enabled="true" 
+            android:name=".FileDesignationService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/fdService" 
+            />
+        <service 
+            android:enabled="true" 
+            android:name=".FileDuplicationDetectionService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/fddService" 
+            />
+        
+    </application>
+    
+    <intent-filter>
+        <action android:name="android.intent.action.SEND" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="text/plain" />
+    </intent-filter>
+
+</manifest>
