@@ -1,0 +1,197 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000">
+	<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content" >
+	   
+		<TextView
+	        android:id="@+id/title"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/mainMenuTitle"
+	        android:textSize="30sp" 
+	        android:textStyle="bold"
+	        android:textColor="#FFFFFF"
+	        >
+	    </TextView>
+	    <View
+	        android:id="@+id/hr1"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/title"
+            android:background="#c0c0c0"/>
+		<View
+		    android:id="@+id/hr2"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/hr1"
+             android:background="#c0c0c0"/>
+	    
+	    <TextView
+	        android:id="@+id/selection1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/hr2"
+	        android:text="@string/mainMenuFddSelection"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+	
+	    <TextView
+	        android:id="@+id/label1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/selection1"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+	 <View
+	     	android:id="@+id/hr3"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/label1"
+             android:background="#c0c0c0"/>
+	    
+	  <TextView
+	        android:id="@+id/selection2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/hr3"
+	        android:text="@string/mainMenuFdSelection"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp" 
+	        >
+	    </TextView>
+	
+	    <TextView
+	        android:id="@+id/label2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/selection2"
+	        android:text="@string/mainMenuFdLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+	    <View
+	     	android:id="@+id/hr4"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/label2"
+             android:background="#c0c0c0"/>
+	    
+	    <TextView
+	        android:id="@+id/selection3"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/hr4"
+	        android:text="@string/mainMenuFiltersSelection"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp" >
+	    </TextView>
+	
+	    <TextView
+	        android:id="@+id/label3"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/selection3"
+	        android:text="@string/mainMenuFiltersLabel"
+	        android:textSize="15sp" 
+	        android:textColor="@color/text_selector_labels"
+	        android:textStyle="italic" 
+	        android:padding="10dp" />
+	    <View
+	     	android:id="@+id/hr5"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/label3"
+             android:background="#c0c0c0"/>
+	    
+	    <TextView
+	        android:id="@+id/selection4"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/hr5"
+	        android:text="@string/mainMenuServicesSelection"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+	
+	    <TextView
+	        android:id="@+id/label4"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/selection4"
+	        android:text="@string/mainMenuServicesLabel"
+	       	android:textSize="15sp" 
+	        android:textColor="@color/text_selector_labels"
+	        android:textStyle="italic"
+	        android:padding="10dp" />
+	    <View
+	     	android:id="@+id/hr6"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/label4"
+             android:background="#c0c0c0"/>
+	    <TextView
+	        android:id="@+id/selection5"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/hr6"
+	        android:text="@string/mainMenuAboutSelection"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+	
+	    <TextView
+	        android:id="@+id/label5"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/selection5"
+	        android:text="@string/mainMenuAboutLabel"
+	       	android:textSize="15sp" 
+	        android:textColor="@color/text_selector_labels"
+	        android:textStyle="italic"
+	        android:padding="10dp" />
+	    <View
+	     	android:id="@+id/hr7"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/label5"
+             android:background="#c0c0c0"/>
+	    
+	</RelativeLayout>
+</ScrollView>

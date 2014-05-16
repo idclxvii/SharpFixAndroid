@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">SharpFix Android</string>
+    <string name="logOut">Logout</string>
+    <string name="action_settings">Settings</string>
+    <string name="Start">Start</string>
+    <string name="Stop">Stop</string>
+    <string name="Service">Service Control</string>
+    <string name="Logs">Logs</string>
+    <string name="Check">Check Logs</string>
+    <string name="Delete">Delete Logs</string>
+    <string name="fdService">File Designation Service</string>
+    <string name="fddService">File Duplication Detection Service</string>    
+    <string name="logo">SharpFix Android File Administration Utility</string>    
+    <string name="usr">Username</string>    
+    <string name="pass">Password</string>    
+    <string name="autoLogin">Enable Autologin</string>    
+    <string name="login">Login</string>    
+    <string name="noAccount">No current account has been detected! Please create an account first before using SharpFix Android File Administration Utility</string>    
+    <string name="createAccount">Create Account</string>    
+    <string name="desiredLogin">Desired Username</string>    
+    <string name="desiredPassword">Desired Password</string>    
+    <string name="confirmPassword">Confirm Password</string>    
+    <string name="footer">IDcLxViI - Codesix 2014</string>    
+    <string name="mainMenuTitle">Main Menu</string>   
+    <string name="mainMenuFddSelection">File Duplication Detecion</string>   
+    <string name="mainMenuFddLabel">Settings on file(s) with exactly similar contents in the SD-Card directory.</string>   
+    <string name="mainMenuFdSelection">File Designation</string>    
+    <string name="mainMenuFdLabel">Settings on files with specific type.</string>   
+    <string name="mainMenuFiltersSelection">Filters</string>    
+    <string name="mainMenuFiltersLabel">Settings on files and/or directories to be ignored by SharpFix.</string>    
+    <string name="mainMenuServicesSelection">Services</string>    
+    <string name="mainMenuServicesLabel">Settings on SharpFix\'s background activities.</string>
+    <string name="mainMenuAboutSelection">About</string>    
+    <string name="mainMenuAboutLabel">About SharpFix</string>
+    
+    <string name="checkBoxFDD">Enable Automatic Deletion</string>    
+    <string name="checkBoxFDDLabel">Automatically delete duplicate files detected by SharpFix</string>    
+    <string name="subMenuFddDeletionPrio">Duplicate Files Deletion Priority</string>    
+    <string name="subMenuFddDeletionPrioLabel">Choose which file the SharpFix deletes in case of duplication</string>    
+    <string name="subMenuFddRadioOlder">Delete the older file among the two duplicate files</string>    
+    <string name="subMenuFddRadioNewer">Delete the newer file among the two duplicate files</string>    
+    <string name="checkBoxFD">Enable File Designation</string>    
+    <string name="checkBoxFDLabel">Automatically transfer files of a certain type (*.jpg, *.apk, etc.) to a directory you have specified.</string>    
+    <string name="subMenuFdRules">File Designation Rules</string>    
+    <string name="subMenuFdRulesLabel">View, create, update, delete, activate and deactivate file designation rules.</string>    
+    <string name="ruleName">Rule Name</string>    
+    <string name="ruleDescription">JPG Files</string>    
+    <string name="noRules">There are no rules defined yet.</string>    
+    <string name="createRule">Create new rule</string>    
+    <string name="checkBoxFdFilters">Enable File Designation Filtering</string>  
+    <string name="checkBoxFdFiltersLabel">Automatically skips the files and/or directories (including subdirectories) you have specified whenever SharpFix performs File Designation scans.</string>    
+    <string name="checkBoxFddFilters">Enable File Duplication Detection Filtering</string>    
+    <string name="checkBoxFddFiltersLabel">Automatically skips the files and/or directories (including subdirectories) you have specified whenever SharpFix performs File Duplication Detection scans.</string>    
+    <string name="subMenuFdFiltersRules">File Designation Filter Rules</string>    
+    <string name="subMenuFddFiltersRules">File Duplication Detection Filter Rules</string>    
+    
+    
+    <!-- Create New Rule Dialog -->
+    <string name="ruleNameHint">Specify Rule Name Here</string>    
+    <string name="chooseFileTypeLabel">Target File Type: </string>    
+    <string name="chooseFileTypeButton">Choose File Type</string>    
+    <string name="targetDesignationDir">Target Designation Directory: </string>    
+    <string name="chooseDesignationDir">Browse</string>    
+    <string name="positiveButton">Create</string>    
+    <string name="negativeButton">Cancel</string>    
+    
+    <!-- Rule Dialog Menu -->
+    <string name="editRule">Edit Rule</string>    
+    <string name="deleteRule">Delete Rule</string>    
+    
+    
+    <!-- Create New Rule Dialog -->
+    
+    <string name="test1">Popup Window will display on this Activity</string>    
+    
+    
+    <!--  Rules Sub Menu-->
+    
+</resources>

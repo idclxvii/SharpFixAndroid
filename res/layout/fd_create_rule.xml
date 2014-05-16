@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000">
+	<RelativeLayout 
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content" >
+	   
+		<EditText
+	        android:id="@+id/ruleName"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:inputType="text"
+	        android:hint="@string/ruleNameHint"
+	        android:layout_margin="5dp"
+	        android:gravity="center"
+	        android:textColor="#4b8c88"
+	        />
+		<TextView
+		    android:id="@+id/choose"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/ruleName"
+		    android:text="@string/chooseFileTypeLabel"
+		    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:gravity="left"
+	        android:padding="5dp"
+	         />
+
+		<Button
+		    android:id="@+id/chooseFileType"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/choose"
+		    android:layout_alignParentLeft="true"
+		    android:text="@string/chooseFileTypeButton" />
+		
+		<TextView
+		    android:id="@+id/designationDir"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/chooseFileType"
+		    android:text="@string/targetDesignationDir"
+		    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:gravity="left"
+	        android:padding="5dp"
+	         />
+		<Button
+		    android:id="@+id/chooseDir"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/designationDir"
+		    android:layout_alignParentLeft="true"
+		    android:text="@string/chooseDesignationDir" />
+		<Button
+		    android:id="@+id/positiveButton"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/chooseDir"
+		    android:layout_alignParentLeft="true"
+		    android:text="@string/positiveButton" />
+		<Button
+		    android:id="@+id/negativeButton"
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/positiveButton"
+		   	android:text="@string/negativeButton" />
+	</RelativeLayout>
+</ScrollView>

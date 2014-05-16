@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000">
+
+<RelativeLayout
+    android:layout_width="fill_parent"
+    android:layout_height="440dp"
+    android:background="#000000"
+    android:gravity="top"
+    android:orientation="vertical"
+    android:paddingBottom="25dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp" >
+	
+	<ImageView
+	    android:id="@+id/imageView1"
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:contentDescription="@string/logo"
+		android:src="@drawable/sharpfix_logo2"
+	/>
+	
+	<EditText
+	    android:id="@+id/password"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/username"
+	    android:layout_alignRight="@+id/username"
+	    android:layout_alignTop="@+id/username"
+	    android:layout_below="@+id/username"
+	    android:layout_marginTop="34dp"
+	    android:background="#FFFFFF"
+	    android:ems="10"
+	    android:hint="@string/pass"
+	    android:inputType="textPassword" >
+
+	</EditText>
+
+	<Button
+	    android:id="@+id/login"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignBottom="@+id/password"
+	    android:layout_toRightOf="@+id/username"
+	    android:layout_marginLeft="10dp"
+	    android:layout_marginBottom="6dp"
+	    android:text="@string/login"
+	    android:textSize="12sp" />
+
+	<EditText
+	    android:id="@+id/username"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/imageView1"
+	    android:layout_marginLeft="18dp"
+	    android:background="#FFFFFF"
+	    android:ems="10"
+	    android:hint="@string/usr"
+	    android:inputType="text"
+	    android:imeOptions="actionNext" >
+		
+	    <requestFocus />
+	</EditText>
+
+	<TextView
+	    android:id="@+id/textView1"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/autoLogin"
+	    android:layout_centerHorizontal="true"
+	    android:layout_marginTop="15dp"
+	    android:text="@string/footer"
+	    android:textColor="#fff297"
+	    android:textAppearance="?android:attr/textAppearanceSmall" />
+
+	<CheckBox
+	    android:id="@+id/autoLogin"
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    android:layout_alignLeft="@+id/password"
+	    android:layout_below="@+id/password"
+	    android:gravity="center"
+	    android:text="@string/autoLogin"
+	    android:textStyle="italic"
+	    android:drawablePadding="30dp"
+	    android:textColor="#F0F0F0"
+	    android:checked="false" />
+
+</RelativeLayout>
+</ScrollView>

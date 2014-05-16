@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000">
+	<RelativeLayout 
+		android:layout_width="fill_parent"
+    	android:layout_height="wrap_content"
+    	android:background="#000000" 
+    	android:paddingLeft="8dp"
+    	android:paddingRight="8dp"
+    	android:paddingBottom="25dp"
+    	
+    	>
+		
+		<EditText
+		    android:id="@+id/desiredLogin"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/textView1"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginTop="54dp"
+		    android:background="#FFFFFF"
+		    android:ems="10"
+		    android:hint="@string/desiredLogin"
+		    android:inputType="text"
+		    android:imeOptions="actionNext" >
+		    
+		</EditText>
+		
+		<EditText
+			android:id="@+id/desiredPassword"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignLeft="@+id/desiredLogin"
+		    android:layout_alignRight="@+id/desiredLogin"
+		    android:layout_below="@+id/desiredLogin"
+		    android:layout_marginTop="26dp"
+		    android:background="#FFFFFF"
+		    android:ems="10"
+		    android:hint="@string/desiredPassword"
+		    android:inputType="textPassword"
+		    android:imeOptions="actionNext" />
+		
+		<EditText
+			android:id="@+id/confirmPassword"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignLeft="@+id/desiredPassword"
+		    android:layout_alignRight="@+id/desiredPassword"
+		    android:layout_below="@+id/desiredPassword"
+		    android:layout_marginTop="28dp"
+		    android:background="#FFFFFF"
+		    android:ems="10"
+		    android:hint="@string/confirmPassword"
+		    android:inputType="textPassword"
+		    android:imeOptions="actionDone"
+		     />
+		<Button
+			android:id="@+id/createAccount"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_below="@+id/confirmPassword"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginTop="28dp"
+		    android:text="@string/createAccount"
+		    android:enabled="false" />
+
+		<TextView
+		    android:id="@+id/textView1"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    android:layout_alignParentTop="true"
+		    android:layout_centerHorizontal="true"
+		    android:layout_marginTop="15dp"
+		    android:gravity="center"
+		    android:text="@string/noAccount"
+		    android:textAlignment="center"
+		    android:textColor="#FFFFFF"
+		    android:textSize="20sp" >
+		</TextView>
+		
+	</RelativeLayout>
+</ScrollView>

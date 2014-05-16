@@ -1,0 +1,9 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item
+        android:id="@+id/MenuLogout"
+        android:showAsAction="ifRoom"
+        android:title="@string/logOut"
+        android:icon="@drawable/logout_icon"/>
+		
+</menu>

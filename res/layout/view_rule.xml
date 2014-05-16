@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="fill_parent"
+	    android:id="@+id/Rules"
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000" >
+	   
+		<TextView
+	        android:id="@+id/rule_name"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/subMenuFdRules"
+	        android:textSize="25sp" 
+	        android:textStyle="bold"
+	        android:textColor="#FFFFFF"
+	        android:clickable="false"
+	        >
+	    </TextView>
+	    <View
+	        android:id="@+id/vr_hr1"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/rule_name"
+            android:background="#c0c0c0"/>
+		<View
+		    android:id="@+id/vr_hr2"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/vr_hr1"
+             android:background="#c0c0c0"/>
+		<TextView
+	 	    android:id="@+id/file_type_label"
+	 	    android:layout_width="fill_parent"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@+id/vr_hr2"
+	 	    android:gravity="center"
+	 	    android:text="@string/createRule"
+	 	    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="false"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        
+	 	     />
+		<TextView
+	 	    android:id="@+id/file_type"
+	 	    android:layout_width="fill_parent"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@+id/file_type_label"
+	 	    android:gravity="center"
+	 	    android:text="@string/createRule"
+	 	    android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:clickable="false"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	 	     />
+		<View
+	     	android:id="@+id/vr_hr4"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/file_type"
+            android:background="#c0c0c0" />
+				
+		<TextView
+	 	    android:id="@+id/designation_label"
+	 	    android:layout_width="fill_parent"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@+id/vr_hr4"
+	 	    android:gravity="center"
+	 	    android:text="@string/noRules"
+	 	    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="false"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	 	     />
+		
+		<TextView
+	 	    android:id="@+id/designation"
+	 	    android:layout_width="fill_parent"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@+id/designation_label"
+	 	    android:gravity="center"
+	 	    android:text="@string/noRules"
+	 	    android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:clickable="false"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	 	    
+	 	     />
+		<View
+	     	android:id="@+id/vr_hr6"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/designation"
+            android:background="#c0c0c0" />
+		
+		
+		
+</RelativeLayout>
