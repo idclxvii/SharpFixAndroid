@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.freetzi.idclxvii.sharpfixandroid"
+    package="tk.idclxvii.sharpfixandroid"
     android:versionCode="1"
     android:versionName="1.0" >
 	
@@ -25,10 +25,10 @@
         android:icon="@drawable/logo2"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name="com.freetzi.idclxvii.sharpfixandroid.SharpFixApplicationClass" >
+        android:name="tk.idclxvii.sharpfixandroid.SharpFixApplicationClass" >
         
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.MainActivity"
+            android:name="tk.idclxvii.sharpfixandroid.MainActivity"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -36,39 +36,39 @@
             </intent-filter>
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.MainMenuActivity"
+            android:name="tk.idclxvii.sharpfixandroid.MainMenuActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFddActivity"
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFddActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFdActivity"
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFdActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFdRulesActivity"
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFdRulesActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFiltersActivity"
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFiltersActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuServicesActivity"
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuServicesActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuAboutActivity"
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuAboutActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.ViewRuleActivity"
+            android:name="tk.idclxvii.sharpfixandroid.ViewRuleActivity"
             android:label="@string/app_name" >
         </activity>
         <activity
-            android:name="com.freetzi.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity"
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity"
             android:label="@string/app_name" >
         </activity><service 
             android:enabled="true" 
