@@ -128,10 +128,11 @@ public final class R {
         public static final int fdd_sub_menu=0x7f030007;
         public static final int file_types_dialog=0x7f030008;
         public static final int filters_sub_menu=0x7f030009;
-        public static final int main_menu=0x7f03000a;
-        public static final int main_no_account=0x7f03000b;
-        public static final int rules_dialog=0x7f03000c;
-        public static final int view_rule=0x7f03000d;
+        public static final int filters_sub_menu_rules=0x7f03000a;
+        public static final int main_menu=0x7f03000b;
+        public static final int main_no_account=0x7f03000c;
+        public static final int rules_dialog=0x7f03000d;
+        public static final int view_rule=0x7f03000e;
     }
     public static final class menu {
         public static final int main=0x7f080000;
@@ -154,18 +155,18 @@ public final class R {
         public static final int checkBoxFdFiltersLabel=0x7f050030;
         public static final int checkBoxFddFilters=0x7f050031;
         public static final int checkBoxFddFiltersLabel=0x7f050032;
-        public static final int chooseDesignationDir=0x7f050039;
-        public static final int chooseFileTypeButton=0x7f050037;
-        public static final int chooseFileTypeLabel=0x7f050036;
+        public static final int chooseDesignationDir=0x7f05003b;
+        public static final int chooseFileTypeButton=0x7f050039;
+        public static final int chooseFileTypeLabel=0x7f050038;
         public static final int confirmPassword=0x7f050014;
         public static final int createAccount=0x7f050011;
         public static final int createRule=0x7f05002e;
-        public static final int deleteRule=0x7f05003d;
+        public static final int deleteRule=0x7f05003f;
         public static final int desiredLogin=0x7f050012;
         public static final int desiredPassword=0x7f050013;
         /**  Rule Dialog Menu 
          */
-        public static final int editRule=0x7f05003c;
+        public static final int editRule=0x7f05003e;
         public static final int fdService=0x7f050009;
         public static final int fddService=0x7f05000a;
         public static final int footer=0x7f050015;
@@ -183,28 +184,30 @@ public final class R {
         public static final int mainMenuServicesLabel=0x7f05001e;
         public static final int mainMenuServicesSelection=0x7f05001d;
         public static final int mainMenuTitle=0x7f050016;
-        public static final int negativeButton=0x7f05003b;
+        public static final int negativeButton=0x7f05003d;
         public static final int noAccount=0x7f050010;
         public static final int noRules=0x7f05002d;
         public static final int pass=0x7f05000d;
-        public static final int positiveButton=0x7f05003a;
+        public static final int positiveButton=0x7f05003c;
         public static final int ruleDescription=0x7f05002c;
         public static final int ruleName=0x7f05002b;
         /**  Create New Rule Dialog 
          */
-        public static final int ruleNameHint=0x7f050035;
+        public static final int ruleNameHint=0x7f050037;
         public static final int subMenuFdFiltersRules=0x7f050033;
+        public static final int subMenuFdFiltersRulesLabel=0x7f050034;
         public static final int subMenuFdRules=0x7f050029;
         public static final int subMenuFdRulesLabel=0x7f05002a;
         public static final int subMenuFddDeletionPrio=0x7f050023;
         public static final int subMenuFddDeletionPrioLabel=0x7f050024;
-        public static final int subMenuFddFiltersRules=0x7f050034;
+        public static final int subMenuFddFiltersRules=0x7f050035;
+        public static final int subMenuFddFiltersRulesLabel=0x7f050036;
         public static final int subMenuFddRadioNewer=0x7f050026;
         public static final int subMenuFddRadioOlder=0x7f050025;
-        public static final int targetDesignationDir=0x7f050038;
+        public static final int targetDesignationDir=0x7f05003a;
         /**  Create New Rule Dialog 
          */
-        public static final int test1=0x7f05003e;
+        public static final int test1=0x7f050040;
         public static final int usr=0x7f05000c;
     }
     public static final class style {

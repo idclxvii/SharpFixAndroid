@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="fill_parent"
+	    android:id="@+id/Rules"
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000" >
+	   
+		<TextView
+	        android:id="@+id/title"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/subMenuFdRules"
+	        android:textSize="30sp" 
+	        android:textStyle="bold"
+	        android:textColor="#FFFFFF"
+	        >
+	    </TextView>
+	    <View
+	        android:id="@+id/hr1"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/title"
+            android:background="#c0c0c0"/>
+		<View
+		    android:id="@+id/hr2"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/hr1"
+             android:background="#c0c0c0"/>
+		<TextView
+	 	    android:id="@+id/createRule"
+	 	    android:layout_width="fill_parent"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@+id/hr2"
+	 	    android:gravity="center"
+	 	    android:padding="5dp"
+	 	    android:text="@string/createRule"
+	 	    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        
+	 	     />
+		
+		<ListView
+		    android:layout_width="fill_parent"
+		    android:layout_height="fill_parent"
+		    android:id="@+id/listViewRules"
+		    android:layout_below="@+id/createRule"
+		    android:cacheColorHint="#000000"
+		    android:gravity="center"
+	 	    android:padding="5dp"
+	 	    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="false"
+	        android:longClickable="false"
+	        />
+		    
+		
+		<View
+	     	android:id="@+id/hrLast"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/createRule"
+            android:background="#c0c0c0" />
+		<TextView
+	 	    android:id="@+id/noRules"
+	 	    android:layout_width="fill_parent"
+	 	    android:layout_height="wrap_content"
+	 	    android:layout_below="@+id/hrLast"
+	 	    android:gravity="center"
+	 	    android:padding="5dp"
+	 	    android:textSize="15sp"
+	 	    android:text="@string/noRules"
+	 	     />
+		
+		<View
+	     	android:id="@+id/noRulesHr"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/noRules"
+            android:background="#c0c0c0" />
+		
+		
+		
+</RelativeLayout>

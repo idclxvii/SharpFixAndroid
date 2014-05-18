@@ -44,7 +44,7 @@
     <string name="checkBoxFD">Enable File Designation</string>    
     <string name="checkBoxFDLabel">Automatically transfer files of a certain type (*.jpg, *.apk, etc.) to a directory you have specified.</string>    
     <string name="subMenuFdRules">File Designation Rules</string>    
-    <string name="subMenuFdRulesLabel">View, create, update, delete, activate and deactivate file designation rules.</string>    
+    <string name="subMenuFdRulesLabel">View, create, update or delete file designation rules.</string>    
     <string name="ruleName">Rule Name</string>    
     <string name="ruleDescription">JPG Files</string>    
     <string name="noRules">There are no rules defined yet.</string>    
@@ -53,8 +53,10 @@
     <string name="checkBoxFdFiltersLabel">Automatically skips the files and/or directories (including subdirectories) you have specified whenever SharpFix performs File Designation scans.</string>    
     <string name="checkBoxFddFilters">Enable File Duplication Detection Filtering</string>    
     <string name="checkBoxFddFiltersLabel">Automatically skips the files and/or directories (including subdirectories) you have specified whenever SharpFix performs File Duplication Detection scans.</string>    
-    <string name="subMenuFdFiltersRules">File Designation Filter Rules</string>    
+    <string name="subMenuFdFiltersRules">File Designation Filter Rules</string> 
+    <string name="subMenuFdFiltersRulesLabel">View, create, update or delete file designation filtering rules.</string> 
     <string name="subMenuFddFiltersRules">File Duplication Detection Filter Rules</string>    
+    <string name="subMenuFddFiltersRulesLabel">View, create, update or delete file duplication detection filtering rules.</string>    
     
     
     <!-- Create New Rule Dialog -->

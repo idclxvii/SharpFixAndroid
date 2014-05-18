@@ -69,6 +69,7 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 					// TODO Auto-generated method stub
 					Intent i = new Intent(SubMenuFiltersActivity.this, SubMenuFilterRulesActivity.class);
 					// set intent variables to tell whether fd or fdd
+					i.putExtra("filter", "fdd");
 					startActivity(i);
 					
 					//Toast.makeText(SubMenuFiltersActivity.this, "Calling File Duplication Detection Filtering Rules", Toast.LENGTH_LONG).show();
@@ -107,6 +108,7 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 					// TODO Auto-generated method stub
 					Intent i = new Intent(SubMenuFiltersActivity.this, SubMenuFilterRulesActivity.class);
 					// set intent variables to tell whether fd or fdd
+					i.putExtra("filter","fd");
 					startActivity(i);
 					// Toast.makeText(SubMenuFiltersActivity.this, "Calling File Designation Filtering Rules", Toast.LENGTH_LONG).show();
 					
@@ -165,6 +167,118 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 			}
 	 		
 	 		// ###############################################################################################################
+	 		if((fddCh.isChecked() && ((SharpFixApplicationClass) getApplication()).getFddFilterSwitch() == 0 ) ||
+					(!fddCh.isChecked() && ((SharpFixApplicationClass) getApplication()).getFddFilterSwitch() == 1)){
+				// update database 
+				if(fddCh.isChecked()){
+					//	File Duplication Detection Filtering Feature is turned on
+					try{
+						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+									((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+									((SharpFixApplicationClass) getApplication()).getFddPref(),
+									((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+									((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+									((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						newParams.setFdd_Filter_switch(1);
+						
+						this.db.update(Tables.preferences, oldParams, newParams, null);
+						((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(1);
+					}catch(Exception e){
+						
+					}
+				}else{
+					//	File Duplication Detection Filtering Feature is turned off
+					try{
+						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						newParams.setFdd_Filter_switch(0);
+						this.db.update(Tables.preferences, oldParams, newParams, null);
+						((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(0);
+					}catch(Exception e){
+							
+					}
+						
+				}
+
+			}else{
+				// Toast.makeText(this, "File Duplication Detection Filtering Settings was not changed" ,Toast.LENGTH_LONG).show();
+			}
+	 		
+	 		if((fdCh.isChecked() && ((SharpFixApplicationClass) getApplication()).getFdFilterSwitch() == 0 ) ||
+					(!fdCh.isChecked() && ((SharpFixApplicationClass) getApplication()).getFdFilterSwitch() == 1)){
+				// update database 
+				if(fdCh.isChecked()){
+					//	File Designation Filtering Feature is turned on
+					try{
+						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+									((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+									((SharpFixApplicationClass) getApplication()).getFddPref(),
+									((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+									((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+									((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						newParams.setFd_Filter_switch(1);
+						/*
+						Toast.makeText(this, this.db.update(Tables.preferences, oldParams, newParams, null) ? "File Designation Settings have been updated!" :
+								"File Designation Settings failed to update!" ,Toast.LENGTH_LONG).show();
+							*/
+						this.db.update(Tables.preferences, oldParams, newParams, null);
+						((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(1);
+					}catch(Exception e){
+						
+					}
+				}else{
+					//	File Designation Filtering Feature is turned off
+					try{
+						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						newParams.setFd_Filter_switch(0);
+						/*
+						Toast.makeText(this, this.db.update(Tables.preferences, oldParams, newParams, null) ? "File Designation Settings have been updated!" :
+								"File Designation Settings failed to update!" ,Toast.LENGTH_LONG).show();
+						*/
+						this.db.update(Tables.preferences, oldParams, newParams, null);
+						((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(0);
+					}catch(Exception e){
+							
+					}
+						
+				}
+
+			}else{
+				// Toast.makeText(this, "File Designation Settings was not changed" ,Toast.LENGTH_LONG).show();
+			}
 	 		
 		}
 		
@@ -173,6 +287,22 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 			super.onResume();
 			if(this.LOGCAT){
 				Log.d(this.TAG, this.TAG +  "onResume()");
+			}
+			try{
+				if( ((SharpFixApplicationClass) getApplication()).getFddFilterSwitch() == 0){
+					fddCh.setChecked(false);
+					
+				}else{
+					fddCh.setChecked(true);
+				}
+				if( ((SharpFixApplicationClass) getApplication()).getFdFilterSwitch() == 0){
+					fdCh.setChecked(false);
+					
+				}else{
+					fdCh.setChecked(true);
+				}
+			}catch(Exception e){
+				
 			}
 			
 		}

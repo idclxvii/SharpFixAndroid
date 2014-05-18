@@ -1,28 +1,19 @@
 package tk.idclxvii.sharpfixandroid;
 
 
-import android.R.id;
-import android.annotation.TargetApi;
 import android.app.*;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnCancelListener;
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
 import android.os.*;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.*;
-import android.view.ContextMenu.ContextMenuInfo;
 import android.view.View.*;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
-import android.widget.AdapterView.OnItemLongClickListener;
-import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.CompoundButton.*;
 
-import tk.idclxvii.sharpfixandroid.FolderDialog.ChosenDirectoryListener;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 
 import java.io.*;
