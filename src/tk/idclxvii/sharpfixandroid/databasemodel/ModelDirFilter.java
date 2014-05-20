@@ -8,10 +8,11 @@ public class ModelDirFilter {
 	private Integer id;
 	private Integer accountId;
 	private String dir;
-	
+	private String filter;
+	private String ruleName;
 	
 	public enum fields{
-		Id, Account, Dir
+		Id, Account, Dir,  Rule, Filter
 	}
 	
 	public String[] getFields(){
@@ -32,12 +33,24 @@ public class ModelDirFilter {
     	this.dir = dir;
     }
     
-    public ModelDirFilter(Integer id, Integer account, String dir){
+    public ModelDirFilter(Integer id, Integer account, String ruleName, String dir, String filter){
     	this.dir = dir;
     	this.id = id;
     	this.accountId = account;
+    	this.filter = filter;
+    	this.ruleName = ruleName;
     }
     
+    public ModelDirFilter(Integer account,String ruleName, String dir, String filter){
+    	this.dir = dir;
+    	this.accountId = account;
+    	this.filter = filter;
+    	this.ruleName = ruleName;
+    }
+    public ModelDirFilter(Integer account, String dir){
+    	this.dir = dir;
+    	this.accountId = account;
+    }
     // setters:
     public void setId(Integer id){
     	this.id = id;
@@ -49,6 +62,14 @@ public class ModelDirFilter {
     
     public void setDir(String dir){
     	this.dir = dir;
+    }
+    
+    public void setFilter(String filter){
+    	this.filter = filter;
+    }
+    
+    public void setRule(String ruleName){
+    	this.ruleName = ruleName;
     }
     
     // getters:
@@ -64,6 +85,11 @@ public class ModelDirFilter {
     	return this.dir;
     }
     
+    public String getFilter(){
+    	return this.filter;
+    }
     
-    
+    public String getRule(){
+    	return this.ruleName;
+    }
 }

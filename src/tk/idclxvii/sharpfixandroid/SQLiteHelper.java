@@ -5,6 +5,7 @@ import java.util.*;
 import android.content.*;
 import android.database.*;
 import android.database.sqlite.*;
+import android.os.AsyncTask;
 import android.util.*;
 import android.widget.Toast;
 
@@ -13,13 +14,50 @@ import tk.idclxvii.sharpfixandroid.databasemodel.*;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
 
+	private class SQLiteAsyc extends AsyncTask<String, Boolean, Object>{
+		
+		// AsyncTask < Params, Progress, Result >
+
+		// This method runs the task in parallel. This method must be 
+		// invoked in the UI - thread.
+		//this.executeOnExecutor(THREAD_POOL_EXECUTOR, String sql);
+		
+		
+		@Override
+		protected Object doInBackground(String... params) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+		
+		@Override 
+		protected void onPostExecute(Object returnedResult){
+			// This runs on the UI thread and is called after doInBackground finishes
+			// doInBackground passes its return value to this method after finishing its task
+			
+			
+		}
+		
+		@Override
+		protected void onPreExecute(){
+			// runs on the UI thread before doInBackground is called
+			 	
+		}
+		
+		@Override 
+		protected void onCancelled(Object result){
+			
+		}
+		
+		
+	}
+	
 	
 	 // Logcat tag and switch
     private static final String TAG = "SQLiteHelper";
     private static boolean LOGCAT = true;
  
     // Database Version
-    private static final int DATABASE_VERSION = 9;
+    private static final int DATABASE_VERSION = 10;
  
     // Database Name
     private static final String DATABASE_NAME = "sharpfix_database.db";
@@ -63,11 +101,13 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     
     private static final String CREATE_DIR_FILTER = "CREATE TABLE"
             +" dir_filter ( id INTEGER PRIMARY KEY, account INTEGER NOT NULL , dir TEXT NOT NULL , " +
+    		"rule TEXT NOT NULL, filter TEXT NOT NULL, " +
             "FOREIGN KEY  (account) REFERENCES accounts_info(id)," +
             "FOREIGN KEY (dir) REFERENCES dirs_info(path) )";
     
     private static final String CREATE_FILE_FILTER = "CREATE TABLE"
             +" file_filter ( id INTEGER PRIMARY KEY, account INTEGER NOT NULL , file TEXT NOT NULL , " +
+            "rule TEXT NOT NULL, filter TEXT NOT NULL, " +
             "FOREIGN KEY  (account) REFERENCES accounts_info(id)," +
             "FOREIGN KEY (file) REFERENCES files_info(path) )";
    

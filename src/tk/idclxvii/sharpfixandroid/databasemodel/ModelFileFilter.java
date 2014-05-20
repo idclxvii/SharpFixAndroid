@@ -7,10 +7,11 @@ public class ModelFileFilter {
 	private Integer id;
 	private Integer accountId;
 	private String fileName;
-	
+	private String filter; //filter type: fdd or fd
+	private String ruleName; // rule name
 	
 	public enum fields{
-		Id, Account, File
+		Id, Account, File, Rule, Filter
 	}
 	
 	public String[] getFields(){
@@ -27,10 +28,19 @@ public class ModelFileFilter {
 		
 	}
 	
-	public ModelFileFilter(Integer id, Integer account, String fileName){
+	public ModelFileFilter(Integer id, Integer account,String ruleName, String fileName, String filter){
 		this.id = id;
 		this.accountId = account;
 		this.fileName = fileName;
+		this.filter = filter;
+		this.ruleName = ruleName;
+	}
+	
+	public ModelFileFilter(Integer account,String ruleName, String fileName, String filter){
+		this.accountId = account;
+		this.fileName = fileName;
+		this.filter = filter;
+		this.ruleName = ruleName;
 	}
 	
 	public ModelFileFilter(String fileName){
@@ -50,6 +60,13 @@ public class ModelFileFilter {
 		this.fileName = fileName;
 	}
 	
+	public void setFilter(String filter){
+		this.filter = filter;
+	}
+	
+	public void setRule(String ruleName){
+		this.ruleName = ruleName;
+	}
 	// getters:
     public Integer getId(){
     	return this.id;
@@ -61,5 +78,13 @@ public class ModelFileFilter {
     
     public String getFile(){
     	return this.fileName;
+    }
+    
+    public String getFilter(){
+    	return this.filter;
+    }
+    
+    public String getRule(){
+    	return this.ruleName;
     }
 }

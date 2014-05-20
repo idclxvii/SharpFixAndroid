@@ -68,6 +68,10 @@
     <string name="positiveButton">Create</string>    
     <string name="negativeButton">Cancel</string>    
     
+    <!-- Create New Rule Dialog -->
+    <string name="chosenFilter">Item(s) to be filtered: </string>    
+    <string name="chooser">Browse</string>    
+    
     <!-- Rule Dialog Menu -->
     <string name="editRule">Edit Rule</string>    
     <string name="deleteRule">Delete Rule</string>    

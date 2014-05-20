@@ -1,6 +1,6 @@
 package tk.idclxvii.sharpfixandroid;
 
-import java.util.Locale;
+import java.util.Locale; // used on API 10 above: .toString(Locale)
 
 import android.app.*;
 import android.content.*;

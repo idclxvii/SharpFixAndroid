@@ -44,53 +44,55 @@ public final class R {
         public static final int stop_service=0x7f02000a;
     }
     public static final class id {
-        public static final int MenuLogout=0x7f090047;
+        public static final int MenuLogout=0x7f090049;
         public static final int Rules=0x7f090018;
         public static final int autoLogin=0x7f090005;
         public static final int choose=0x7f090009;
         public static final int chooseDir=0x7f09000c;
         public static final int chooseFileType=0x7f09000a;
-        public static final int confirmPassword=0x7f09003a;
-        public static final int createAccount=0x7f09003b;
+        public static final int chooser=0x7f090023;
+        public static final int chosenFilter=0x7f090022;
+        public static final int confirmPassword=0x7f09003c;
+        public static final int createAccount=0x7f09003d;
         public static final int createRule=0x7f090019;
         public static final int custom_textview=0x7f090007;
-        public static final int deleteRule=0x7f09003d;
+        public static final int deleteRule=0x7f09003f;
         public static final int deletionPriority=0x7f09001e;
-        public static final int designation=0x7f090045;
+        public static final int designation=0x7f090047;
         public static final int designationDir=0x7f09000b;
-        public static final int designation_label=0x7f090044;
-        public static final int desiredLogin=0x7f090038;
-        public static final int desiredPassword=0x7f090039;
-        public static final int editRule=0x7f09003c;
-        public static final int file_type=0x7f090042;
-        public static final int file_type_label=0x7f090041;
-        public static final int filters_hr1=0x7f090022;
-        public static final int filters_hr2=0x7f090023;
-        public static final int filters_hr3=0x7f090026;
-        public static final int filters_hr4=0x7f090029;
-        public static final int filters_hr5=0x7f09002c;
-        public static final int filters_label1=0x7f090025;
-        public static final int filters_label2=0x7f090028;
-        public static final int filters_label3=0x7f09002b;
-        public static final int filters_label4=0x7f09002e;
-        public static final int filters_selection1=0x7f090024;
-        public static final int filters_selection2=0x7f090027;
-        public static final int filters_selection3=0x7f09002a;
-        public static final int filters_selection4=0x7f09002d;
+        public static final int designation_label=0x7f090046;
+        public static final int desiredLogin=0x7f09003a;
+        public static final int desiredPassword=0x7f09003b;
+        public static final int editRule=0x7f09003e;
+        public static final int file_type=0x7f090044;
+        public static final int file_type_label=0x7f090043;
+        public static final int filters_hr1=0x7f090024;
+        public static final int filters_hr2=0x7f090025;
+        public static final int filters_hr3=0x7f090028;
+        public static final int filters_hr4=0x7f09002b;
+        public static final int filters_hr5=0x7f09002e;
+        public static final int filters_label1=0x7f090027;
+        public static final int filters_label2=0x7f09002a;
+        public static final int filters_label3=0x7f09002d;
+        public static final int filters_label4=0x7f090030;
+        public static final int filters_selection1=0x7f090026;
+        public static final int filters_selection2=0x7f090029;
+        public static final int filters_selection3=0x7f09002c;
+        public static final int filters_selection4=0x7f09002f;
         public static final int hr1=0x7f090010;
         public static final int hr2=0x7f090011;
         public static final int hr3=0x7f090014;
-        public static final int hr4=0x7f09002f;
-        public static final int hr5=0x7f090032;
+        public static final int hr4=0x7f090031;
+        public static final int hr5=0x7f090034;
         public static final int hr6=0x7f090017;
-        public static final int hr7=0x7f090037;
+        public static final int hr7=0x7f090039;
         public static final int hrLast=0x7f09001b;
         public static final int imageView1=0x7f090000;
         public static final int label1=0x7f090013;
         public static final int label2=0x7f090016;
-        public static final int label3=0x7f090031;
-        public static final int label4=0x7f090034;
-        public static final int label5=0x7f090036;
+        public static final int label3=0x7f090033;
+        public static final int label4=0x7f090036;
+        public static final int label5=0x7f090038;
         public static final int listViewRules=0x7f09001a;
         public static final int logged=0x7f090006;
         public static final int login=0x7f090003;
@@ -103,19 +105,19 @@ public final class R {
         public static final int radioNewer=0x7f090020;
         public static final int radioOlder=0x7f09001f;
         public static final int ruleName=0x7f090008;
-        public static final int rule_name=0x7f09003e;
+        public static final int rule_name=0x7f090040;
         public static final int selection1=0x7f090012;
         public static final int selection2=0x7f090015;
-        public static final int selection3=0x7f090030;
-        public static final int selection4=0x7f090033;
-        public static final int selection5=0x7f090035;
+        public static final int selection3=0x7f090032;
+        public static final int selection4=0x7f090035;
+        public static final int selection5=0x7f090037;
         public static final int textView1=0x7f090004;
         public static final int title=0x7f09000f;
         public static final int username=0x7f090002;
-        public static final int vr_hr1=0x7f09003f;
-        public static final int vr_hr2=0x7f090040;
-        public static final int vr_hr4=0x7f090043;
-        public static final int vr_hr6=0x7f090046;
+        public static final int vr_hr1=0x7f090041;
+        public static final int vr_hr2=0x7f090042;
+        public static final int vr_hr4=0x7f090045;
+        public static final int vr_hr6=0x7f090048;
     }
     public static final class layout {
         public static final int activity_main=0x7f030000;
@@ -127,12 +129,13 @@ public final class R {
         public static final int fd_sub_menu_rules=0x7f030006;
         public static final int fdd_sub_menu=0x7f030007;
         public static final int file_types_dialog=0x7f030008;
-        public static final int filters_sub_menu=0x7f030009;
-        public static final int filters_sub_menu_rules=0x7f03000a;
-        public static final int main_menu=0x7f03000b;
-        public static final int main_no_account=0x7f03000c;
-        public static final int rules_dialog=0x7f03000d;
-        public static final int view_rule=0x7f03000e;
+        public static final int filter_create_rule=0x7f030009;
+        public static final int filters_sub_menu=0x7f03000a;
+        public static final int filters_sub_menu_rules=0x7f03000b;
+        public static final int main_menu=0x7f03000c;
+        public static final int main_no_account=0x7f03000d;
+        public static final int rules_dialog=0x7f03000e;
+        public static final int view_rule=0x7f03000f;
     }
     public static final class menu {
         public static final int main=0x7f080000;
@@ -158,15 +161,19 @@ public final class R {
         public static final int chooseDesignationDir=0x7f05003b;
         public static final int chooseFileTypeButton=0x7f050039;
         public static final int chooseFileTypeLabel=0x7f050038;
+        public static final int chooser=0x7f05003f;
+        /**  Create New Rule Dialog 
+         */
+        public static final int chosenFilter=0x7f05003e;
         public static final int confirmPassword=0x7f050014;
         public static final int createAccount=0x7f050011;
         public static final int createRule=0x7f05002e;
-        public static final int deleteRule=0x7f05003f;
+        public static final int deleteRule=0x7f050041;
         public static final int desiredLogin=0x7f050012;
         public static final int desiredPassword=0x7f050013;
         /**  Rule Dialog Menu 
          */
-        public static final int editRule=0x7f05003e;
+        public static final int editRule=0x7f050040;
         public static final int fdService=0x7f050009;
         public static final int fddService=0x7f05000a;
         public static final int footer=0x7f050015;
@@ -207,7 +214,7 @@ public final class R {
         public static final int targetDesignationDir=0x7f05003a;
         /**  Create New Rule Dialog 
          */
-        public static final int test1=0x7f050040;
+        public static final int test1=0x7f050042;
         public static final int usr=0x7f05000c;
     }
     public static final class style {
