@@ -29,11 +29,13 @@ public class SubMenuFilterRulesActivity extends Activity implements
 	private boolean LOGCAT;
 	
 	private enum filterFlag { fd, fdd};
+	
+	
 	private filterFlag instance;
 	
 	boolean onEditRule = false;
 	String onEditTitle = "";
-	private ModelFdSettings oldParams;
+	private Object oldParams;
 	SQLiteHelper db;
 	TextView title;
 	private RelativeLayout RL;
@@ -95,7 +97,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 			public boolean onLongClick(View v) {
 				// 2TODO Auto-generated method stub
 				Toast.makeText(
-		            	SubMenuFilterRulesActivity.this,"FUCK YOU! You dont hold this button down asshole!", Toast.LENGTH_LONG).show();
+		            	SubMenuFilterRulesActivity.this,"Developer Mode currently disabled!", Toast.LENGTH_LONG).show();
 				return false;
 			}
 			
@@ -126,15 +128,15 @@ public class SubMenuFilterRulesActivity extends Activity implements
 				
 				// dir_filters
 				for(Object f : r){
-					adapter.add(this.instance.name().toUpperCase() + " Filter Rule" + "\n" +
-							((ModelDirFilter)f).getRule() + "\n" + ((ModelDirFilter)f).getDir());
+					adapter.add(((ModelDirFilter)f).getRule() + "\n" + "Directory Filter Rule" + "\n" +
+							  ((ModelDirFilter)f).getDir());
 					
 				}
 				
 				// file_filters
 				for(Object f : q){
-					adapter.add(this.instance.name().toUpperCase() + " Filter Rule" + "\n" +
-				((ModelFileFilter)f).getRule() + "\n" + ((ModelFileFilter)f).getFile());
+					adapter.add(((ModelFileFilter)f).getRule() + "\n" + "File Filter Rule" + "\n" +
+				 ((ModelFileFilter)f).getFile());
 					
 				}
 				
@@ -149,32 +151,51 @@ public class SubMenuFilterRulesActivity extends Activity implements
 						
 						try{
 							final String selection = ((String)parent.getItemAtPosition(position));
-							final String fileType = selection.substring(selection.indexOf("\n")+1);
 							final String ruleName = selection.substring(0, selection.indexOf("\n"));
-							final Object rule = SubMenuFilterRulesActivity.this.db.select(Tables.file_designation_settings, ModelFdSettings.class,
+							final String filterType = selection.substring(selection.indexOf("\n")+1).substring(0,
+									(selection.substring(selection.indexOf("\n")+1).indexOf("\n")));
+							final Object rule = (filterType.equals("Directory Filter Rule") ?
+										(SubMenuFilterRulesActivity.this.db.select(Tables.dir_filter, ModelDirFilter.class,
+												new Object[][]{{"filter", SubMenuFilterRulesActivity.this.instance.toString()},
+											{"rule", ruleName}}, null))
+									:
+										(SubMenuFilterRulesActivity.this.db.select(Tables.file_filter, ModelFileFilter.class,
+												new Object[][]{{"filter", SubMenuFilterRulesActivity.this.instance.toString()},
+													{"rule", ruleName}}, null))
+									
+									
+									);/* = SubMenuFilterRulesActivity.this.db.select(Tables, ModelFdSettings.class,
 								new Object[][]{{"file_type", fileType}}, null);
+							*/
+							Toast.makeText(SubMenuFilterRulesActivity.this, "Filter type: '" + filterType +"'", Toast.LENGTH_LONG).show();
 							
-							SubMenuFilterRulesActivity.this.oldParams = (ModelFdSettings) rule;
+							SubMenuFilterRulesActivity.this.oldParams = rule;
 							SubMenuFilterRulesActivity.this.holdDialog = new Dialog(SubMenuFilterRulesActivity.this);
 							SubMenuFilterRulesActivity.this.holdDialog.setContentView(R.layout.rules_dialog);
 							SubMenuFilterRulesActivity.this.holdDialog.setTitle(ruleName);
 							Button edit = (Button) SubMenuFilterRulesActivity.this.holdDialog.findViewById(R.id.editRule);
 							Button delete = (Button) SubMenuFilterRulesActivity.this.holdDialog.findViewById(R.id.deleteRule);
 							SubMenuFilterRulesActivity.this.holdDialog .setCancelable(true);
-								
+							
 							edit.setOnClickListener(new OnClickListener(){
 								
 								@Override
 								public void onClick(View v) {
 									// TODO Auto-generated method stub
 									SubMenuFilterRulesActivity.this.onEditRule = true;
-									SubMenuFilterRulesActivity.this.onEditTitle = fileType;
+									SubMenuFilterRulesActivity.this.onEditTitle = filterType;
 									SubMenuFilterRulesActivity.this.createRule.performClick();
-									SubMenuFilterRulesActivity.this.dialog.setTitle(fileType);
+									SubMenuFilterRulesActivity.this.dialog.setTitle(filterType);
+									SubMenuFilterRulesActivity.this.positive.setText("Update Rule");
+									SubMenuFilterRulesActivity.this.ruleName.setText(ruleName);
+									SubMenuFilterRulesActivity.this.chosenFilter.setText("Item(s) to be filtered: "+"\n" + 
+									(filterType.equals("Directory Filter Rule") ? ((ModelDirFilter)rule).getDir() :
+										 ((ModelFileFilter)rule).getFile()
+											));
+									SubMenuFilterRulesActivity.this.dirFilter = (filterType.equals("Directory Filter Rule") ? true : false);						/*
 									SubMenuFilterRulesActivity.this.ruleName.setText(((ModelFdSettings)rule).getRule_name());
 									SubMenuFilterRulesActivity.this.chosenFilter.setText("Item(s) to be filtered: "+"\n" + ((ModelFdSettings)rule).getDesignation_path());
-									SubMenuFilterRulesActivity.this.positive.setText("Update Rule");
-									
+									*/
 									
 								}
 								
@@ -209,12 +230,25 @@ public class SubMenuFilterRulesActivity extends Activity implements
 										public void onClick(View v) {
 											// TODO Auto-generated method stub
 											try{
-												if(SubMenuFilterRulesActivity.this.db.delete(Tables.file_designation_settings,
-														SubMenuFilterRulesActivity.this.oldParams, null)){
-													Log.d(TAG, "Successfully deleted the rule: ");
+												if(filterType.equals("Directory Filter Rule")){
+													if(SubMenuFilterRulesActivity.this.db.delete(Tables.dir_filter,
+															(ModelDirFilter) rule, null)){
+														Log.d(TAG, "Successfully deleted the rule: ");
+													}else{
+														Log.e(TAG, "Failed deleting the rule: ");
+													}
 												}else{
-													Log.e(TAG, "Failed deleting the rule: ");
+													if(SubMenuFilterRulesActivity.this.db.delete(Tables.file_filter,
+															(ModelFileFilter) rule, null)){
+														Log.d(TAG, "Successfully deleted the rule: ");
+													}else{
+														Log.e(TAG, "Failed deleting the rule: ");
+													}
 												}
+													
+													
+													
+												
 												d.dismiss();
 												SubMenuFilterRulesActivity.this.holdDialog.dismiss();
 												SubMenuFilterRulesActivity.this.onEditRule = false;
@@ -282,7 +316,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 							final String selection = ((String)parent.getItemAtPosition(position));
 							final String fileType = selection.substring(selection.indexOf("\n")+1);
 							final String ruleName = selection.substring(0, selection.indexOf("\n"));
-							final Object rule = SubMenuFilterRulesActivity.this.db.select(Tables.file_designation_settings, ModelFdSettings.class,
+							final Object rule = SubMenuFilterRulesActivity.this.db.select(Tables.file_filter, ModelFdSettings.class,
 								new Object[][]{{"file_type", fileType}}, null);
 							Intent i = new Intent(SubMenuFilterRulesActivity.this, ViewRuleActivity.class);
 							
@@ -420,54 +454,58 @@ public class SubMenuFilterRulesActivity extends Activity implements
 		
 		switch (src.getId()){
 			case R.id.createRule:
-			
+				
+				if(!this.onEditRule){
 				//#####################################################################################################
-				final Dialog d = new Dialog(SubMenuFilterRulesActivity.this);
-				d.setContentView(R.layout.rules_dialog);
-				final Button yes = (Button) d.findViewById(R.id.editRule);
-				yes.setText("File Filter: Filters the selected file.");
-				final Button no = (Button) d.findViewById(R.id.deleteRule);
-				no.setText("Directory Filter: Filters all the files inside the selected directory including its subdirectories,");
-				d.setTitle("Select Filter Type");
-			
-				no.setOnClickListener(new OnClickListener(){
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						SubMenuFilterRulesActivity.this.dirFilter = true;
-						d.dismiss();
-						SubMenuFilterRulesActivity.this.performTask();
-					}	
-					
-				});
+					final Dialog d = new Dialog(SubMenuFilterRulesActivity.this);
+					d.setContentView(R.layout.rules_dialog);
+					final Button yes = (Button) d.findViewById(R.id.editRule);
+					yes.setText("File Filter: Filters the selected file.");
+					final Button no = (Button) d.findViewById(R.id.deleteRule);
+					no.setText("Directory Filter: Filters all the files inside the selected directory including its subdirectories,");
+					d.setTitle("Select Filter Type");
 				
-				yes.setOnClickListener(new OnClickListener(){
-
-					@Override
-					public void onClick(View v) {
-						// TODO Auto-generated method stub
-						SubMenuFilterRulesActivity.this.dirFilter = false;
-						d.dismiss();
-						SubMenuFilterRulesActivity.this.performTask();
+					no.setOnClickListener(new OnClickListener(){
+	
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							SubMenuFilterRulesActivity.this.dirFilter = true;
+							d.dismiss();
+							SubMenuFilterRulesActivity.this.performTask();
+						}	
 						
-					}
+					});
 					
-				});
-				
-				d.setOnCancelListener(new OnCancelListener(){
-
-					@Override
-					public void onCancel(
-							DialogInterface dialog) {
-						// TODO Auto-generated method stub
-						d.dismiss();
-					}
+					yes.setOnClickListener(new OnClickListener(){
+	
+						@Override
+						public void onClick(View v) {
+							// TODO Auto-generated method stub
+							SubMenuFilterRulesActivity.this.dirFilter = false;
+							d.dismiss();
+							SubMenuFilterRulesActivity.this.performTask();
+							
+						}
+						
+					});
 					
-				});
-				d.show();
-
-				
+					d.setOnCancelListener(new OnCancelListener(){
+	
+						@Override
+						public void onCancel(
+								DialogInterface dialog) {
+							// TODO Auto-generated method stub
+							d.dismiss();
+						}
+						
+					});
+					d.show();
+	
+				}else{
+					// Toast.makeText(this, "ON EDIT RULE SHIT", Toast.LENGTH_LONG).show();
+					SubMenuFilterRulesActivity.this.performTask();
+				}
 			
 			break;
 			
@@ -512,6 +550,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 					// user selected file filtering					
 					FileDialog f = new FileDialog(SubMenuFilterRulesActivity.this,Environment.getExternalStorageDirectory());
 					f.addFileListener(SubMenuFilterRulesActivity.this);
+					f.setSelectDirectoryOption(false);
 					f.createFileDialog();
 					// Anonymous inner class
 					/*
@@ -538,6 +577,8 @@ public class SubMenuFilterRulesActivity extends Activity implements
 				// CREATE RULE BUTTON
 				// insert the new rule to the database, but check the fields first of course
 				if(!SubMenuFilterRulesActivity.this.onEditRule){
+					
+					
 					if(SubMenuFilterRulesActivity.this.chosenFilter != null){
 						// valid chosen directory
 						if(ruleName.getText().toString() != null || ruleName.getText().toString().length() < 1){
@@ -547,11 +588,29 @@ public class SubMenuFilterRulesActivity extends Activity implements
 								// public ModelFdSettings(Integer accountId, String ruleName, String designationPath, String fileType)
 								
 								if(db.insert((SubMenuFilterRulesActivity.this.dirFilter) ? Tables.dir_filter : Tables.file_filter,
-										(SubMenuFilterRulesActivity.this.instance.equals(SubMenuFilterRulesActivity.filterFlag.fd)) 
-										? 	new ModelFileFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
-												SubMenuFilterRulesActivity.this.chosenFiltered, "fd")
-								: 	new ModelDirFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
-										SubMenuFilterRulesActivity.this.chosenFiltered, "fdd"),
+										
+										( (SubMenuFilterRulesActivity.this.dirFilter) ? 
+												(SubMenuFilterRulesActivity.this.instance.equals(SubMenuFilterRulesActivity.filterFlag.fd)) ?
+														new ModelDirFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+																	SubMenuFilterRulesActivity.this.chosenFiltered, "fd")
+													: 	
+														new ModelDirFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+																	SubMenuFilterRulesActivity.this.chosenFiltered, "fdd") 
+										:
+											
+											
+												(SubMenuFilterRulesActivity.this.instance.equals(SubMenuFilterRulesActivity.filterFlag.fd)) ?
+														new ModelFileFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+															SubMenuFilterRulesActivity.this.chosenFiltered, "fd")
+													: 	
+														new ModelFileFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+													SubMenuFilterRulesActivity.this.chosenFiltered, "fdd")
+										
+												
+												),
+										
+										
+										
 								/*
 								 * 	new ModelFdSettings(SF.getAccountId(), ruleName.getText().toString(),
 								 *		SubMenuFilterRulesActivity.this.chosenFilter, SubMenuFilterRulesActivity.this.chosenMagicNumber)
@@ -571,6 +630,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 											"Chosen dir: " + SubMenuFilterRulesActivity.this.chosenFiltered + "\n" +
 											"Filter Flag: " +SubMenuFilterRulesActivity.this.instance.name() );
 								}
+								SubMenuFilterRulesActivity.this.holdDialog.dismiss();
 								dialog.dismiss();
 								finish();
 								startActivity(getIntent());
@@ -597,6 +657,94 @@ public class SubMenuFilterRulesActivity extends Activity implements
 					
 				}else{
 					// on Edit mode
+					
+
+					if(SubMenuFilterRulesActivity.this.chosenFilter != null){
+						// valid chosen directory
+						if(ruleName.getText().toString() != null || ruleName.getText().toString().length() < 1){
+							// rulename is not empty
+							SQLiteHelper db = SubMenuFilterRulesActivity.this.getDb(SubMenuFilterRulesActivity.this);
+							try{
+								// public ModelFdSettings(Integer accountId, String ruleName, String designationPath, String fileType)
+								
+								// db.update(table, oldParams, newParams, db)
+								// db.insert(table, params, db)
+								
+								if(db.update(
+										
+										(SubMenuFilterRulesActivity.this.dirFilter) ? Tables.dir_filter : Tables.file_filter,
+										
+										// old params
+										(SubMenuFilterRulesActivity.this.dirFilter) ?
+												(ModelDirFilter)SubMenuFilterRulesActivity.this.oldParams :
+												(ModelFileFilter)SubMenuFilterRulesActivity.this.oldParams ,
+												
+												((SubMenuFilterRulesActivity.this.dirFilter) ? 
+														(SubMenuFilterRulesActivity.this.instance.equals(SubMenuFilterRulesActivity.filterFlag.fd)) ?
+																new ModelDirFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+																			SubMenuFilterRulesActivity.this.chosenFiltered, "fd")
+															: 	
+																new ModelDirFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+																			SubMenuFilterRulesActivity.this.chosenFiltered, "fdd") 
+												:
+													
+													
+														(SubMenuFilterRulesActivity.this.instance.equals(SubMenuFilterRulesActivity.filterFlag.fd)) ?
+																new ModelFileFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+																	SubMenuFilterRulesActivity.this.chosenFiltered, "fd")
+															: 	
+																new ModelFileFilter(SF.getAccountId(), SubMenuFilterRulesActivity.this.ruleName.getText().toString(),
+															SubMenuFilterRulesActivity.this.chosenFiltered, "fdd")
+												
+														
+										),
+								/*
+								 * 	new ModelFdSettings(SF.getAccountId(), ruleName.getText().toString(),
+								 *		SubMenuFilterRulesActivity.this.chosenFilter, SubMenuFilterRulesActivity.this.chosenMagicNumber)
+								 */
+									null)
+									
+										
+										){
+									Toast.makeText(SubMenuFilterRulesActivity.this,
+											"Successfully created the new rule!",
+											Toast.LENGTH_LONG).show();
+									Log.d(TAG, "Successfully created new rule: " + ruleName.getText().toString() + "\n" +
+											"Chosen dir: " + SubMenuFilterRulesActivity.this.chosenFiltered + "\n" +
+											"Filter Flag: " +SubMenuFilterRulesActivity.this.instance.name() );
+								}else{
+									Toast.makeText(SubMenuFilterRulesActivity.this,
+											"The rule you have specified is already existing!",
+											Toast.LENGTH_LONG).show();
+									Log.e(TAG, "Failed creating new rule: " + ruleName.getText().toString() + "\n" +
+											"Chosen dir: " + SubMenuFilterRulesActivity.this.chosenFiltered + "\n" +
+											"Filter Flag: " +SubMenuFilterRulesActivity.this.instance.name() );
+								}
+								SubMenuFilterRulesActivity.this.holdDialog.dismiss();
+								dialog.dismiss();
+								finish();
+								startActivity(getIntent());
+							}catch(Exception e){
+								if(LOGCAT){
+									StackTraceElement[] st = e.getStackTrace();
+			    					for(int y= 0; y <st.length; y++){
+			    						Log.w(TAG, st[y].toString());
+			    					}
+								}
+							}
+						}else{
+						// rule name is blank!
+						Toast.makeText(SubMenuFilterRulesActivity.this, "Please input a Rule Name!",
+								Toast.LENGTH_LONG).show();
+						
+						}
+						
+					}else{
+					// chosen directory is either null or invalid
+						Toast.makeText(SubMenuFilterRulesActivity.this, "The directory you have chosen is invalid!",
+							Toast.LENGTH_LONG).show();
+					}
+					
 					/*
 					if(SubMenuFilterRulesActivity.this.chosenFilter != null){
 						// valid chosen directory
@@ -697,26 +845,36 @@ public class SubMenuFilterRulesActivity extends Activity implements
 	@Override
 	public void onChosenDir(String chosenDir) {
 		// TODO Auto-generated method stub
-		chosenFilter.setText("Target Designation Directory:"+"\n" + chosenDir);
-		Toast.makeText(
-            	SubMenuFilterRulesActivity.this, "Chosen directory: " + 
-              chosenDir, Toast.LENGTH_LONG).show();
-		File f = new File(chosenDir);
-		if(f.exists() && f.canRead() && f.canWrite()  && !(f.isHidden()) ){
-			// check if the directory exists, can be read, is not hidden and can be accessed to write
-			SubMenuFilterRulesActivity.this.chosenFiltered = chosenDir;
-		}else{
-			SubMenuFilterRulesActivity.this.chosenFilter = null;
-			chosenFilter.setText("Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
+		try{
+			chosenFilter.setText("Item(s) to be filtered: "+"\n" + chosenDir);
+			Toast.makeText(
+	            	SubMenuFilterRulesActivity.this, "Chosen directory: " + 
+	              chosenDir, Toast.LENGTH_LONG).show();
+			File f = new File(chosenDir);
+			if(f.exists() && f.canRead() && f.canWrite()  && !(f.isHidden()) ){
+				// check if the directory exists, can be read, is not hidden and can be accessed to write
+				SubMenuFilterRulesActivity.this.chosenFiltered = chosenDir;
+			}else{
+				SubMenuFilterRulesActivity.this.chosenFilter = null;
+				chosenFilter.setText("Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
+						" cannot be used as a Designation Directory due to System Permissions");
+				if(LOGCAT){
+					Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
+							" cannot be used as a Designation Directory due to System Permissions");
+					Log.d(TAG, chosenDir + " Properties:");
+					Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
+					Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
+					Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));
+					Log.d(TAG, "Is Hidden?: (This should be false!)" + Boolean.toString(f.isHidden()));
+					
+				}
+			}
+		}catch(Exception e){
+			chosenFilter.setText("Item(s) to be filtered: "+"\n" + "The chosen directory " + chosenDir +
 					" cannot be used as a Designation Directory due to System Permissions");
 			if(LOGCAT){
-				Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
+				Log.d(TAG, "Item(s) to be filtered: "+"\n" + "The chosen directory " + chosenDir +
 						" cannot be used as a Designation Directory due to System Permissions");
-				Log.d(TAG, chosenDir + " Properties:");
-				Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
-				Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
-				Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));
-				Log.d(TAG, "Is Hidden?: (This should be false!)" + Boolean.toString(f.isHidden()));
 				
 			}
 		}
@@ -727,10 +885,20 @@ public class SubMenuFilterRulesActivity extends Activity implements
 	public void fileSelected(File f) {
 		
 		// TODO Auto-generated method stub
-		chosenFilter.setText("Target Designation Directory:"+"\n" + f.getAbsolutePath());
+		chosenFilter.setText("Item(s) to be filtered: "+"\n" + f.getAbsolutePath());
 		Toast.makeText(
             	SubMenuFilterRulesActivity.this, "Chosen directory: " + 
             			f.getAbsolutePath(), Toast.LENGTH_LONG).show();
+		
+		Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + f.getAbsolutePath() +
+				" cannot be used as a Designation Directory due to System Permissions");
+		Log.d(TAG, f.getAbsolutePath() + " Properties:");
+		Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
+		Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
+		Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));
+		Log.d(TAG, "Is Hidden?: (This should be false!)" + Boolean.toString(f.isHidden()));
+		
+		
 		if(f.exists() && f.canRead() && f.canWrite()  && !(f.isHidden()) ){
 			// check if the directory exists, can be read, is not hidden and can be accessed to write
 			SubMenuFilterRulesActivity.this.chosenFiltered = f.getAbsolutePath();

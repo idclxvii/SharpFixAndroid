@@ -4,12 +4,20 @@ import java.io.*;
 import java.util.*;
 
 import tk.idclxvii.sharpfixandroid.ListenerList.FireHandler;
+import tk.idclxvii.sharpfixandroid.utils.*;
 
 import android.app.*;
 import android.content.*;
 import android.content.DialogInterface.*;
 import android.os.*;
 import android.util.*;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemLongClickListener;
+import android.widget.ArrayAdapter;
+import android.widget.ListAdapter;
+import android.widget.ListView;
+import android.widget.TextView;
 
 public class FileDialog {
     private static final String PARENT_DIR = "..";
@@ -42,9 +50,9 @@ public class FileDialog {
      * @return file dialog
      */
     public Dialog createFileDialog() {
-        Dialog dialog = null;
-        AlertDialog.Builder builder = new AlertDialog.Builder(activity);
-
+    	Dialog dialog = null;
+        final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
+        
         builder.setTitle(currentPath.getPath());
         if (selectDirectoryOption) {
             builder.setPositiveButton("Select directory", new OnClickListener() {
@@ -67,9 +75,110 @@ public class FileDialog {
                 } else fireFileSelectedEvent(chosenFile);
             }
         });
+        
+        
+       // dialog = builder.show();
+       dialog = builder.create();
+       //final AlertDialog d = (AlertDialog) dialog;
+       dialog.setOnShowListener(new OnShowListener(){
+    	   
+		@Override
+		public void onShow(DialogInterface dialog) {
+			// TODO Auto-generated method stub
+			ListView lv = ((AlertDialog) dialog).getListView();
+			lv.setOnItemLongClickListener(new OnItemLongClickListener(){
 
-        dialog = builder.show();
-        return dialog;
+				@Override
+				public boolean onItemLongClick(AdapterView<?> parent,
+						View view, int position, long id) {
+					String selection = ((String)parent.getItemAtPosition(position));
+					selection =  selection.replace("{Dir} ", "");
+					selection =  selection.replace("{File} ", "");
+					
+					File f = new File(currentPath,selection);
+					Log.d(TAG,"Selected Item's Properties:");
+					Log.d(TAG, "FILE: " + f.toString());
+					Log.d(TAG, "Current Path: " +currentPath);
+					Log.d(TAG, "Name:" + selection);
+					Log.d(TAG, "Type: " + (f.isDirectory() ? "Folder" : "File"));
+					FolderProperties fp = null;
+					if(f.isDirectory()) fp = new FolderProperties(f);
+					Log.d(TAG, (f.isDirectory() ?
+							"Size: " + FileProperties.formatFileSize(fp.getFolderSize()) + "\nTotal Files: " + fp.getTotalFile() + "\nTotal Folders: " + fp.getTotalFolder() :
+							"Size: " + (FileProperties.formatFileSize(f.length()) )
+								) );
+					Log.d(TAG, "Last Modified: " + FileProperties.formatFileLastMod(f.lastModified()));
+					Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
+					Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
+					Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));
+					Log.d(TAG, "Is Hidden?: (This should be false!)" + Boolean.toString(f.isHidden()));
+					
+					Dialog dx = new Dialog(activity);
+					dx.setContentView(R.layout.file_dialog_properties_dialog);
+					dx.setTitle("Selected "+ (f.isDirectory() ? "Folder" : "File") + " Properties: ");
+					
+					TextView absPath = (TextView) dx.findViewById(R.id.absPath);
+					absPath.setText("Absolute Path:");
+					TextView absPathVal = (TextView) dx.findViewById(R.id.absPathValue);
+					absPathVal.setText(f.toString());
+					
+					TextView parentPath = (TextView) dx.findViewById(R.id.parentPath);
+					parentPath.setText("Parent Directory Path:");
+					TextView parentPathVal = (TextView) dx.findViewById(R.id.parentPathValue);
+					parentPathVal.setText(currentPath.toString());
+					
+					TextView fileName = (TextView) dx.findViewById(R.id.fileName);
+					fileName.setText((f.isDirectory()? "Folder Name:" : "File Name:"));
+					TextView fileNameVal = (TextView) dx.findViewById(R.id.fileNameValue);
+					fileNameVal.setText(selection);
+					
+					TextView fileType = (TextView) dx.findViewById(R.id.fileType);
+					fileType.setText("File Type:");
+					TextView fileTypeVal = (TextView) dx.findViewById(R.id.fileTypeValue);
+					fileTypeVal.setText((f.isDirectory()? "Folder:" : "File:"));
+					
+					TextView fileSize = (TextView) dx.findViewById(R.id.fileSize);
+					fileSize.setText((f.isDirectory()? "Folder Size:" : "File Size:"));
+					TextView fileSizeVal = (TextView) dx.findViewById(R.id.fileSizeValue);
+					fileSizeVal.setText((f.isDirectory() ?
+							"Size: " + FileProperties.formatFileSize(fp.getFolderSize()) :
+							"Size: " + (FileProperties.formatFileSize(f.length()) )
+								));
+					
+					TextView totalFolders = (TextView) dx.findViewById(R.id.totalFolders);
+					totalFolders.setText("Total Folders Count:");
+					TextView totalFoldersVal = (TextView) dx.findViewById(R.id.totalFoldersValue);
+					totalFoldersVal.setText((f.isDirectory() ?
+							fp.getTotalFolder() + " Folders" :
+							"N/A" 
+								));
+					
+					TextView totalFiles = (TextView) dx.findViewById(R.id.totalFiles);
+					totalFiles.setText("Total Files Count:");
+					TextView totalFilesVal = (TextView) dx.findViewById(R.id.totalFilesValue);
+					totalFilesVal.setText((f.isDirectory() ?
+							fp.getTotalFile() + " Files" :
+							"N/A" 
+								));
+					
+					TextView lastMod = (TextView) dx.findViewById(R.id.lastMod);
+					lastMod.setText("Last Modified:");
+					TextView lastModVal = (TextView) dx.findViewById(R.id.lastModValue);
+					lastModVal.setText(FileProperties.formatFileLastMod(f.lastModified()));
+					
+					dx.show();
+			        return true;
+				}
+				
+			});
+			
+		}
+    	   
+       });
+        
+        
+       dialog.show();
+       return dialog;
     }
 
 
@@ -103,7 +212,11 @@ public class FileDialog {
     private void fireFileSelectedEvent(final File file) {
         fileListenerList.fireEvent(new FireHandler<FileDialog.FileSelectedListener>() {
             public void fireEvent(FileSelectedListener listener) {
-                listener.fileSelected(file);
+            	String s = file.toString();
+            	s = s.replace("{Dir} ", "");
+            	s = s.replace("{File} ", "");
+            	final File f = new File(s);
+                listener.fileSelected(f);
             }
         });
     }
@@ -111,7 +224,11 @@ public class FileDialog {
     private void fireDirectorySelectedEvent(final File directory) {
         dirListenerList.fireEvent(new FireHandler<FileDialog.DirectorySelectedListener>() {
             public void fireEvent(DirectorySelectedListener listener) {
-                listener.directorySelected(directory);
+            	String s = directory.toString();
+            	s = s.replace("{Dir} ", "");
+            	s = s.replace("{File} ", "");
+            	final File f = new File(s);
+                listener.directorySelected(f);
             }
         });
     }
@@ -134,13 +251,22 @@ public class FileDialog {
             };
             String[] fileList1 = path.list(filter);
             for (String file : fileList1) {
-                r.add(file);
+            	File f = new File(currentPath,file);
+            	if(f.isDirectory()){
+            		r.add("{Dir} " +file);
+            	}else{
+            		r.add("{File} " +file);
+            	}
+                
             }
         }
         fileList = (String[]) r.toArray(new String[]{});
     }
 
     private File getChosenFile(String fileChosen) {
+    	fileChosen = fileChosen.replace("{Dir} ", "");
+    	fileChosen = fileChosen.replace("{File} ", "");
+    	
         if (fileChosen.equals(PARENT_DIR)) return currentPath.getParentFile();
         else return new File(currentPath, fileChosen);
     }

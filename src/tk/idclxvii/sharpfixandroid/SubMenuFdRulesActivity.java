@@ -82,7 +82,7 @@ public class SubMenuFdRulesActivity extends Activity implements
 			public boolean onLongClick(View v) {
 				// 2TODO Auto-generated method stub
 				Toast.makeText(
-		            	SubMenuFdRulesActivity.this,"FUCK YOU! You dont hold this button down asshole!", Toast.LENGTH_LONG).show();
+		            	SubMenuFdRulesActivity.this,"Developer Mode currently disabled!", Toast.LENGTH_LONG).show();
 				return false;
 			}
 			

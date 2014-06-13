@@ -1,0 +1,148 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    >
+
+<LinearLayout 
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical" >
+
+    <TextView
+        android:id="@+id/absPath"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+        android:layout_margin="3dp" 
+        />
+    
+    <TextView
+        android:id="@+id/absPathValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	
+	<TextView
+        android:id="@+id/parentPath"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	 <TextView
+        android:id="@+id/parentPathValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	<TextView
+        android:id="@+id/fileName"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	 <TextView
+        android:id="@+id/fileNameValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	<TextView
+        android:id="@+id/fileType"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	 <TextView
+        android:id="@+id/fileTypeValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />	
+	<TextView
+        android:id="@+id/fileSize"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	 <TextView
+        android:id="@+id/fileSizeValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />	
+         
+	 <TextView
+        android:id="@+id/totalFolders"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	 <TextView
+        android:id="@+id/totalFoldersValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />		
+         
+	 <TextView
+        android:id="@+id/totalFiles"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	 <TextView
+        android:id="@+id/totalFilesValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	
+	 <TextView
+        android:id="@+id/lastMod"
+        android:text="@string/dummy"
+        android:gravity="left"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+         />
+	 <TextView
+        android:id="@+id/lastModValue"
+        android:text="@string/dummy"
+        android:gravity="center"
+        android:layout_width="fill_parent"
+		android:layout_height="wrap_content"
+		android:layout_margin="3dp"
+		
+         />	
+         
+	</LinearLayout>
+</ScrollView>
