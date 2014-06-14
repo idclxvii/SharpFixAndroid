@@ -58,6 +58,14 @@
     <string name="subMenuFddFiltersRules">File Duplication Detection Filter Rules</string>    
     <string name="subMenuFddFiltersRulesLabel">View, create, update or delete file duplication detection filtering rules.</string>    
     
+    <string name="checkBoxServices">Enable SharpFix Scheduled Scan</string>    
+    <string name="checkBoxServicesLabel">Automatically scans the SD Card every time at the specific time you have set. </string>    
+    <string name="subMenuServucesSSS">Scheduled Scan Settings</string>    
+    <string name="subMenuServucesSSSLabel">Settings on SharpFix\'s behavior when performing Scheduled Scans</string>    
+    <string name="checkBoxAutoUpdate">Enable Automatic Updates</string>    
+    <string name="checkBoxAutoUpdateLabel">Automatically updates SharpFix file signature definitions as well as version other fixes provided by the developer</string>    
+    
+    
     
     <!-- Create New Rule Dialog -->
     <string name="ruleNameHint">Specify Rule Name Here</string>    

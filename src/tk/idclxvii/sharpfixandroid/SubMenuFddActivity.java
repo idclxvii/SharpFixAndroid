@@ -2,6 +2,7 @@ package tk.idclxvii.sharpfixandroid;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.ModelPreferences;
 import tk.idclxvii.sharpfixandroid.databasemodel.Tables;
+import tk.idclxvii.sharpfixandroid.utils.AndroidLayoutUtils;
 
 import android.app.*;
 import android.content.Context;
@@ -63,6 +64,15 @@ public class SubMenuFddActivity extends Activity implements OnClickListener, OnC
 		label.setOnClickListener(this);
 		
 		this.db = this.getDb(getApplicationContext());
+		if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.JELLY_BEAN) {
+			
+		}else{
+			ch = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, ch,30.0f);
+			older = AndroidLayoutUtils.fixRadioButtonPaddingLeft(this, older, 30.f);
+			newer = AndroidLayoutUtils.fixRadioButtonPaddingLeft(this, newer, 30.f);
+			
+			
+		}
 		checkChanged(0);
 	}
 

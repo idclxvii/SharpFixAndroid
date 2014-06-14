@@ -1,6 +1,7 @@
 package tk.idclxvii.sharpfixandroid;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidLayoutUtils;
 
 import android.app.*;
 import android.content.*;
@@ -55,6 +56,11 @@ public class SubMenuFdActivity extends Activity implements OnClickListener{
 		
 		this.db = this.getDb(getApplicationContext());
 		
+		if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.JELLY_BEAN) {
+			
+		}else{
+			ch = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, ch,30.0f);
+		}
 		
 		
 	}

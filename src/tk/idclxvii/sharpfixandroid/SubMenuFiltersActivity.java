@@ -17,6 +17,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidLayoutUtils;
 
 public class SubMenuFiltersActivity extends Activity implements OnClickListener, OnCheckedChangeListener{
 	
@@ -141,12 +142,20 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 			*/
 			this.db = this.getDb(getApplicationContext());
 			
-			
+			if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.JELLY_BEAN) {
+				
+			}else{
+				fddCh = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, fddCh,30.0f);
+				fdCh = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, fdCh,30.0f);
+				
+			}
 			
 			checkChanged(0);
 		}
 		
 		
+		
+	
 		@Override
 		public void onDestroy() {
 			super.onDestroy();

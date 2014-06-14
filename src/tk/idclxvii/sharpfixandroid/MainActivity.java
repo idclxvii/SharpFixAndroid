@@ -2,6 +2,7 @@ package tk.idclxvii.sharpfixandroid;
 
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 
 import android.os.*;
 import android.app.*;
@@ -52,6 +53,7 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){
+			Log.d(TAG, "Starting SharpFix . . .\nAndroid Version Detection Initializing . . .\n" + AndroidUtils.getCurrentAndroidVersionInfo());
 			Log.d(this.TAG, this.TAG +  " onCreate()");
 		}
 		// initialize database connection
