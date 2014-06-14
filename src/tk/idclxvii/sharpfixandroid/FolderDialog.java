@@ -10,26 +10,50 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import tk.idclxvii.sharpfixandroid.databasemodel.ModelMagicNumber;
+import tk.idclxvii.sharpfixandroid.databasemodel.Tables;
+import tk.idclxvii.sharpfixandroid.utils.FileProperties;
+import tk.idclxvii.sharpfixandroid.utils.FolderProperties;
+
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.DialogInterface.OnClickListener;
 import android.content.DialogInterface.OnKeyListener;
+import android.content.DialogInterface.OnShowListener;
 import android.os.Environment;
 import android.text.Editable;
+import android.util.Log;
 import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.AdapterView.OnItemLongClickListener;
 
 public class FolderDialog {
+	
+	private SharpFixApplicationClass SF;
+	private boolean LOGCAT = true;
+	private final String TAG = getClass().getName();
+    	
+	private SQLiteHelper db;
+	
+	 private synchronized SQLiteHelper getDb(Context context){
+			db = new SQLiteHelper(context);
+			
+			return this.db;
+		}
+	
  private boolean m_isNewFolderEnabled = true;
  private String m_sdcardDirectory = "";
  private Context m_context;
@@ -140,7 +164,7 @@ public class FolderDialog {
      }
  }).setNegativeButton("Cancel", null);
 
- final AlertDialog dirsDialog = dialogBuilder.create();
+  Dialog dirsDialog = dialogBuilder.create();
 
  dirsDialog.setOnKeyListener(new OnKeyListener() 
  {
@@ -172,6 +196,149 @@ public class FolderDialog {
  });
 
  // Show directory chooser dialog
+ dirsDialog.setOnShowListener(new OnShowListener(){
+
+	@Override
+	public void onShow(DialogInterface dialog) {
+		// TODO Auto-generated method stub
+		ListView lv = ((AlertDialog) dialog).getListView();
+		lv.setOnItemLongClickListener(new OnItemLongClickListener(){
+
+			@Override
+			public boolean onItemLongClick(AdapterView<?> parent,
+					View view, int position, long id) {
+				String selection = ((String)parent.getItemAtPosition(position));
+				
+				File f = new File(m_dir,selection);
+				Log.d(TAG,"Selected Item's Properties:");
+				Log.d(TAG, "FILE: " + f.toString());
+				Log.d(TAG, "Current Path: " +m_dir);
+				Log.d(TAG, "Name:" + selection);
+				Log.d(TAG, "Type: " + (f.isDirectory() ? "Folder" : "File"));
+				FolderProperties fp = null;
+				if(f.isDirectory()) fp = new FolderProperties(f);
+				Log.d(TAG, (f.isDirectory() ?
+						"Size: " + FileProperties.formatFileSize(fp.getFolderSize()) + "\nTotal Files: " + fp.getTotalFile() + "\nTotal Folders: " + fp.getTotalFolder() :
+						"Size: " + (FileProperties.formatFileSize(f.length()) )
+							) );
+				Log.d(TAG, "Last Modified: " + FileProperties.formatFileLastMod(f.lastModified()));
+				Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
+				Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
+				Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));
+				Log.d(TAG, "Is Hidden?: (This should be false!)" + Boolean.toString(f.isHidden()));
+				
+				Dialog dx = new Dialog(m_context);
+				dx.setContentView(R.layout.file_dialog_properties_dialog);
+				dx.setTitle("Selected "+ (f.isDirectory() ? "Folder" : "File") + " Properties: ");
+				
+				TextView absPath = (TextView) dx.findViewById(R.id.absPath);
+				absPath.setText("Absolute Path:");
+				TextView absPathVal = (TextView) dx.findViewById(R.id.absPathValue);
+				absPathVal.setText(f.toString());
+				
+				TextView parentPath = (TextView) dx.findViewById(R.id.parentPath);
+				parentPath.setText("Parent Directory Path:");
+				TextView parentPathVal = (TextView) dx.findViewById(R.id.parentPathValue);
+				parentPathVal.setText(m_dir.toString());
+				
+				TextView fileName = (TextView) dx.findViewById(R.id.fileName);
+				fileName.setText((f.isDirectory()? "Folder Name:" : "File Name:"));
+				TextView fileNameVal = (TextView) dx.findViewById(R.id.fileNameValue);
+				fileNameVal.setText(selection);
+				
+				TextView fileType = (TextView) dx.findViewById(R.id.fileType);
+				fileType.setText("File Type:");
+				TextView fileTypeVal = (TextView) dx.findViewById(R.id.fileTypeValue);
+				String ft = null;
+				
+				//########################################################################################
+				try{
+					String temp = null;
+					temp = ((ModelMagicNumber) (
+							FolderDialog.this.db.select(
+									Tables.magic_number, ModelMagicNumber.class, 
+									new Object[][]{ {"signature_8_bytes", FileProperties.getMagicNumber(f, 8)} }, null))).getFile_type();
+					if(temp != null){
+						ft = temp;
+					}else{
+						temp = ((ModelMagicNumber) (
+								FolderDialog.this.db.select(
+										Tables.magic_number, ModelMagicNumber.class, 
+										new Object[][]{ {"signature_4_bytes", FileProperties.getMagicNumber(f, 4)} }, null))).getFile_type();
+						if(temp != null){
+							ft = temp;
+						}else{	
+							if(LOGCAT){
+								ft = "Unknown ";
+								Log.d(TAG,"Unknown File Type detected: " + f.toString());
+								try{
+									Log.d(TAG,"8 bytes signature: " + FileProperties.getMagicNumber(f, 8));
+									Log.d(TAG,"4 bytes signature: " + FileProperties.getMagicNumber(f, 4));
+								}catch(Exception eee){
+									if(LOGCAT){
+										Log.e(TAG,"An error in getting a file's n-bytes signature has been encountered!");
+										
+									}
+								}
+							}
+						}
+					}
+					
+				}catch(Exception e){
+					if(LOGCAT){
+						fileTypeVal.setText("Unknown File");
+						Log.d(TAG,"Unknown File Type detected: " + f.toString());
+						try{
+							Log.d(TAG,"4 bytes signature: " + FileProperties.getMagicNumber(f, 4));
+							Log.d(TAG,"4 bytes signature: " + FileProperties.getMagicNumber(f, 8));
+						}catch(Exception eee){
+							if(LOGCAT){
+								Log.e(TAG,"An error in getting a file's n-bytes signature has been encountered!");
+								
+							}
+						}
+					}
+				}
+				
+				
+				
+				fileTypeVal.setText((f.isDirectory()? "Folder" : (ft.contains("File") ? ft : ft + " File") ));
+				
+				//########################################################################################
+				
+				TextView fileSize = (TextView) dx.findViewById(R.id.fileSize);
+				fileSize.setText((f.isDirectory()? "Folder Size:" : "File Size:"));
+				TextView fileSizeVal = (TextView) dx.findViewById(R.id.fileSizeValue);
+				fileSizeVal.setText((f.isDirectory() ?
+						"Size: " + FileProperties.formatFileSize(fp.getFolderSize()) :
+						"Size: " + (FileProperties.formatFileSize(f.length()) )
+							));
+				
+				TextView totalContents = (TextView) dx.findViewById(R.id.totalContents);
+				totalContents.setText("Total Contents:");
+				TextView totalContentsVal = (TextView) dx.findViewById(R.id.totalContentsValue);
+				totalContentsVal.setText((f.isDirectory() ?
+						fp.getTotalFolder() + " Folders and " +fp.getTotalFile() + " Files" :
+						"N/A" 
+							));
+				
+				
+				TextView lastMod = (TextView) dx.findViewById(R.id.lastMod);
+				lastMod.setText("Last Modified:");
+				TextView lastModVal = (TextView) dx.findViewById(R.id.lastModValue);
+				lastModVal.setText(FileProperties.formatFileLastMod(f.lastModified()));
+				
+				dx.show();
+		        return true;
+			}
+			
+		});
+		
+	}
+	 
+	 
+ });
+ 
  dirsDialog.show();
 }
 
