@@ -185,7 +185,13 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 			 
 			    }	 
 			  }catch(Exception e){
-				Log.w(TAG,e.getMessage().toString());  
+				  if(LOGCAT){
+		    			StackTraceElement[] st = e.getStackTrace();
+						for(int y= 0; y <st.length; y++){
+							Log.w(TAG, st[y].toString());
+							
+						}
+		    		}
 			  }
 			    db.closeConnection();
 		

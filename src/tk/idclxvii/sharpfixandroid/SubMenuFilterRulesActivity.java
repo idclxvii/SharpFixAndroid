@@ -630,7 +630,6 @@ public class SubMenuFilterRulesActivity extends Activity implements
 											"Chosen dir: " + SubMenuFilterRulesActivity.this.chosenFiltered + "\n" +
 											"Filter Flag: " +SubMenuFilterRulesActivity.this.instance.name() );
 								}
-								SubMenuFilterRulesActivity.this.holdDialog.dismiss();
 								dialog.dismiss();
 								finish();
 								startActivity(getIntent());

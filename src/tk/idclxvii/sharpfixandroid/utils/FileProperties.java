@@ -20,5 +20,20 @@ public class FileProperties {
 		
 	}
 		
+	
+	public static String getMagicNumber(File f, int bytes)throws Exception{
+		InputStream fis =  new FileInputStream(f.toString());
+		String result = "";
+		byte[] buffer = new byte[bytes];
+		fis.read(buffer);
+		for(int x = 0; x < buffer.length; x++){
+			result += (Long.toHexString(buffer[x])).toUpperCase();
+			if(x < buffer.length-1){
+				result += " ";
+			}
+		}
+		fis.close();
+		return result;
+	}
 
 }

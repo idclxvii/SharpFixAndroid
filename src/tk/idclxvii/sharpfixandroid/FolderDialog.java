@@ -3,6 +3,7 @@ package tk.idclxvii.sharpfixandroid;
 
 
 import java.io.File;
+import java.io.FilenameFilter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -196,7 +197,28 @@ private List<String> getDirectories(String dir)
      {
          return dirs;
      }
-
+     // #######################################################################
+     FilenameFilter filter = new FilenameFilter() {
+         public boolean accept(File dir, String filename) {
+             File sel = new File(dir, filename);
+             if (!sel.canRead() || !sel.canWrite() || sel.isHidden()) return false;
+             return sel.isDirectory();
+             
+         }
+     };
+     
+     String[] fileList1 = dirFile.list(filter);
+     for (String file : fileList1) {
+     	File f = new File(dirFile,file);
+     	if(f.isDirectory()){
+     		 dirs.add( f.getName() );
+     	}
+         
+     }
+     // #######################################################################
+     
+  // #######################################################################
+     /*
      for (File file : dirFile.listFiles()) 
      {
          if ( file.isDirectory() )
@@ -204,6 +226,11 @@ private List<String> getDirectories(String dir)
              dirs.add( file.getName() );
          }
      }
+     */
+  // #######################################################################
+     
+     
+     
  }
  catch (Exception e)
  {

@@ -93,7 +93,7 @@
          />	
          
 	 <TextView
-        android:id="@+id/totalFolders"
+        android:id="@+id/totalContents"
         android:text="@string/dummy"
         android:gravity="left"
         android:layout_width="fill_parent"
@@ -101,7 +101,7 @@
 		android:layout_margin="3dp"
          />
 	 <TextView
-        android:id="@+id/totalFoldersValue"
+        android:id="@+id/totalContentsValue"
         android:text="@string/dummy"
         android:gravity="center"
         android:layout_width="fill_parent"
@@ -109,23 +109,7 @@
 		android:layout_margin="3dp"
          />		
          
-	 <TextView
-        android:id="@+id/totalFiles"
-        android:text="@string/dummy"
-        android:gravity="left"
-        android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="3dp"
-         />
-	 <TextView
-        android:id="@+id/totalFilesValue"
-        android:text="@string/dummy"
-        android:gravity="center"
-        android:layout_width="fill_parent"
-		android:layout_height="wrap_content"
-		android:layout_margin="3dp"
-         />
-	
+	 
 	 <TextView
         android:id="@+id/lastMod"
         android:text="@string/dummy"

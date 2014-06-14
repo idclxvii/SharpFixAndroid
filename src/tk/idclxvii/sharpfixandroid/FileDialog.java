@@ -4,6 +4,8 @@ import java.io.*;
 import java.util.*;
 
 import tk.idclxvii.sharpfixandroid.ListenerList.FireHandler;
+import tk.idclxvii.sharpfixandroid.databasemodel.ModelMagicNumber;
+import tk.idclxvii.sharpfixandroid.databasemodel.Tables;
 import tk.idclxvii.sharpfixandroid.utils.*;
 
 import android.app.*;
@@ -20,8 +22,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 public class FileDialog {
+	
+	// LogCat switch and tag
+	private SharpFixApplicationClass SF;
+	private boolean LOGCAT = true;
+	private final String TAG = getClass().getName();
+    	
+	private SQLiteHelper db;
     private static final String PARENT_DIR = "..";
-    private final String TAG = getClass().getName();
     private String[] fileList;
     private File currentPath;
     public interface FileSelectedListener {
@@ -36,12 +44,20 @@ public class FileDialog {
     private boolean selectDirectoryOption;
     private String fileEndsWith;    
 
+    
+    private synchronized SQLiteHelper getDb(Context context){
+		db = new SQLiteHelper(context);
+		
+		return this.db;
+	}
     /**
      * @param activity 
      * @param initialPath
      */
     public FileDialog(Activity activity, File path) {
         this.activity = activity;
+        this.db = this.getDb(this.activity);
+        
         if (!path.exists()) path = Environment.getExternalStorageDirectory();
         loadFileList(path);
     }
@@ -135,7 +151,62 @@ public class FileDialog {
 					TextView fileType = (TextView) dx.findViewById(R.id.fileType);
 					fileType.setText("File Type:");
 					TextView fileTypeVal = (TextView) dx.findViewById(R.id.fileTypeValue);
-					fileTypeVal.setText((f.isDirectory()? "Folder:" : "File:"));
+					String ft = null;
+					
+					//########################################################################################
+					try{
+						String temp = null;
+						temp = ((ModelMagicNumber) (
+								FileDialog.this.db.select(
+										Tables.magic_number, ModelMagicNumber.class, 
+										new Object[][]{ {"signature_8_bytes", FileProperties.getMagicNumber(f, 8)} }, null))).getFile_type();
+						if(temp != null){
+							ft = temp;
+						}else{
+							temp = ((ModelMagicNumber) (
+									FileDialog.this.db.select(
+											Tables.magic_number, ModelMagicNumber.class, 
+											new Object[][]{ {"signature_4_bytes", FileProperties.getMagicNumber(f, 4)} }, null))).getFile_type();
+							if(temp != null){
+								ft = temp;
+							}else{	
+								if(LOGCAT){
+									ft = "Unknown ";
+									Log.d(TAG,"Unknown File Type detected: " + f.toString());
+									try{
+										Log.d(TAG,"8 bytes signature: " + FileProperties.getMagicNumber(f, 8));
+										Log.d(TAG,"4 bytes signature: " + FileProperties.getMagicNumber(f, 4));
+									}catch(Exception eee){
+										if(LOGCAT){
+											Log.e(TAG,"An error in getting a file's n-bytes signature has been encountered!");
+											
+										}
+									}
+								}
+							}
+						}
+						
+					}catch(Exception e){
+						if(LOGCAT){
+							fileTypeVal.setText("Unknown File");
+							Log.d(TAG,"Unknown File Type detected: " + f.toString());
+							try{
+								Log.d(TAG,"4 bytes signature: " + FileProperties.getMagicNumber(f, 4));
+								Log.d(TAG,"4 bytes signature: " + FileProperties.getMagicNumber(f, 8));
+							}catch(Exception eee){
+								if(LOGCAT){
+									Log.e(TAG,"An error in getting a file's n-bytes signature has been encountered!");
+									
+								}
+							}
+						}
+					}
+					
+					
+					
+					fileTypeVal.setText((f.isDirectory()? "Folder" : (ft.contains("File") ? ft : ft + " File") ));
+					
+					//########################################################################################
 					
 					TextView fileSize = (TextView) dx.findViewById(R.id.fileSize);
 					fileSize.setText((f.isDirectory()? "Folder Size:" : "File Size:"));
@@ -145,21 +216,14 @@ public class FileDialog {
 							"Size: " + (FileProperties.formatFileSize(f.length()) )
 								));
 					
-					TextView totalFolders = (TextView) dx.findViewById(R.id.totalFolders);
-					totalFolders.setText("Total Folders Count:");
-					TextView totalFoldersVal = (TextView) dx.findViewById(R.id.totalFoldersValue);
-					totalFoldersVal.setText((f.isDirectory() ?
-							fp.getTotalFolder() + " Folders" :
+					TextView totalContents = (TextView) dx.findViewById(R.id.totalContents);
+					totalContents.setText("Total Contents:");
+					TextView totalContentsVal = (TextView) dx.findViewById(R.id.totalContentsValue);
+					totalContentsVal.setText((f.isDirectory() ?
+							fp.getTotalFolder() + " Folders and " +fp.getTotalFile() + " Files" :
 							"N/A" 
 								));
 					
-					TextView totalFiles = (TextView) dx.findViewById(R.id.totalFiles);
-					totalFiles.setText("Total Files Count:");
-					TextView totalFilesVal = (TextView) dx.findViewById(R.id.totalFilesValue);
-					totalFilesVal.setText((f.isDirectory() ?
-							fp.getTotalFile() + " Files" :
-							"N/A" 
-								));
 					
 					TextView lastMod = (TextView) dx.findViewById(R.id.lastMod);
 					lastMod.setText("Last Modified:");
@@ -241,7 +305,7 @@ public class FileDialog {
             FilenameFilter filter = new FilenameFilter() {
                 public boolean accept(File dir, String filename) {
                     File sel = new File(dir, filename);
-                    if (!sel.canRead()) return false;
+                    if (!sel.canRead() || !sel.canWrite() || sel.isHidden()) return false;
                     if (selectDirectoryOption) return sel.isDirectory();
                     else {
                         boolean endsWith = fileEndsWith != null ? filename.toLowerCase().endsWith(fileEndsWith) : true;
