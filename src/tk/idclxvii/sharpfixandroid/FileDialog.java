@@ -13,6 +13,7 @@ import android.content.*;
 import android.content.DialogInterface.*;
 import android.os.*;
 import android.util.*;
+import android.view.KeyEvent;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemLongClickListener;
@@ -96,6 +97,8 @@ public class FileDialog {
        // dialog = builder.show();
        dialog = builder.create();
        //final AlertDialog d = (AlertDialog) dialog;
+       
+       
        dialog.setOnShowListener(new OnShowListener(){
     	   
 		@Override
