@@ -11,7 +11,7 @@
 	        android:id="@+id/title"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:text="@string/mainMenuFiltersSelection"
+	        android:text="@string/subMenuServucesSSS"
 	        android:textSize="30sp" 
 	        android:textStyle="bold"
 	        android:textColor="#FFFFFF"
@@ -30,12 +30,12 @@
              android:layout_below="@+id/filters_hr1"
              android:background="#c0c0c0"/>
 	    
-	    <CheckBox
-	        android:id="@+id/filters_selection1"
+	    <TextView
+	        android:id="@+id/sssUpdateSelection1"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@+id/filters_hr2"
-	        android:text="@string/checkBoxFddFilters"
+	        android:text="@string/sssUpdateSelection1"
 	        android:textSize="20sp" 
 	        android:textStyle="bold"
 	        android:clickable="true"
@@ -46,33 +46,33 @@
 	        android:paddingRight="5dp"
 	        
 	        >
-	    </CheckBox>
+	    </TextView>
 	
 	    <TextView
-	        android:id="@+id/filters_label1"
+	        android:id="@+id/sssUpdateLabel1"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/filters_selection1"
-	        android:text="@string/checkBoxFddFiltersLabel"
+	        android:layout_below="@+id/sssUpdateSelection1"
+	        android:text="@string/sssUpdateLabel1"
 	        android:textSize="15sp" 
 	        android:textColor="@color/text_selector_labels"
 	        android:textStyle="italic"
 	        android:padding="10dp" />
 	 <View
-	     	android:id="@+id/filters_hr3"
+	     	android:id="@+id/services_hr3"
              android:layout_width="fill_parent"
              android:layout_height="0.5dp"
-             android:layout_below="@+id/filters_label1"
+             android:layout_below="@+id/sssUpdateLabel1"
              android:background="#c0c0c0"/>
 	    
 	<!-- INSERT HERE -->
 	 <TextView
-	        android:id="@+id/filters_selection2"
+	        android:id="@+id/sssUpdateSelection2"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/filters_hr3"
-	        android:text="@string/subMenuFddFiltersRules"
+	        android:layout_below="@+id/services_hr3"
+	        android:text="@string/sssUpdateSelection2"
 	        android:textSize="20sp" 
 	        android:textStyle="bold"
 	        android:clickable="true"
@@ -82,29 +82,29 @@
 	        >
 	    </TextView>
 	   <TextView
-	        android:id="@+id/filters_label2"
+	        android:id="@+id/sssUpdateLabel2"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/filters_selection2"
-	        android:text="@string/subMenuFdFiltersRulesLabel"
+	        android:layout_below="@+id/sssUpdateSelection2"
+	        android:text="@string/sssUpdateLabel2"
 	        android:textSize="15sp" 
 	        android:textColor="@color/text_selector_labels"
 	        android:textStyle="italic"
 	        android:padding="10dp" />
 	 <View
-	     	android:id="@+id/filters_hr4"
+	     	android:id="@+id/services_hr4"
             android:layout_width="fill_parent"
             android:layout_height="0.5dp"
-            android:layout_below="@+id/filters_label2"
+            android:layout_below="@+id/sssUpdateLabel2"
             android:background="#c0c0c0"/>
 	
 	 <CheckBox
-	        android:id="@+id/filters_selection3"
+	        android:id="@+id/sssUpdateSelection3"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/filters_hr4"
-	        android:text="@string/checkBoxFdFilters"
+	        android:layout_below="@+id/services_hr4"
+	        android:text="@string/sssUpdateSelection3"
 	        android:textSize="20sp" 
 	        android:textStyle="bold"
 	        android:clickable="true"
@@ -113,16 +113,16 @@
 	        android:paddingTop="5dp"
 	        android:paddingBottom="5dp"
 	        android:paddingRight="5dp"
-	        
+	       
 	        >
 	    </CheckBox>
 	    <TextView
-	        android:id="@+id/filters_label3"
+	        android:id="@+id/sssUpdateLabel3"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/filters_selection3"
-	        android:text="@string/checkBoxFdFiltersLabel"
+	        android:layout_below="@+id/sssUpdateSelection3"
+	        android:text="@string/sssUpdateLabel3"
 	        android:textSize="15sp" 
 	        android:textColor="@color/text_selector_labels"
 	        android:textStyle="italic"
@@ -130,39 +130,48 @@
 	
 	     
 	     <View
-	        android:id="@+id/filters_hr5"
+	        android:id="@+id/services_hr5"
 	        android:layout_width="fill_parent"
 	        android:layout_height="0.5dp"
-	        android:layout_below="@+id/filters_label3"
+	        android:layout_below="@+id/sssUpdateLabel3"
 	        android:background="#c0c0c0" />
  		
- 		<TextView
-	        android:id="@+id/filters_selection4"
+ 		<CheckBox
+	        android:id="@+id/sssUpdateSelection4"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/filters_hr5"
-	        android:text="@string/subMenuFdFiltersRules"
+	        android:layout_below="@+id/services_hr5"
+	        android:text="@string/sssUpdateSelection4"
 	        android:textSize="20sp" 
 	        android:textStyle="bold"
 	        android:clickable="true"
 	        android:textColor="@color/text_selector"
 	        android:background="@color/background_selector"
-	        android:padding="5dp"
+	        android:paddingTop="5dp"
+	        android:paddingBottom="5dp"
+	        android:paddingRight="5dp"
+	       
 	        >
-	    </TextView>
+	    </CheckBox>
 	    <TextView
-	        android:id="@+id/filters_label4"
+	        android:id="@+id/sssUpdateLabel4"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
 	        android:layout_alignParentLeft="true"
-	        android:layout_below="@+id/filters_selection4"
-	        android:text="@string/subMenuFdFiltersRulesLabel"
+	        android:layout_below="@+id/sssUpdateSelection4"
+	        android:text="@string/sssUpdateLabel4"
 	        android:textSize="15sp" 
 	        android:textColor="@color/text_selector_labels"
 	        android:textStyle="italic"
 	        android:padding="10dp" />
-	    
 	
+	     
+	     <View
+	        android:id="@+id/services_hr6"
+	        android:layout_width="fill_parent"
+	        android:layout_height="0.5dp"
+	        android:layout_below="@+id/sssUpdateLabel4"
+	        android:background="#c0c0c0" />
 	    
 	    
 	</RelativeLayout>

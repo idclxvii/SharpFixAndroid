@@ -24,7 +24,7 @@
     <string name="confirmPassword">Confirm Password</string>    
     <string name="footer">IDcLxViI - Codesix 2014</string>    
     <string name="mainMenuTitle">Main Menu</string>   
-    <string name="mainMenuFddSelection">File Duplication Detecion</string>   
+    <string name="mainMenuFddSelection">File Duplication Detection</string>   
     <string name="mainMenuFddLabel">Settings on file(s) with exactly similar contents in the SD-Card directory.</string>   
     <string name="mainMenuFdSelection">File Designation</string>    
     <string name="mainMenuFdLabel">Settings on files with specific type.</string>   
@@ -64,6 +64,16 @@
     <string name="subMenuServucesSSSLabel">Settings on SharpFix\'s behavior when performing Scheduled Scans</string>    
     <string name="checkBoxAutoUpdate">Enable Automatic Updates</string>    
     <string name="checkBoxAutoUpdateLabel">Automatically updates SharpFix file signature definitions as well as version other fixes provided by the developer</string>    
+    
+    <!--  Scheduled Scan Settings SubMenu -->
+    <string name="sssUpdateSelection1">Time</string>    
+    <string name="sssUpdateLabel1">12:53 PM</string>    
+    <string name="sssUpdateSelection2">Repeat</string>   
+    <string name="sssUpdateLabel2">Friday</string>    
+    <string name="sssUpdateSelection3">Check for Latest File Signature Definitions Before Initializing Scheduled Scan</string>    
+    <string name="sssUpdateLabel3">If Internet connection is available, SharpFix checks for the latest file signature definitions to be used by File Designation Scan before initializing the said scheduled scan.</string>    
+    <string name="sssUpdateSelection4">Enable Scheduled Scan Notifications</string>    
+    <string name="sssUpdateLabel4">SharpFix gives User Notifications when starting Scheduled Scans</string>    
     
     
     

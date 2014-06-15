@@ -14,8 +14,24 @@ public class ModelPreferences {
 	private Integer fddFilterSwitch;
 	private Integer fdFilterSwitch;
 	
+	// new switches
+	/*
+	        "sss_switch INTEGER NOT NULL, sss_hh INTEGER NOT NULL, sss_mm INTEGER NOT NULL, sss_ampm INTEGER NOT NULL, sss_update INTEGER NOT NULL,"+
+            "sss_repeat INTEGER NOT NULL,  au_switch INTEGER NOT NULL" +	
+	 */
+	private Integer serviceSwitch; // 1 = on, 0 = off
+	private Integer serviceHour; // 0-24 from hours
+	private Integer serviceMin; // 0 - 59 from min
+	private Integer serviceAMPM; // 1 = AM, 0 = PM
+	private Integer serviceUpdateSwitch;  // 1 = on, 0 = off
+	private Integer serviceRepeat; // 0 - 7, Monday = 0, Tue = 1 and so on ... 7 = everyday
+	private Integer auSwitch;  // 1 = on, 0 = off
+	private Integer serviceNoti;
+	
+	
 	public enum fields{
-		Id, Account, Fdd_switch, Fd_switch,  Fdd_pref, Auto_login, Fdd_Filter_switch, Fd_Filter_switch
+		Id, Account, Fdd_switch, Fd_switch,  Fdd_pref, Auto_login, Fdd_Filter_switch, Fd_Filter_switch,
+		Sss_switch, Sss_hh, Sss_mm, Sss_ampm, Sss_update, Sss_repeat, Sss_noti, Au_switch
 	}
 	
 	public String[] getFields(){
@@ -41,8 +57,10 @@ public class ModelPreferences {
 		this.accountId = account;
 	}
 	
+	
 	public ModelPreferences(Integer id, Integer account, Integer fddSw, Integer fdSw, Integer fddPref, Integer autoLogin,
-			Integer fddFilterSwitch, Integer fdFilterSwitch){
+			Integer fddFilterSwitch, Integer fdFilterSwitch, Integer srvcSw, Integer srvcHH, Integer srvcMM,
+			Integer srvcAMPM, Integer srvcUSw, Integer srvcRepeat, Integer srvcNoti, Integer auSw){
 		this.id = id;
 		this.accountId = account;
 		this.fddSwitch = fddSw;
@@ -51,10 +69,20 @@ public class ModelPreferences {
 		this.fddFilterSwitch = fddFilterSwitch;
 		this.fddPref = fddPref;
 		this.autoLogin = autoLogin;
+		this.serviceSwitch = srvcSw;
+		this.serviceHour = srvcHH;
+		this.serviceMin = srvcMM;
+		this.serviceAMPM = srvcAMPM;
+		this.serviceUpdateSwitch = srvcUSw;
+		this.serviceRepeat = srvcRepeat;
+		this.auSwitch = auSw;
+		this.serviceNoti = srvcNoti;
+		
 	}
 	
 	public ModelPreferences(Integer account, Integer fddSw, Integer fdSw, Integer fddPref, Integer autoLogin,
-			Integer fddFilterSwitch, Integer fdFilterSwitch){
+			Integer fddFilterSwitch, Integer fdFilterSwitch, Integer srvcSw, Integer srvcHH, Integer srvcMM,
+			Integer srvcAMPM, Integer srvcUSw, Integer srvcRepeat, Integer srvcNoti, Integer auSw){
 		this.accountId = account;
 		this.fddSwitch = fddSw;
 		this.fdSwitch = fdSw;
@@ -62,6 +90,15 @@ public class ModelPreferences {
 		this.fddFilterSwitch = fddFilterSwitch;
 		this.fddPref = fddPref;
 		this.autoLogin = autoLogin;
+		this.serviceSwitch = srvcSw;
+		this.serviceHour = srvcHH;
+		this.serviceMin = srvcMM;
+		this.serviceAMPM = srvcAMPM;
+		this.serviceUpdateSwitch = srvcUSw;
+		this.serviceRepeat = srvcRepeat;
+		this.serviceNoti = srvcNoti;
+		this.auSwitch = auSw;
+		
 	}
 	
 	// setters:
@@ -95,6 +132,40 @@ public class ModelPreferences {
 	
 	public void setAuto_login(Integer sw){
 		this.autoLogin = sw;
+	}
+	
+	// Sss_switch, Sss_hh, Sss_mm, Sss_ampm, Sss_update, Sss_repeat, Au_switch
+	
+	public void setSss_switch(Integer sw){
+		this.serviceSwitch = sw;
+	}
+	
+	public void setSss_hh(Integer hh){
+		this.serviceHour = hh;
+	}
+	
+	public void setSss_mm(Integer mm){
+		this.serviceMin = mm;
+	}
+	
+	public void setSss_ampm(Integer ampm){
+		this.serviceAMPM = ampm;
+	}
+	
+	public void setSss_update(Integer sw){
+		this.serviceUpdateSwitch = sw;
+	}
+	
+	public void setSss_repeat(Integer repeat){
+		this.serviceRepeat = repeat;
+	}
+	
+	public void setSss_noti(Integer noti){
+		this.serviceNoti = noti;
+	}
+	
+	public void setAu_switch(Integer sw){
+		this.auSwitch = sw;
 	}
 	// getters:
 	public Integer getId(){
@@ -130,4 +201,41 @@ public class ModelPreferences {
 	public Integer getAuto_login(){
 		return this.autoLogin;
 	}
+	
+	// new getters
+	
+	// Sss_switch, Sss_hh, Sss_mm, Sss_ampm, Sss_update, Sss_repeat, Au_switch
+	
+	public Integer getSss_switch(){
+		return this.serviceSwitch;
+	}
+	
+	public Integer getSss_hh(){
+		return this.serviceHour;
+	}
+	
+	public Integer getSss_mm(){
+		return this.serviceMin;
+	}
+	
+	public Integer getSss_ampm(){
+		return this.serviceAMPM;
+	}
+	
+	public Integer getSss_update(){
+		return this.serviceUpdateSwitch;
+	}
+	
+	public Integer getSss_repeat(){
+		return this.serviceRepeat;
+	}
+	
+	public Integer getSss_noti(){
+		return this.serviceNoti;
+	}
+	
+	public Integer getAu_switch(){
+		return this.auSwitch;
+	}
+	
 }

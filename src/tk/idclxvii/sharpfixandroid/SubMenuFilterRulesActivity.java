@@ -313,6 +313,34 @@ public class SubMenuFilterRulesActivity extends Activity implements
 							int position, long id) {
 						// TODO Auto-generated method stub
 						try{
+							
+							final String selection = ((String)parent.getItemAtPosition(position));
+							final String ruleName = selection.substring(0, selection.indexOf("\n"));
+							final String filterType = selection.substring(selection.indexOf("\n")+1).substring(0,
+									(selection.substring(selection.indexOf("\n")+1).indexOf("\n")));
+							final Object rule = (filterType.equals("Directory Filter Rule") ?
+										(SubMenuFilterRulesActivity.this.db.select(Tables.dir_filter, ModelDirFilter.class,
+												new Object[][]{{"filter", SubMenuFilterRulesActivity.this.instance.toString()},
+											{"rule", ruleName}}, null))
+									:
+										(SubMenuFilterRulesActivity.this.db.select(Tables.file_filter, ModelFileFilter.class,
+												new Object[][]{{"filter", SubMenuFilterRulesActivity.this.instance.toString()},
+													{"rule", ruleName}}, null))
+									
+									
+									);
+							Intent i = new Intent(SubMenuFilterRulesActivity.this, ViewRuleActivity.class);
+							i.putExtra("Instance", "filter");
+							i.putExtra("RuleName", (filterType.equals("Directory Filter Rule") ? ((ModelDirFilter)rule).getRule() : ((ModelFileFilter)rule).getRule()));
+							// FileType is the trigger in ViewRuleActivity, but in this case it means filter type
+							i.putExtra("FileType", filterType); 
+							 // Designation is the trigger in ViewRUleActivity, but in this case it means absolute path to the target
+							i.putExtra("Designation", (filterType.equals("Directory Filter Rule") ? ((ModelDirFilter)rule).getDir() : ((ModelFileFilter)rule).getFile()));
+
+							startActivity(i);
+							
+							//##############################################################################################################
+							/*
 							final String selection = ((String)parent.getItemAtPosition(position));
 							final String fileType = selection.substring(selection.indexOf("\n")+1);
 							final String ruleName = selection.substring(0, selection.indexOf("\n"));
@@ -323,7 +351,9 @@ public class SubMenuFilterRulesActivity extends Activity implements
 							i.putExtra("RuleName", ((ModelFdSettings)rule).getRule_name());
 							i.putExtra("FileType", ((ModelFdSettings)rule).getFile_type());
 							i.putExtra("Designation", ((ModelFdSettings)rule).getDesignation_path());
-							startActivity(i);
+							*/
+							
+							
 						}catch(Exception e){
 							if(LOGCAT){
 				    			StackTraceElement[] st = e.getStackTrace();
@@ -411,17 +441,41 @@ public class SubMenuFilterRulesActivity extends Activity implements
 		  case R.id.MenuLogout:
 			// call method / do task.
 			  ModelPreferences oldParams = new ModelPreferences( ((SharpFixApplicationClass) getApplication()).getAccountId(),
-						((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+						((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+						((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 						((SharpFixApplicationClass) getApplication()).getFddPref(),
 						((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 						((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-						((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+						
+						// new fields
+						// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+						((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+						((SharpFixApplicationClass) getApplication()).getServiceHour(),
+						((SharpFixApplicationClass) getApplication()).getServiceMin(),
+						((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+						((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+						((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+						((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+						((SharpFixApplicationClass) getApplication()).getAuSwitch());
 			  ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-						((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+						((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+						((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 						((SharpFixApplicationClass) getApplication()).getFddPref(),
 						((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 						((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-						((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+						((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+						
+						// new fields
+						// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+						((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+						((SharpFixApplicationClass) getApplication()).getServiceHour(),
+						((SharpFixApplicationClass) getApplication()).getServiceMin(),
+						((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+						((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+						((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+						((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+						((SharpFixApplicationClass) getApplication()).getAuSwitch());
 			  newParams.setAuto_login(0);
 			  try{
 				  this.db.update(Tables.preferences, oldParams, newParams, null);
@@ -579,7 +633,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 				if(!SubMenuFilterRulesActivity.this.onEditRule){
 					
 					
-					if(SubMenuFilterRulesActivity.this.chosenFilter != null){
+					if(SubMenuFilterRulesActivity.this.chosenFiltered != null){
 						// valid chosen directory
 						if(ruleName.getText().toString() != null || ruleName.getText().toString().length() < 1){
 							// rulename is not empty
@@ -658,7 +712,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 					// on Edit mode
 					
 
-					if(SubMenuFilterRulesActivity.this.chosenFilter != null){
+					if(SubMenuFilterRulesActivity.this.chosenFiltered != null){
 						// valid chosen directory
 						if(ruleName.getText().toString() != null || ruleName.getText().toString().length() < 1){
 							// rulename is not empty
@@ -854,7 +908,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 				// check if the directory exists, can be read, is not hidden and can be accessed to write
 				SubMenuFilterRulesActivity.this.chosenFiltered = chosenDir;
 			}else{
-				SubMenuFilterRulesActivity.this.chosenFilter = null;
+				SubMenuFilterRulesActivity.this.chosenFiltered = null;
 				chosenFilter.setText("Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
 						" cannot be used as a Designation Directory due to System Permissions");
 				if(LOGCAT){
@@ -902,13 +956,13 @@ public class SubMenuFilterRulesActivity extends Activity implements
 			// check if the directory exists, can be read, is not hidden and can be accessed to write
 			SubMenuFilterRulesActivity.this.chosenFiltered = f.getAbsolutePath();
 		}else{
-			SubMenuFilterRulesActivity.this.chosenFilter = null;
-			chosenFilter.setText("Target Designation Directory:"+"\n" + "The chosen directory " + f.getAbsolutePath() +
+			SubMenuFilterRulesActivity.this.chosenFiltered = null;
+			chosenFilter.setText("Target Designation Directory:"+"\n" + "The chosen file " + f.toString() +
 					" cannot be used as a Designation Directory due to System Permissions");
 			if(LOGCAT){
-				Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + f.getAbsolutePath() +
+				Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + f.toString() +
 						" cannot be used as a Designation Directory due to System Permissions");
-				Log.d(TAG, f.getAbsolutePath() + " Properties:");
+				Log.d(TAG, f.toString() + " Properties:");
 				Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
 				Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
 				Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));

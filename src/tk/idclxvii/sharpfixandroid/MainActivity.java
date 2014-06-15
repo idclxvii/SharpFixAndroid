@@ -1,8 +1,13 @@
 package tk.idclxvii.sharpfixandroid;
 
 
+import java.util.ArrayList;
+import java.util.List;
+
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
+import tk.idclxvii.sharpfixandroid.utils.ExecuteAsRootBase;
+import tk.idclxvii.sharpfixandroid.utils.Shell;
 
 import android.os.*;
 import android.app.*;
@@ -23,6 +28,7 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 	private String TAG;
 	private boolean LOGCAT;
 		
+	
 	Button buttonStart, buttonStop, buttonCheck, buttonDelete;
 	SQLiteHelper db;
 	EditText desiredLogin;
@@ -53,8 +59,13 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){
-			Log.d(TAG, "Starting SharpFix . . .\nAndroid Version Detection Initializing . . .\n" + AndroidUtils.getCurrentAndroidVersionInfo());
+			Log.i(TAG, "Starting SharpFix . . .\nAndroid Version Detection Initializing . . .\n" + AndroidUtils.getCurrentAndroidVersionInfo());
+			Log.i(TAG, "Root Access Detection Initializing . . .\n");
+			Log.w(TAG, "Root Access Detection awaiting permission . . .\n");
+			this.SF.setRootAccess(ExecuteAsRootBase.canRunRootCommands());
+			Log.e(TAG, (this.SF.getRootAccess()) ? "Root Access available!" : "Root Access unavailable!");
 			Log.d(this.TAG, this.TAG +  " onCreate()");
+			
 		}
 		// initialize database connection
 		db = this.getDb(getApplicationContext());//new SQLiteHelper(getApplicationContext());
@@ -101,6 +112,16 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		    			((SharpFixApplicationClass) getApplication()).setFdSwitch(result.getFd_switch());
 		    			((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(result.getFdd_Filter_switch());
 		    			((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(result.getFd_Filter_switch());
+		    			((SharpFixApplicationClass) getApplication()).setServiceSwitch(result.getSss_switch());
+						((SharpFixApplicationClass) getApplication()).setServiceHour(result.getSss_hh());
+						((SharpFixApplicationClass) getApplication()).setServiceMin(result.getSss_mm());
+						((SharpFixApplicationClass) getApplication()).setServiceAMPM(result.getSss_ampm());
+						((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(result.getSss_update());
+						((SharpFixApplicationClass) getApplication()).setServiceRepeat(result.getSss_repeat());
+						((SharpFixApplicationClass) getApplication()).setServiceNoti(result.getSss_noti());
+						((SharpFixApplicationClass) getApplication()).setAuSwitch(result.getAu_switch());
+	    				
+		    			
 		    			
 		    			//startActivity(new Intent(this, MainMenuActivity.class));
 		    			startActivityForResult(new Intent(this, MainMenuActivity.class), 1);
@@ -275,7 +296,7 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 							Security.md5Hash(desiredPass.getText().toString())), null )){
 						ModelAccountsInfo mai = (ModelAccountsInfo) this.db.select(Tables.accounts_info, ModelAccountsInfo.class, 
 								new Object[][]{{"login",desiredLogin.getText().toString()}, {"password", Security.md5Hash(desiredPass.getText().toString())}}, null);
-						this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 0,0,0,0,0,0),null);
+						this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 0,0,0,0,0,0,0,0,0,0,0,0,0,0),null);
 						
 						if(this.LOGCAT){
 							Log.d(this.TAG, "An account has been successfully created!");
@@ -324,6 +345,15 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		    				((SharpFixApplicationClass) getApplication()).setFdSwitch(oldParams.getFd_switch());
 		    				((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(oldParams.getFdd_Filter_switch());
 		    				((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(oldParams.getFd_Filter_switch());
+		    				
+		    				((SharpFixApplicationClass) getApplication()).setServiceSwitch(oldParams.getSss_switch());
+							((SharpFixApplicationClass) getApplication()).setServiceHour(oldParams.getSss_hh());
+							((SharpFixApplicationClass) getApplication()).setServiceMin(oldParams.getSss_mm());
+							((SharpFixApplicationClass) getApplication()).setServiceAMPM(oldParams.getSss_ampm());
+							((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(oldParams.getSss_update());
+							((SharpFixApplicationClass) getApplication()).setServiceRepeat(oldParams.getSss_repeat());
+							((SharpFixApplicationClass) getApplication()).setServiceNoti(oldParams.getSss_noti());
+							((SharpFixApplicationClass) getApplication()).setAuSwitch(oldParams.getAu_switch());
 		    				
 
 		    				if((ch.isChecked() && oldParams.getAuto_login() == 0) ||

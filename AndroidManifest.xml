@@ -13,7 +13,7 @@
         android:minSdkVersion="9"
         android:targetSdkVersion="17" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-	
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<!-- Prevent users from deleting database records
 	<application 
 		android:manageSpaceActivity=".MainActivity" 
@@ -57,6 +57,10 @@
         </activity>
         <activity
             android:name="tk.idclxvii.sharpfixandroid.SubMenuServicesActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuSchedScanSettingsActivity"
             android:label="@string/app_name" >
         </activity>
         <activity

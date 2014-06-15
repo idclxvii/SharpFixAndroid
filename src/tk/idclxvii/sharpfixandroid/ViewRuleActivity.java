@@ -29,13 +29,17 @@ public class ViewRuleActivity extends Activity {
 		ruleName = (TextView) findViewById(R.id.rule_name);
 		ruleName.setText(this.getIntent().getStringExtra("RuleName"));
 		fileType = (TextView) findViewById(R.id.file_type);
+		
 		fileType.setText(this.getIntent().getStringExtra("FileType"));
 		fileTypeLabel = (TextView) findViewById(R.id.file_type_label);
-		fileTypeLabel.setText("Targeted File Type:");
+		
+		fileTypeLabel.setText( (this.getIntent().getStringExtra("Instance").equals("fd")) ? "Targeted File Type:" : "Filter Rule Type:");
+		
 		designationDir = (TextView) findViewById(R.id.designation);
 		designationDir.setText(this.getIntent().getStringExtra("Designation"));
+		
 		designationDirLabel = (TextView) findViewById(R.id.designation_label);
-		designationDirLabel.setText("Target Directory:");
+		designationDirLabel.setText((this.getIntent().getStringExtra("Instance").equals("fd")) ? "Target Directory:" : "Target:");
 	}
 	
 	

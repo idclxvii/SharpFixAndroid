@@ -57,7 +57,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static boolean LOGCAT = true;
  
     // Database Version
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 3;
     private static final double DATABASE_VERSION_REVISION = 0.1;
  
     // Database Name
@@ -98,6 +98,10 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             +" preferences ( id INTEGER PRIMARY KEY, account INTEGER NOT NULL , fdd_switch INTEGER NOT NULL " +
             ", fd_switch INTEGER NOT NULL , " +
             "fdd_pref INTEGER NOT NULL , auto_login INTEGER NOT NULL, fdd_filter_switch INTEGER NOT NULL, fd_filter_switch INTEGER NOT NULL,  " +
+            
+            "sss_switch INTEGER NOT NULL, sss_hh INTEGER NOT NULL, sss_mm INTEGER NOT NULL, sss_ampm INTEGER NOT NULL, sss_update INTEGER NOT NULL, "+
+            "sss_repeat INTEGER NOT NULL, sss_noti INTEGER NOT NULL,  au_switch INTEGER NOT NULL,	" +
+            
             "FOREIGN KEY  (account) REFERENCES accounts_info(id) )";
     
     private static final String CREATE_DIR_FILTER = "CREATE TABLE"
@@ -305,22 +309,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             this.createMagicNumberDatabase(db);
         }catch(Exception e){
         	if(LOGCAT){
-        		StackTraceElement[] st = e.getStackTrace();
-				for(int y= 0; y < st.length; y++){
-					Log.w(TAG, st[y].toString());
-					
+        		try{
+	        		StackTraceElement[] st = e.getStackTrace();
+					for(int y= 0; y < st.length; y++){
+						Log.w(TAG, st[y].toString());
+					}
+				}catch(Exception ee){
+					Log.e(TAG, "2nd Level Exception Caught!\nThe system cannot get the Stacktrace requested at:\n" 
+							+"onCreate(SQLiteDatabase)");
 				}
-        	}try{
-        		this.createMagicNumberDatabase(db);
-        	}catch(Exception ee){
-        		if(LOGCAT){
-            			Log.w(TAG, "EXCEPTION CAUGHT! FAILED CREATING MAGIC_NUMBER DATABASE!");
-    				}
-        	}
-        	
+			}
+        }try{
+        	this.createMagicNumberDatabase(db);
+        }catch(Exception ee){
+        	if(LOGCAT){
+        		Log.w(TAG, "EXCEPTION CAUGHT! FAILED CREATING MAGIC_NUMBER DATABASE!");
+    		}
         }
-    	
-        
+        	
+     	
     }
  
     private List<Object[]> result = new ArrayList<Object[]>();

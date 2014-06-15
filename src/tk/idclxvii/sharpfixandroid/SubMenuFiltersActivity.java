@@ -145,8 +145,8 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 			if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.JELLY_BEAN) {
 				
 			}else{
-				fddCh = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, fddCh,30.0f);
-				fdCh = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, fdCh,30.0f);
+				fddCh = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, fddCh,50.0f);
+				fdCh = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, fdCh,50.0f);
 				
 			}
 			
@@ -183,17 +183,41 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 					//	File Duplication Detection Filtering Feature is turned on
 					try{
 						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-									((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
-									((SharpFixApplicationClass) getApplication()).getFddPref(),
-									((SharpFixApplicationClass) getApplication()).getAutoLogin(),
-									((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-									((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
-						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 								((SharpFixApplicationClass) getApplication()).getFddPref(),
 								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
+						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
 						newParams.setFdd_Filter_switch(1);
 						
 						this.db.update(Tables.preferences, oldParams, newParams, null);
@@ -205,17 +229,41 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 					//	File Duplication Detection Filtering Feature is turned off
 					try{
 						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 								((SharpFixApplicationClass) getApplication()).getFddPref(),
 								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
 						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 								((SharpFixApplicationClass) getApplication()).getFddPref(),
 								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
 						newParams.setFdd_Filter_switch(0);
 						this.db.update(Tables.preferences, oldParams, newParams, null);
 						((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(0);
@@ -236,17 +284,41 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 					//	File Designation Filtering Feature is turned on
 					try{
 						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-									((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
-									((SharpFixApplicationClass) getApplication()).getFddPref(),
-									((SharpFixApplicationClass) getApplication()).getAutoLogin(),
-									((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-									((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
-						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 								((SharpFixApplicationClass) getApplication()).getFddPref(),
 								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
+						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddPref(),
+								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
 						newParams.setFd_Filter_switch(1);
 						/*
 						Toast.makeText(this, this.db.update(Tables.preferences, oldParams, newParams, null) ? "File Designation Settings have been updated!" :
@@ -261,17 +333,41 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 					//	File Designation Filtering Feature is turned off
 					try{
 						ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 								((SharpFixApplicationClass) getApplication()).getFddPref(),
 								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
 						ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-								((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+								((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 								((SharpFixApplicationClass) getApplication()).getFddPref(),
 								((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 								((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+								((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+								
+								// new fields
+								// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+								((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceHour(),
+								((SharpFixApplicationClass) getApplication()).getServiceMin(),
+								((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+								((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+								((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+								((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+								((SharpFixApplicationClass) getApplication()).getAuSwitch());
 						newParams.setFd_Filter_switch(0);
 						/*
 						Toast.makeText(this, this.db.update(Tables.preferences, oldParams, newParams, null) ? "File Designation Settings have been updated!" :
@@ -340,17 +436,41 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 			  case R.id.MenuLogout:
 				// call method / do task.
 				  ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-							((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+							((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+							((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 							((SharpFixApplicationClass) getApplication()).getFddPref(),
 							((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 							((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-							((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+							((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+							
+							// new fields
+							// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+							((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+							((SharpFixApplicationClass) getApplication()).getServiceHour(),
+							((SharpFixApplicationClass) getApplication()).getServiceMin(),
+							((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+							((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+							((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+							((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+							((SharpFixApplicationClass) getApplication()).getAuSwitch());
 				  ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
-							((SharpFixApplicationClass) getApplication()).getFddSwitch(), ((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+							((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+							((SharpFixApplicationClass) getApplication()).getFdSwitch(),
 							((SharpFixApplicationClass) getApplication()).getFddPref(),
 							((SharpFixApplicationClass) getApplication()).getAutoLogin(),
 							((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
-							((SharpFixApplicationClass) getApplication()).getFdFilterSwitch());
+							((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+							
+							// new fields
+							// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+							((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+							((SharpFixApplicationClass) getApplication()).getServiceHour(),
+							((SharpFixApplicationClass) getApplication()).getServiceMin(),
+							((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+							((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+							((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+							((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+							((SharpFixApplicationClass) getApplication()).getAuSwitch());
 				  newParams.setAuto_login(0);
 				  try{
 					  this.db.update(Tables.preferences, oldParams, newParams, null);

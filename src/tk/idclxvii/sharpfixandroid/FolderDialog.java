@@ -368,7 +368,17 @@ private List<String> getDirectories(String dir)
      FilenameFilter filter = new FilenameFilter() {
          public boolean accept(File dir, String filename) {
              File sel = new File(dir, filename);
-             if (!sel.canRead() || !sel.canWrite() || sel.isHidden()) return false;
+             if (!sel.canRead() || !sel.canWrite() || sel.isHidden()){
+            	 if(LOGCAT){
+            		 Log.d(TAG, "File " +sel.toString() + " is unaccessible!");
+            		 Log.d(TAG, "canRead? " +sel.canRead());
+            		 Log.d(TAG, "canWrite? " +sel.canWrite());
+            		 Log.d(TAG, "isHidden? " +sel.isHidden());
+            		 
+            	 }
+            	 return false;
+             }
+             
              return sel.isDirectory();
              
          }

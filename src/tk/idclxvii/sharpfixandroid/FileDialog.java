@@ -58,7 +58,7 @@ public class FileDialog {
     public FileDialog(Activity activity, File path) {
         this.activity = activity;
         this.db = this.getDb(this.activity);
-        
+        this.SF = ((SharpFixApplicationClass) activity.getApplication());
         if (!path.exists()) path = Environment.getExternalStorageDirectory();
         loadFileList(path);
     }
@@ -316,16 +316,51 @@ public class FileDialog {
                     }
                 }
             };
-            String[] fileList1 = path.list(filter);
-            for (String file : fileList1) {
-            	File f = new File(currentPath,file);
-            	if(f.isDirectory()){
-            		r.add("{Dir} " +file);
+            if(this.SF.getRootAccess()){ // device is rooted
+            	
+            	String[] fileList1 = Shell.sendShellCommand(new String[]{"su","-c", "ls "+path.toString()}, this.activity);
+            	if( ((SharpFixApplicationClass)this.activity.getApplicationContext()).getRootPermission() ){
+            		for (String file : fileList1) {
+                    	File f = new File(currentPath,file);
+                    	if(f.isDirectory()){
+                    		r.add("{Dir} " +file);
+                    	}else{
+                    		r.add("{File} " +file);
+                    	}
+                        
+                    }
             	}else{
-            		r.add("{File} " +file);
+            		
+            		fileList1 = path.list(filter);
+            		try{
+	                    for (String file : fileList1) {
+	                    	File f = new File(currentPath,file);	
+	                    	if(f.isDirectory()){
+	                    		r.add("{Dir} " +file);
+	                    	}else{
+	                    		r.add("{File} " +file);
+	                    	}
+	                        
+	                    }
+            		}catch(Exception e){
+            			Log.e(TAG,"WARNING! ROOT PERMISSION WAS FORCEFULLY DENIED! ");
+            			
+            		}
             	}
-                
+            	
+            }else{
+            	String[] fileList1 = path.list(filter);
+                for (String file : fileList1) {
+                	File f = new File(currentPath,file);
+                	if(f.isDirectory()){
+                		r.add("{Dir} " +file);
+                	}else{
+                		r.add("{File} " +file);
+                	}
+                    
+                }
             }
+            
         }
         fileList = (String[]) r.toArray(new String[]{});
     }
