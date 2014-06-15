@@ -83,7 +83,7 @@ public class SharpFixApplicationClass extends Application{
 		if(LOGCAT){
 			Log.d(TAG, this.getClass().getName() + " onCreate()");
 			Log.i(TAG, "Application Information: ");	
-			Log.i(TAG, "Package: " + this.getApplicationInfo().packageName);	
+			Log.i(TAG, "Package Name: " + this.getApplicationInfo().packageName);	
 			Log.i(TAG, "Process Name: " + this.getApplicationInfo().processName);	
 			Log.i(TAG, "Target SDK: " + this.getApplicationInfo().targetSdkVersion);	
 			Log.i(TAG, "Application External Dir: " +extFileDir.toString());

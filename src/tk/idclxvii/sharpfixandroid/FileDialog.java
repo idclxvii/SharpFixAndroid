@@ -318,7 +318,7 @@ public class FileDialog {
             };
             if(this.SF.getRootAccess()){ // device is rooted
             	
-            	String[] fileList1 = Shell.sendShellCommand(new String[]{"su","-c", "ls "+path.toString()}, this.activity);
+            	String[] fileList1 = Shell.sendShellCommand(new String[]{/*"su","-c", */"ls "+path.toString()}, this.activity);
             	if( ((SharpFixApplicationClass)this.activity.getApplicationContext()).getRootPermission() ){
             		for (String file : fileList1) {
                     	File f = new File(currentPath,file);
