@@ -3,6 +3,9 @@ package tk.idclxvii.sharpfixandroid;
 import java.io.File;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
+import tk.idclxvii.sharpfixandroid.utils.ExecuteAsRootBase;
+import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
 import android.app.Application;
 import android.util.Log;
@@ -10,7 +13,12 @@ import android.util.Log;
 public class SharpFixApplicationClass extends Application{
 	
 	private final boolean LOGCAT = true;
-	private final String TAG = "." +this.getClass().getName();
+	private final String TAG = this.getClass().getName();
+	private final boolean DEVELOPER_MODE = true;
+	
+	public boolean getDevMode(){
+		return this.DEVELOPER_MODE;
+	}
 	
 	private File extFileDir;
 	private File intFileDir;
@@ -71,6 +79,43 @@ public class SharpFixApplicationClass extends Application{
 	private Integer serviceNoti; // 1 = on, 0 = off
 	private Integer auSwitch;  // 1 = on, 0 = off
 	
+	public void bootMessage(){
+		if(LOGCAT){
+			Log.d(TAG, this.getClass().getName() + " onCreate()");
+			Log.i(TAG, "########################################");
+			Log.i(TAG, "SharpFix Android File Management Utility");
+			Log.i(TAG, "Application Information: ");	
+			try{
+
+				Log.i(TAG, "* Release Version: " + this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionCode);
+				Log.i(TAG, "* Version Name: "+ this.getPackageManager().getPackageInfo(this.getPackageName(), 0).versionName);
+			}catch(Exception e){
+				Log.e(TAG, "WARNING!\nERROR ON EXECUTING COMMAND : \'this.getPackageManager().getPackageInfo(this.getPackageName(), 0)\'");
+			}
+			Log.i(TAG, "* Package Name: " + this.getApplicationInfo().packageName);	
+			Log.i(TAG, "* Process Name: " + this.getApplicationInfo().processName);	
+			Log.i(TAG, "* Target SDK: " + this.getApplicationInfo().targetSdkVersion);	
+			Log.i(TAG, "* Application External Directory: " +extFileDir.toString());
+			Log.i(TAG, "* Application Root Directory: " +intFileDir.toString());
+			Log.i(TAG, "* Application Database Directory: " +dbFileDir.toString());
+			Log.i(TAG, "* Database: " +SQLiteHelper.getDatabaseVersion());
+			Log.i(TAG, "* Developer: {ERROR c0d3s1x: \"The handle is invalid\"}");
+		}
+	}
+	
+	public void bootTasks(){
+		Log.i(TAG, "########################################");
+		Log.i(TAG, " Starting SharpFix initial tasks . . .\n");
+		Log.i(TAG, "{Android Version} Detection Initializing . . .");
+		Logcat.i(this, AndroidUtils.getCurrentAndroidVersionInfo());
+		Log.i(TAG, "{Root Access} Detection Initializing . . .\n");
+		Log.w(TAG, "{Root Access} Detection awaiting permission . . .\n");
+		this.setRootAccess(ExecuteAsRootBase.canRunRootCommands());
+		Log.e(TAG, (this.getRootAccess()) ? "{Root Access} available!" : "{Root Access} unavailable!");
+		Log.i(TAG, "{Active and Mounted Volumes} Detection Initializing . . .");
+		Logcat.i(this,  AndroidUtils.getMountedVolumes());
+		
+	}
 	
 	@Override
 	public void onCreate(){
@@ -79,18 +124,8 @@ public class SharpFixApplicationClass extends Application{
 		extFileDir = this.getExternalFilesDir(null).getParentFile();
 		intFileDir = this.getFilesDir().getParentFile();
 		dbFileDir = this.getDatabasePath("sharpfix_database.db").getParentFile();
-		
-		if(LOGCAT){
-			Log.d(TAG, this.getClass().getName() + " onCreate()");
-			Log.i(TAG, "Application Information: ");	
-			Log.i(TAG, "Package Name: " + this.getApplicationInfo().packageName);	
-			Log.i(TAG, "Process Name: " + this.getApplicationInfo().processName);	
-			Log.i(TAG, "Target SDK: " + this.getApplicationInfo().targetSdkVersion);	
-			Log.i(TAG, "Application External Dir: " +extFileDir.toString());
-			Log.i(TAG, "Application Internal Dir: " +intFileDir.toString());
-			Log.i(TAG, "Application Database Dir: " +dbFileDir.toString());
-		}
-		
+		bootMessage();
+		bootTasks();
 	}
 	
 	@Override

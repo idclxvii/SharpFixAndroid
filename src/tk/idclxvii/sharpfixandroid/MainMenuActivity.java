@@ -1,10 +1,12 @@
 package tk.idclxvii.sharpfixandroid;
 
+import java.io.File;
 import java.util.Locale; // used on API 10 above: .toString(Locale)
 
 import android.app.*;
 import android.content.*;
 import android.os.Bundle;
+import android.os.Environment;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -13,6 +15,7 @@ import android.view.View;
 import android.view.View.*;
 import android.widget.*;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 
 public class MainMenuActivity extends Activity implements OnClickListener{
 	
@@ -81,7 +84,100 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 		aboutl = (TextView) findViewById(R.id.label5);
 		aboutl.setOnClickListener(this);
 		
-		
+		// DEVELOPER MODE:
+		if(this.SF.getDevMode()){
+			abouts.setOnLongClickListener(new OnLongClickListener(){
+	
+				@Override
+				public boolean onLongClick(View v) {
+					// TODO Auto-generated method stub
+					Dialog d = new Dialog(MainMenuActivity.this);
+					d.setContentView(R.layout.fd_sub_menu_rules);
+					
+					d.setTitle("{DEVELOPER MODE} " + (MainMenuActivity.this.SF.getRootAccess() ? "root" : "h4x0r"));
+					TextView title = (TextView) d.findViewById(R.id.title);
+					title.setText("Active and Mounted Volumes Detection");
+					TextView noRules = (TextView) d.findViewById(R.id.noRules);
+					View noRulesHr = (View) d.findViewById(R.id.noRulesHr);
+					TextView createRule = (TextView) d.findViewById(R.id.createRule);
+					noRules.setVisibility(View.GONE);
+					noRulesHr.setVisibility(View.GONE);
+					ListView RULES = (ListView) d.findViewById(R.id.listViewRules);
+					ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainMenuActivity.this,
+							R.layout.custom_textview);
+					String[] storage = AndroidUtils.getMountedVolumes();
+					for(int i = 0; i < storage.length; i++){
+						
+						if(storage.length > 2){
+							// multiple storage detected
+							if(i == 0){
+								createRule.setText(storage[i]);
+							}else if( i > 1){
+								adapter.add(storage[i]);
+							}
+							
+						}else{
+							if(i == 0){
+								createRule.setText(storage[i]);
+							}else{
+								adapter.add(storage[i]);
+							}
+						}
+					}
+					
+					RULES.setAdapter(adapter);
+					RULES.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+	
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view,
+								int position, long id) {
+							// TODO Auto-generated method stub
+							try{
+								final String selection = ((String)parent.getItemAtPosition(position));
+								final String dir = selection.substring(selection.indexOf("/"), selection.length());
+								FileDialog f = new FileDialog(MainMenuActivity.this, new File(dir));
+								f.addFileListener(new FileDialog.FileSelectedListener(){
+	
+									@Override
+									public void fileSelected(File file) {
+										// TODO Auto-generated method stub
+										
+									}
+									
+								});
+								f.setSelectDirectoryOption(false);
+								f.createFileDialog();
+								
+							}catch(Exception e){
+								if(LOGCAT){
+					    			StackTraceElement[] st = e.getStackTrace();
+									for(int y= 0; y <st.length; y++){
+										Log.w(TAG, st[y].toString());
+									}
+					    		}
+								
+							}
+						}
+	
+						
+					});
+					d.show();
+					return true;
+				}
+				
+			});
+			
+			aboutl.setOnLongClickListener(new OnLongClickListener(){
+	
+				@Override
+				public boolean onLongClick(View v) {
+					// TODO Auto-generated method stub
+					abouts.performLongClick();
+					return true;
+				}
+				
+			});
+		}
 	}
 	
 	@Override

@@ -60,8 +60,16 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 3;
     private static final double DATABASE_VERSION_REVISION = 0.1;
  
+    
+    
+    
     // Database Name
     private static final String DATABASE_NAME = "sharpfix_database.db";
+    
+    public static String getDatabaseVersion(){
+    	return (DATABASE_NAME + " v "
+    			 + DATABASE_VERSION + "." + DATABASE_VERSION_REVISION);
+    }
     
     // Table Names
     private static final String[]  TABLES = {"sd_info","dirs_info","files_info","accounts_info", 

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
-import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
-import tk.idclxvii.sharpfixandroid.utils.ExecuteAsRootBase;
-import tk.idclxvii.sharpfixandroid.utils.Shell;
+import tk.idclxvii.sharpfixandroid.utils.*;
 
 import android.os.*;
 import android.app.*;
@@ -59,12 +57,9 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){
-			Log.i(TAG, "Starting SharpFix . . .\nAndroid Version Detection Initializing . . .\n" + AndroidUtils.getCurrentAndroidVersionInfo());
-			Log.i(TAG, "Root Access Detection Initializing . . .\n");
-			Log.w(TAG, "Root Access Detection awaiting permission . . .\n");
-			this.SF.setRootAccess(ExecuteAsRootBase.canRunRootCommands());
-			Log.e(TAG, (this.SF.getRootAccess()) ? "Root Access available!" : "Root Access unavailable!");
 			Log.d(this.TAG, this.TAG +  " onCreate()");
+			
+			
 			
 		}
 		// initialize database connection
@@ -227,6 +222,22 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		if(this.LOGCAT){
 			Log.d(this.TAG, this.TAG +  " onStart()");
 		}
+		/*
+		 BEBE Device: Sony Experia Go ST27i
+		 Note for codes: 
+		 	Sony Experia locks the Internal Storage when connected via Android Debug Bridge (adb)
+		 	causing the {Active and Mounted Volumes} Detection to catch the SD-Card as the 
+		 	only mounted device {SINGLE VOLUME DETECTED}. Even though it outputs SECONDARY STORAGE, this might 
+		 	lead to confusion. Always note of the given Type (PRIMARY, SECONDARY) of the storage. 
+		
+		String log = "";
+		for(String str : AndroidUtils.getMountedVolumes()){
+			log += (str+"\n");
+		}
+		Toast.makeText(this, log, Toast.LENGTH_LONG).show();
+		
+		*/
+		
 	}
 	
 	
