@@ -1,0 +1,354 @@
+android.support.v4.app.BackStackState
+android.support.v4.app.BackStackState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.Fragment$SavedState
+android.support.v4.app.Fragment$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentManagerState
+android.support.v4.app.FragmentManagerState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentState
+android.support.v4.app.FragmentState: android.os.Parcelable$Creator CREATOR
+android.support.v4.app.FragmentTabHost: void setOnTabChangedListener(android.widget.TabHost$OnTabChangeListener)
+android.support.v4.app.FragmentTabHost$SavedState
+android.support.v4.app.FragmentTabHost$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status[] values()
+android.support.v4.content.ModernAsyncTask$Status: android.support.v4.content.ModernAsyncTask$Status valueOf(java.lang.String)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColor(int)
+android.support.v4.view.PagerTabStrip: void setTabIndicatorColorResource(int)
+android.support.v4.view.PagerTabStrip: int getTabIndicatorColor()
+android.support.v4.view.PagerTabStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.PagerTabStrip: void setBackgroundColor(int)
+android.support.v4.view.PagerTabStrip: void setBackgroundResource(int)
+android.support.v4.view.PagerTabStrip: void setDrawFullUnderline(boolean)
+android.support.v4.view.PagerTabStrip: boolean getDrawFullUnderline()
+android.support.v4.view.PagerTabStrip: int getMinHeight()
+android.support.v4.view.PagerTitleStrip: void setSingleLineAllCaps(android.widget.TextView)
+android.support.v4.view.PagerTitleStrip: void setTextSpacing(int)
+android.support.v4.view.PagerTitleStrip: int getTextSpacing()
+android.support.v4.view.PagerTitleStrip: void setNonPrimaryAlpha(float)
+android.support.v4.view.PagerTitleStrip: void setTextColor(int)
+android.support.v4.view.PagerTitleStrip: void setGravity(int)
+android.support.v4.view.PagerTitleStrip: int getMinHeight()
+android.support.v4.view.ViewPager: void setScrollState(int)
+android.support.v4.view.ViewPager: void setAdapter(android.support.v4.view.PagerAdapter)
+android.support.v4.view.ViewPager: android.support.v4.view.PagerAdapter getAdapter()
+android.support.v4.view.ViewPager: void setOnAdapterChangeListener(android.support.v4.view.ViewPager$OnAdapterChangeListener)
+android.support.v4.view.ViewPager: int getClientWidth()
+android.support.v4.view.ViewPager: void setCurrentItem(int)
+android.support.v4.view.ViewPager: int getCurrentItem()
+android.support.v4.view.ViewPager: void setOnPageChangeListener(android.support.v4.view.ViewPager$OnPageChangeListener)
+android.support.v4.view.ViewPager: void setChildrenDrawingOrderEnabledCompat(boolean)
+android.support.v4.view.ViewPager: int getOffscreenPageLimit()
+android.support.v4.view.ViewPager: void setOffscreenPageLimit(int)
+android.support.v4.view.ViewPager: void setPageMargin(int)
+android.support.v4.view.ViewPager: int getPageMargin()
+android.support.v4.view.ViewPager: void setPageMarginDrawable(android.graphics.drawable.Drawable)
+android.support.v4.view.ViewPager: void setPageMarginDrawable(int)
+android.support.v4.view.ViewPager: void setScrollingCacheEnabled(boolean)
+android.support.v4.view.ViewPager$SavedState
+android.support.v4.view.ViewPager$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.widget.DrawerLayout: void setScrimColor(int)
+android.support.v4.widget.DrawerLayout: void setDrawerListener(android.support.v4.widget.DrawerLayout$DrawerListener)
+android.support.v4.widget.DrawerLayout: void setDrawerLockMode(int)
+android.support.v4.widget.DrawerLayout$SavedState
+android.support.v4.widget.DrawerLayout$SavedState: android.os.Parcelable$Creator CREATOR
+android.support.v4.widget.SlidingPaneLayout: void setParallaxDistance(int)
+android.support.v4.widget.SlidingPaneLayout: int getParallaxDistance()
+android.support.v4.widget.SlidingPaneLayout: void setSliderFadeColor(int)
+android.support.v4.widget.SlidingPaneLayout: int getSliderFadeColor()
+android.support.v4.widget.SlidingPaneLayout: void setCoveredFadeColor(int)
+android.support.v4.widget.SlidingPaneLayout: int getCoveredFadeColor()
+android.support.v4.widget.SlidingPaneLayout: void setPanelSlideListener(android.support.v4.widget.SlidingPaneLayout$PanelSlideListener)
+android.support.v4.widget.SlidingPaneLayout: void setShadowDrawable(android.graphics.drawable.Drawable)
+android.support.v4.widget.SlidingPaneLayout: void setShadowResource(int)
+android.support.v4.widget.SlidingPaneLayout$SavedState
+android.support.v4.widget.SlidingPaneLayout$SavedState: android.os.Parcelable$Creator CREATOR
+tk.idclxvii.sharpfixandroid.FileDesignationService
+tk.idclxvii.sharpfixandroid.FileDesignationService: FileDesignationService()
+tk.idclxvii.sharpfixandroid.FileDuplicationDetectionService
+tk.idclxvii.sharpfixandroid.FileDuplicationDetectionService: FileDuplicationDetectionService()
+tk.idclxvii.sharpfixandroid.MainActivity
+tk.idclxvii.sharpfixandroid.MainActivity: MainActivity()
+tk.idclxvii.sharpfixandroid.MainActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.MainMenuActivity
+tk.idclxvii.sharpfixandroid.MainMenuActivity: MainMenuActivity()
+tk.idclxvii.sharpfixandroid.MainMenuActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.R$color: int background_selector
+tk.idclxvii.sharpfixandroid.R$color: int text_selector
+tk.idclxvii.sharpfixandroid.R$color: int text_selector_labels
+tk.idclxvii.sharpfixandroid.R$dimen: int activity_horizontal_margin
+tk.idclxvii.sharpfixandroid.R$dimen: int activity_vertical_margin
+tk.idclxvii.sharpfixandroid.R$drawable: int dot_button
+tk.idclxvii.sharpfixandroid.R$drawable: int ic_launcher
+tk.idclxvii.sharpfixandroid.R$drawable: int logo2
+tk.idclxvii.sharpfixandroid.R$drawable: int logout_icon
+tk.idclxvii.sharpfixandroid.R$drawable: int sharpfix_logo
+tk.idclxvii.sharpfixandroid.R$drawable: int sharpfix_logo2
+tk.idclxvii.sharpfixandroid.R$drawable: int sharpfix_logo4
+tk.idclxvii.sharpfixandroid.R$drawable: int start_button
+tk.idclxvii.sharpfixandroid.R$drawable: int start_service
+tk.idclxvii.sharpfixandroid.R$drawable: int stop_button
+tk.idclxvii.sharpfixandroid.R$drawable: int stop_service
+tk.idclxvii.sharpfixandroid.R$id: int MenuLogout
+tk.idclxvii.sharpfixandroid.R$id: int Rules
+tk.idclxvii.sharpfixandroid.R$id: int absPath
+tk.idclxvii.sharpfixandroid.R$id: int absPathValue
+tk.idclxvii.sharpfixandroid.R$id: int autoLogin
+tk.idclxvii.sharpfixandroid.R$id: int choose
+tk.idclxvii.sharpfixandroid.R$id: int chooseDir
+tk.idclxvii.sharpfixandroid.R$id: int chooseFileType
+tk.idclxvii.sharpfixandroid.R$id: int chooser
+tk.idclxvii.sharpfixandroid.R$id: int chosenFilter
+tk.idclxvii.sharpfixandroid.R$id: int confirmPassword
+tk.idclxvii.sharpfixandroid.R$id: int createAccount
+tk.idclxvii.sharpfixandroid.R$id: int createRule
+tk.idclxvii.sharpfixandroid.R$id: int custom_textview
+tk.idclxvii.sharpfixandroid.R$id: int deleteRule
+tk.idclxvii.sharpfixandroid.R$id: int deletionPriority
+tk.idclxvii.sharpfixandroid.R$id: int designation
+tk.idclxvii.sharpfixandroid.R$id: int designationDir
+tk.idclxvii.sharpfixandroid.R$id: int designation_label
+tk.idclxvii.sharpfixandroid.R$id: int desiredLogin
+tk.idclxvii.sharpfixandroid.R$id: int desiredPassword
+tk.idclxvii.sharpfixandroid.R$id: int editRule
+tk.idclxvii.sharpfixandroid.R$id: int fileName
+tk.idclxvii.sharpfixandroid.R$id: int fileNameValue
+tk.idclxvii.sharpfixandroid.R$id: int fileSize
+tk.idclxvii.sharpfixandroid.R$id: int fileSizeValue
+tk.idclxvii.sharpfixandroid.R$id: int fileType
+tk.idclxvii.sharpfixandroid.R$id: int fileTypeValue
+tk.idclxvii.sharpfixandroid.R$id: int file_type
+tk.idclxvii.sharpfixandroid.R$id: int file_type_label
+tk.idclxvii.sharpfixandroid.R$id: int filters_hr1
+tk.idclxvii.sharpfixandroid.R$id: int filters_hr2
+tk.idclxvii.sharpfixandroid.R$id: int filters_hr3
+tk.idclxvii.sharpfixandroid.R$id: int filters_hr4
+tk.idclxvii.sharpfixandroid.R$id: int filters_hr5
+tk.idclxvii.sharpfixandroid.R$id: int filters_label1
+tk.idclxvii.sharpfixandroid.R$id: int filters_label2
+tk.idclxvii.sharpfixandroid.R$id: int filters_label3
+tk.idclxvii.sharpfixandroid.R$id: int filters_label4
+tk.idclxvii.sharpfixandroid.R$id: int filters_selection1
+tk.idclxvii.sharpfixandroid.R$id: int filters_selection2
+tk.idclxvii.sharpfixandroid.R$id: int filters_selection3
+tk.idclxvii.sharpfixandroid.R$id: int filters_selection4
+tk.idclxvii.sharpfixandroid.R$id: int hr1
+tk.idclxvii.sharpfixandroid.R$id: int hr2
+tk.idclxvii.sharpfixandroid.R$id: int hr3
+tk.idclxvii.sharpfixandroid.R$id: int hr4
+tk.idclxvii.sharpfixandroid.R$id: int hr5
+tk.idclxvii.sharpfixandroid.R$id: int hr6
+tk.idclxvii.sharpfixandroid.R$id: int hr7
+tk.idclxvii.sharpfixandroid.R$id: int hrLast
+tk.idclxvii.sharpfixandroid.R$id: int imageView1
+tk.idclxvii.sharpfixandroid.R$id: int label1
+tk.idclxvii.sharpfixandroid.R$id: int label2
+tk.idclxvii.sharpfixandroid.R$id: int label3
+tk.idclxvii.sharpfixandroid.R$id: int label4
+tk.idclxvii.sharpfixandroid.R$id: int label5
+tk.idclxvii.sharpfixandroid.R$id: int lastMod
+tk.idclxvii.sharpfixandroid.R$id: int lastModValue
+tk.idclxvii.sharpfixandroid.R$id: int listViewRules
+tk.idclxvii.sharpfixandroid.R$id: int logged
+tk.idclxvii.sharpfixandroid.R$id: int login
+tk.idclxvii.sharpfixandroid.R$id: int lv
+tk.idclxvii.sharpfixandroid.R$id: int negativeButton
+tk.idclxvii.sharpfixandroid.R$id: int noRules
+tk.idclxvii.sharpfixandroid.R$id: int noRulesHr
+tk.idclxvii.sharpfixandroid.R$id: int parentPath
+tk.idclxvii.sharpfixandroid.R$id: int parentPathValue
+tk.idclxvii.sharpfixandroid.R$id: int password
+tk.idclxvii.sharpfixandroid.R$id: int positiveButton
+tk.idclxvii.sharpfixandroid.R$id: int radioNewer
+tk.idclxvii.sharpfixandroid.R$id: int radioOlder
+tk.idclxvii.sharpfixandroid.R$id: int ruleName
+tk.idclxvii.sharpfixandroid.R$id: int rule_name
+tk.idclxvii.sharpfixandroid.R$id: int selection1
+tk.idclxvii.sharpfixandroid.R$id: int selection2
+tk.idclxvii.sharpfixandroid.R$id: int selection3
+tk.idclxvii.sharpfixandroid.R$id: int selection4
+tk.idclxvii.sharpfixandroid.R$id: int selection5
+tk.idclxvii.sharpfixandroid.R$id: int services_hr3
+tk.idclxvii.sharpfixandroid.R$id: int services_hr4
+tk.idclxvii.sharpfixandroid.R$id: int services_hr5
+tk.idclxvii.sharpfixandroid.R$id: int services_hr6
+tk.idclxvii.sharpfixandroid.R$id: int services_label1
+tk.idclxvii.sharpfixandroid.R$id: int services_label2
+tk.idclxvii.sharpfixandroid.R$id: int services_label3
+tk.idclxvii.sharpfixandroid.R$id: int services_selection1
+tk.idclxvii.sharpfixandroid.R$id: int services_selection2
+tk.idclxvii.sharpfixandroid.R$id: int services_selection3
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateLabel1
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateLabel2
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateLabel3
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateLabel4
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateSelection1
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateSelection2
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateSelection3
+tk.idclxvii.sharpfixandroid.R$id: int sssUpdateSelection4
+tk.idclxvii.sharpfixandroid.R$id: int textView1
+tk.idclxvii.sharpfixandroid.R$id: int title
+tk.idclxvii.sharpfixandroid.R$id: int totalContents
+tk.idclxvii.sharpfixandroid.R$id: int totalContentsValue
+tk.idclxvii.sharpfixandroid.R$id: int username
+tk.idclxvii.sharpfixandroid.R$id: int vr_hr1
+tk.idclxvii.sharpfixandroid.R$id: int vr_hr2
+tk.idclxvii.sharpfixandroid.R$id: int vr_hr4
+tk.idclxvii.sharpfixandroid.R$id: int vr_hr6
+tk.idclxvii.sharpfixandroid.R$layout: int activity_main
+tk.idclxvii.sharpfixandroid.R$layout: int check_logs
+tk.idclxvii.sharpfixandroid.R$layout: int create_fd_rule
+tk.idclxvii.sharpfixandroid.R$layout: int custom_textview
+tk.idclxvii.sharpfixandroid.R$layout: int fd_create_rule
+tk.idclxvii.sharpfixandroid.R$layout: int fd_sub_menu
+tk.idclxvii.sharpfixandroid.R$layout: int fd_sub_menu_rules
+tk.idclxvii.sharpfixandroid.R$layout: int fdd_sub_menu
+tk.idclxvii.sharpfixandroid.R$layout: int file_dialog_properties_dialog
+tk.idclxvii.sharpfixandroid.R$layout: int file_types_dialog
+tk.idclxvii.sharpfixandroid.R$layout: int filter_create_rule
+tk.idclxvii.sharpfixandroid.R$layout: int filters_sub_menu
+tk.idclxvii.sharpfixandroid.R$layout: int filters_sub_menu_rules
+tk.idclxvii.sharpfixandroid.R$layout: int main_menu
+tk.idclxvii.sharpfixandroid.R$layout: int main_no_account
+tk.idclxvii.sharpfixandroid.R$layout: int rules_dialog
+tk.idclxvii.sharpfixandroid.R$layout: int sched_scan_settings_sub_menu
+tk.idclxvii.sharpfixandroid.R$layout: int services_sub_menu
+tk.idclxvii.sharpfixandroid.R$layout: int view_rule
+tk.idclxvii.sharpfixandroid.R$menu: int main
+tk.idclxvii.sharpfixandroid.R$string: int Check
+tk.idclxvii.sharpfixandroid.R$string: int Delete
+tk.idclxvii.sharpfixandroid.R$string: int Logs
+tk.idclxvii.sharpfixandroid.R$string: int Service
+tk.idclxvii.sharpfixandroid.R$string: int Start
+tk.idclxvii.sharpfixandroid.R$string: int Stop
+tk.idclxvii.sharpfixandroid.R$string: int action_settings
+tk.idclxvii.sharpfixandroid.R$string: int app_name
+tk.idclxvii.sharpfixandroid.R$string: int autoLogin
+tk.idclxvii.sharpfixandroid.R$string: int blankdummy
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxAutoUpdate
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxAutoUpdateLabel
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFD
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFDD
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFDDLabel
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFDLabel
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFdFilters
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFdFiltersLabel
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFddFilters
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxFddFiltersLabel
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxServices
+tk.idclxvii.sharpfixandroid.R$string: int checkBoxServicesLabel
+tk.idclxvii.sharpfixandroid.R$string: int chooseDesignationDir
+tk.idclxvii.sharpfixandroid.R$string: int chooseFileTypeButton
+tk.idclxvii.sharpfixandroid.R$string: int chooseFileTypeLabel
+tk.idclxvii.sharpfixandroid.R$string: int chooser
+tk.idclxvii.sharpfixandroid.R$string: int chosenFilter
+tk.idclxvii.sharpfixandroid.R$string: int confirmPassword
+tk.idclxvii.sharpfixandroid.R$string: int createAccount
+tk.idclxvii.sharpfixandroid.R$string: int createRule
+tk.idclxvii.sharpfixandroid.R$string: int deleteRule
+tk.idclxvii.sharpfixandroid.R$string: int desiredLogin
+tk.idclxvii.sharpfixandroid.R$string: int desiredPassword
+tk.idclxvii.sharpfixandroid.R$string: int dummy
+tk.idclxvii.sharpfixandroid.R$string: int editRule
+tk.idclxvii.sharpfixandroid.R$string: int fdService
+tk.idclxvii.sharpfixandroid.R$string: int fddService
+tk.idclxvii.sharpfixandroid.R$string: int footer
+tk.idclxvii.sharpfixandroid.R$string: int logOut
+tk.idclxvii.sharpfixandroid.R$string: int login
+tk.idclxvii.sharpfixandroid.R$string: int logo
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuAboutLabel
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuAboutSelection
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuFdLabel
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuFdSelection
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuFddLabel
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuFddSelection
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuFiltersLabel
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuFiltersSelection
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuServicesLabel
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuServicesSelection
+tk.idclxvii.sharpfixandroid.R$string: int mainMenuTitle
+tk.idclxvii.sharpfixandroid.R$string: int negativeButton
+tk.idclxvii.sharpfixandroid.R$string: int noAccount
+tk.idclxvii.sharpfixandroid.R$string: int noRules
+tk.idclxvii.sharpfixandroid.R$string: int pass
+tk.idclxvii.sharpfixandroid.R$string: int positiveButton
+tk.idclxvii.sharpfixandroid.R$string: int ruleDescription
+tk.idclxvii.sharpfixandroid.R$string: int ruleName
+tk.idclxvii.sharpfixandroid.R$string: int ruleNameHint
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateLabel1
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateLabel2
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateLabel3
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateLabel4
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateSelection1
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateSelection2
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateSelection3
+tk.idclxvii.sharpfixandroid.R$string: int sssUpdateSelection4
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFdFiltersRules
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFdFiltersRulesLabel
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFdRules
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFdRulesLabel
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFddDeletionPrio
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFddDeletionPrioLabel
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFddFiltersRules
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFddFiltersRulesLabel
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFddRadioNewer
+tk.idclxvii.sharpfixandroid.R$string: int subMenuFddRadioOlder
+tk.idclxvii.sharpfixandroid.R$string: int subMenuServucesSSS
+tk.idclxvii.sharpfixandroid.R$string: int subMenuServucesSSSLabel
+tk.idclxvii.sharpfixandroid.R$string: int targetDesignationDir
+tk.idclxvii.sharpfixandroid.R$string: int test1
+tk.idclxvii.sharpfixandroid.R$string: int usr
+tk.idclxvii.sharpfixandroid.R$style: int AppBaseTheme
+tk.idclxvii.sharpfixandroid.R$style: int AppTheme
+tk.idclxvii.sharpfixandroid.SharpFixApplicationClass
+tk.idclxvii.sharpfixandroid.SharpFixApplicationClass: SharpFixApplicationClass()
+tk.idclxvii.sharpfixandroid.SubMenuAboutActivity
+tk.idclxvii.sharpfixandroid.SubMenuAboutActivity: SubMenuAboutActivity()
+tk.idclxvii.sharpfixandroid.SubMenuAboutActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.SubMenuFdActivity
+tk.idclxvii.sharpfixandroid.SubMenuFdActivity: SubMenuFdActivity()
+tk.idclxvii.sharpfixandroid.SubMenuFdActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.SubMenuFdRulesActivity
+tk.idclxvii.sharpfixandroid.SubMenuFdRulesActivity: SubMenuFdRulesActivity()
+tk.idclxvii.sharpfixandroid.SubMenuFdRulesActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.SubMenuFddActivity
+tk.idclxvii.sharpfixandroid.SubMenuFddActivity: SubMenuFddActivity()
+tk.idclxvii.sharpfixandroid.SubMenuFddActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity
+tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity: SubMenuFilterRulesActivity()
+tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity$filterFlag: tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity$filterFlag[] values()
+tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity$filterFlag: tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity$filterFlag valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.SubMenuFiltersActivity
+tk.idclxvii.sharpfixandroid.SubMenuFiltersActivity: SubMenuFiltersActivity()
+tk.idclxvii.sharpfixandroid.SubMenuFiltersActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.SubMenuSchedScanSettingsActivity
+tk.idclxvii.sharpfixandroid.SubMenuSchedScanSettingsActivity: SubMenuSchedScanSettingsActivity()
+tk.idclxvii.sharpfixandroid.SubMenuServicesActivity
+tk.idclxvii.sharpfixandroid.SubMenuServicesActivity: SubMenuServicesActivity()
+tk.idclxvii.sharpfixandroid.SubMenuServicesActivity: void onClick(android.view.View)
+tk.idclxvii.sharpfixandroid.ViewRuleActivity
+tk.idclxvii.sharpfixandroid.ViewRuleActivity: ViewRuleActivity()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelAccountsInfo$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelAccountsInfo$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelAccountsInfo$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelAccountsInfo$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelDirFilter$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelDirFilter$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelDirFilter$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelDirFilter$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelDirsInfo$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelDirsInfo$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelDirsInfo$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelDirsInfo$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelFdSettings$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelFdSettings$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelFdSettings$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelFdSettings$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelFileFilter$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelFileFilter$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelFileFilter$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelFileFilter$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelFilesInfo$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelFilesInfo$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelFilesInfo$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelFilesInfo$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelMagicNumber$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelMagicNumber$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelMagicNumber$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelMagicNumber$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelPreferences$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelPreferences$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelPreferences$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelPreferences$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.ModelSD$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelSD$fields[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.ModelSD$fields: tk.idclxvii.sharpfixandroid.databasemodel.ModelSD$fields valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.Models: tk.idclxvii.sharpfixandroid.databasemodel.Models[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.Models: tk.idclxvii.sharpfixandroid.databasemodel.Models valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.databasemodel.Tables: tk.idclxvii.sharpfixandroid.databasemodel.Tables[] values()
+tk.idclxvii.sharpfixandroid.databasemodel.Tables: tk.idclxvii.sharpfixandroid.databasemodel.Tables valueOf(java.lang.String)
+tk.idclxvii.sharpfixandroid.utils.AndroidUtils$API_CODE_NAME: tk.idclxvii.sharpfixandroid.utils.AndroidUtils$API_CODE_NAME[] values()
+tk.idclxvii.sharpfixandroid.utils.AndroidUtils$API_CODE_NAME: tk.idclxvii.sharpfixandroid.utils.AndroidUtils$API_CODE_NAME valueOf(java.lang.String)

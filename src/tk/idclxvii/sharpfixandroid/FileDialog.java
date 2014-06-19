@@ -30,7 +30,11 @@ public class FileDialog {
 	private final String TAG = getClass().getName();
     	
 	private SQLiteHelper db;
-    private static final String PARENT_DIR = "..";
+	private static final String PARENT_DIR = "..";
+    
+    private HashMap<String, String> fileListWithImage = new HashMap<String,String>();
+    private File topMostPath = null;
+    private boolean developer = false;
     private String[] fileList;
     private File currentPath;
     public interface FileSelectedListener {
@@ -55,11 +59,39 @@ public class FileDialog {
      * @param activity 
      * @param initialPath
      */
-    public FileDialog(Activity activity, File path) {
+    public FileDialog(Activity activity, File path, boolean dev) {
         this.activity = activity;
         this.db = this.getDb(this.activity);
         this.SF = ((SharpFixApplicationClass) activity.getApplication());
-        if (!path.exists()) path = Environment.getExternalStorageDirectory();
+        this.developer = dev;
+        	// there are more than 1 mounted storage shit
+        HashMap <String, File> hm = this.SF.getMountedVolumeDirs();
+        if(hm.size() > 1){
+        	boolean flag = true;
+        	File previous = null;
+        	for(String str : hm.keySet().toArray(new String[hm.size()])){
+        		try{
+	            	if(!hm.get(str).getParentFile().exists() && !previous.getParentFile().equals(hm.get(str).getParentFile())){
+	            		flag = false;
+	            	}
+	            	previous = hm.get(str).getParentFile();
+            	}catch(Exception e){
+            		// Null pointer exception on previous
+            		previous = hm.get(str).getParentFile();
+            		
+            	}
+            }
+        	topMostPath = (flag && (this.SF.getDevMode() && this.developer)) ? Environment.getRootDirectory().getParentFile() : previous;
+        	currentPath = topMostPath;
+        }else{
+        	topMostPath = ( hm.get("primary").exists() && (this.SF.getDevMode() && this.developer)) ? 
+        			Environment.getRootDirectory().getParentFile() 
+        			: hm.get("primary");
+        	currentPath = topMostPath;
+        }
+        
+       
+        if (!path.exists()) path = topMostPath;//Environment.getExternalStorageDirectory();
         loadFileList(path);
     }
 
@@ -80,7 +112,10 @@ public class FileDialog {
             });
         }
 
+        /*
+        
         builder.setItems(fileList, new DialogInterface.OnClickListener() {
+        	
             public void onClick(DialogInterface dialog, int which) {
                 String fileChosen = fileList[which];
                 File chosenFile = getChosenFile(fileChosen);
@@ -93,11 +128,77 @@ public class FileDialog {
             }
         });
         
+        */
+                
+        
+        
+        //################################################################################################
+       
+        
+        
+        
+        builder.setNeutralButton("Cancel", new OnClickListener(){
+
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				
+			}
+        	
+        });
+        
+        
+        builder.setAdapter(
+        		new AndroidLayoutUtils.CustomListView.ItemAdapter(activity,R.layout.custom_listview_row, fileList),
+        		new DialogInterface.OnClickListener() {
+			
+			@Override
+			public void onClick(DialogInterface dialog, int which) {
+				// TODO Auto-generated method stub
+				String fileChosen = fileList[which];
+                File chosenFile = getChosenFile(fileChosen);
+                if (chosenFile.isDirectory()) {
+                    loadFileList(chosenFile);
+                    dialog.cancel();
+                    dialog.dismiss();
+                    showDialog();
+                } else fireFileSelectedEvent(chosenFile);
+			}
+		});
+        
+        
+        //################################################################################################
+        
         
        // dialog = builder.show();
        dialog = builder.create();
        //final AlertDialog d = (AlertDialog) dialog;
        
+       dialog.setCancelable(false);
+       
+       dialog.setOnKeyListener(new OnKeyListener(){
+    	   @Override
+    	     public boolean onKey(DialogInterface dialog, int keyCode, KeyEvent event){
+    	         if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_DOWN){
+    	        	 try{
+	    	        	 File chosenFile = getChosenFile(PARENT_DIR);
+	    	             loadFileList(chosenFile);
+	    	             dialog.cancel();
+	    	             dialog.dismiss();
+	    	             showDialog();
+	    	             return true;
+    	        	 }catch(Exception e){
+    	             	// possible error from here is the current directory is the top most directory on the file system
+    	             	Logcat.logCaughtException(activity, e.getStackTrace());
+    	             	return false;
+    	             }
+    	        	 
+    	            
+    	         }else{
+    	             return false;
+    	         }
+    	     }
+       });
        
        dialog.setOnShowListener(new OnShowListener(){
     	   
@@ -114,7 +215,11 @@ public class FileDialog {
 					selection =  selection.replace("{Dir} ", "");
 					selection =  selection.replace("{File} ", "");
 					
+					
+					//################################################################################################
+					//File f = (selection.equals(PARENT_DIR)) ? new File(currentPath.getParent()) :new File(currentPath,selection);
 					File f = new File(currentPath,selection);
+					
 					Log.d(TAG,"Selected Item's Properties:");
 					Log.d(TAG, "FILE: " + f.toString());
 					Log.d(TAG, "Current Path: " +currentPath);
@@ -188,7 +293,8 @@ public class FileDialog {
 								}
 							}
 						}
-						
+						fileTypeVal.setText((f.isDirectory()? "Folder" : (ft.contains("File") ? ft : ft + " File") ));
+							
 					}catch(Exception e){
 						if(LOGCAT){
 							fileTypeVal.setText("Unknown File");
@@ -198,7 +304,11 @@ public class FileDialog {
 								Log.d(TAG,"4 bytes signature: " + FileProperties.getMagicNumber(f, 8));
 							}catch(Exception eee){
 								if(LOGCAT){
-									Log.e(TAG,"An error in getting a file's n-bytes signature has been encountered!");
+									Log.e(TAG,"An error occured in getting the file's n-bytes signature!");
+									Log.e(TAG,"Checking root cause of the error occurence . . .");
+									
+									Log.e(TAG, (f.isDirectory() ? "The file " +f.toString() + " is a directory! Directories do not have Magic Number Signatures." :
+										"Please recheck the file \"" + f.toString() + "\" as it does not seem to be a directory to encounter this error!"));
 									
 								}
 							}
@@ -207,7 +317,6 @@ public class FileDialog {
 					
 					
 					
-					fileTypeVal.setText((f.isDirectory()? "Folder" : (ft.contains("File") ? ft : ft + " File") ));
 					
 					//########################################################################################
 					
@@ -243,7 +352,8 @@ public class FileDialog {
     	   
        });
         
-        
+       
+       
        dialog.show();
        return dialog;
     }
@@ -303,73 +413,107 @@ public class FileDialog {
     private void loadFileList(File path) {
         this.currentPath = path;
         List<String> r = new ArrayList<String>();
-        if (path.exists()) {
-            if (path.getParentFile() != null ) r.add(PARENT_DIR);
-            FilenameFilter filter = new FilenameFilter() {
-                public boolean accept(File dir, String filename) {
-                    File sel = new File(dir, filename);
-                    if (!sel.canRead() || !sel.canWrite() || sel.isHidden()) return false;
-                    if (selectDirectoryOption) return sel.isDirectory();
-                    else {
-                        boolean endsWith = fileEndsWith != null ? filename.toLowerCase().endsWith(fileEndsWith) : true;
-                        return endsWith || sel.isDirectory();
-                    }
-                }
-            };
-            if(this.SF.getRootAccess()){ // device is rooted
-            	
-            	String[] fileList1 = Shell.sendShellCommand(new String[]{/*"su","-c", */"ls "+path.toString()}, this.activity);
-            	if( ((SharpFixApplicationClass)this.activity.getApplicationContext()).getRootPermission() ){
-            		for (String file : fileList1) {
-                    	File f = new File(currentPath,file);
-                    	if(f.isDirectory()){
-                    		r.add("{Dir} " +file);
-                    	}else{
-                    		r.add("{File} " +file);
-                    	}
-                        
-                    }
-            	}else{
-            		
-            		fileList1 = path.list(filter);
-            		try{
-	                    for (String file : fileList1) {
-	                    	File f = new File(currentPath,file);	
+            if (path.exists()) {
+	            
+	        	// ################################################################################################
+	        	// if (path.getParentFile() != null ) r.add(PARENT_DIR);
+	            
+	        	FilenameFilter filter = new FilenameFilter() {
+	                public boolean accept(File dir, String filename) {
+	                    File sel = new File(dir, filename);
+	                    if (!sel.canRead() || !sel.canWrite() || sel.isHidden()) return false;
+	                    if (selectDirectoryOption) return sel.isDirectory();
+	                    else {
+	                        boolean endsWith = fileEndsWith != null ? filename.toLowerCase().endsWith(fileEndsWith) : true;
+	                        return endsWith || sel.isDirectory();
+	                    }
+	                }
+	            };
+	            if(this.SF.getRootAccess()){ // device is rooted
+	            	
+	            	String[] fileList1 = Shell.sendShellCommand(
+	            			(this.developer) ? new String[]{"su","-c", "ls "+path.toString()} :
+	            				new String[] {"ls " +path.toString()},
+	            			
+	            			this.activity);
+	            	if( ((SharpFixApplicationClass)this.activity.getApplicationContext()).getRootPermission() ){
+	            		
+	            		for (String file : fileList1) {
+	                    	File f = new File(currentPath,file);
+	                    	
 	                    	if(f.isDirectory()){
-	                    		r.add("{Dir} " +file);
+	                    		
+	                    		r.add(file); //("{Dir} " +file);
+	                    		// key = file name, value = image 
+	                    		fileListWithImage.put(file.toString(), "folder_icon.png");
 	                    	}else{
-	                    		r.add("{File} " +file);
+	                    		r.add(file); //("{File} " +file);
+	                    		fileListWithImage.put(file.toString(), "file_icon.png");
 	                    	}
 	                        
 	                    }
-            		}catch(Exception e){
-            			Log.e(TAG,"WARNING! ROOT PERMISSION WAS FORCEFULLY DENIED! ");
-            			
-            		}
-            	}
-            	
-            }else{
-            	String[] fileList1 = path.list(filter);
-                for (String file : fileList1) {
-                	File f = new File(currentPath,file);
-                	if(f.isDirectory()){
-                		r.add("{Dir} " +file);
-                	}else{
-                		r.add("{File} " +file);
-                	}
-                    
-                }
-            }
-            
-        }
-        fileList = (String[]) r.toArray(new String[]{});
+	            	}else{
+	            		
+	            		fileList1 = path.list(filter);
+	            		try{
+		                    for (String file : fileList1) {
+		                    	File f = new File(currentPath,file);	
+		                    	if(f.isDirectory()){
+		                    		
+		                    		r.add(file); //("{Dir} " +file);
+		                    		// key = file name, value = image 
+		                    		fileListWithImage.put(file.toString(), "folder_icon.png");
+		                    	}else{
+		                    		r.add(file); //("{File} " +file);
+		                    		fileListWithImage.put(file.toString(), "file_icon.png");
+		                    	}
+		                        
+		                    }
+	            		}catch(Exception e){
+	            			Log.e(TAG,"WARNING! ROOT PERMISSION WAS FORCEFULLY DENIED! ");
+	            			
+	            		}
+	            	}
+	            	
+	            }else{
+	            	String[] fileList1 = path.list(filter);
+	                for (String file : fileList1) {
+	                	File f = new File(currentPath,file);
+	                	if(f.isDirectory()){
+	                		
+	                		r.add(file); //("{Dir} " +file);
+	                		// key = file name, value = image 
+	                		fileListWithImage.put(file.toString(), "folder_icon.png");
+	                	}else{
+	                		r.add(file); //("{File} " +file);
+	                		fileListWithImage.put(file.toString(), "file_icon.png");
+	                	}
+	                    
+	                }
+	            }
+	            
+	        }
+	        fileList = (String[]) r.toArray(new String[]{});
+	        
+	
+	    	AndroidLayoutUtils.CustomListView.Model.refreshModel();
+	        for (int i= 0; i < fileList.length; i++){
+	        	AndroidLayoutUtils.CustomListView.Model.LoadModel(i,
+	        			(fileListWithImage.get(fileList[i]) != null ? fileListWithImage.get(fileList[i]): 
+	        				"folder_icon.png")
+	        				, fileList[i]);
+	        }
+	        
+        
+
+        
     }
 
     private File getChosenFile(String fileChosen) {
     	fileChosen = fileChosen.replace("{Dir} ", "");
     	fileChosen = fileChosen.replace("{File} ", "");
     	
-        if (fileChosen.equals(PARENT_DIR)) return currentPath.getParentFile();
+        if (fileChosen.equals(PARENT_DIR)) return (!currentPath.getAbsolutePath().equals(topMostPath.getAbsolutePath())) ? currentPath.getParentFile() : topMostPath;
         else return new File(currentPath, fileChosen);
     }
 

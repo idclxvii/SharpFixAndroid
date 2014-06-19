@@ -1,6 +1,9 @@
 package tk.idclxvii.sharpfixandroid;
 
 import java.io.File;
+import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.*;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
@@ -8,9 +11,14 @@ import tk.idclxvii.sharpfixandroid.utils.ExecuteAsRootBase;
 import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
 import android.app.Application;
+import android.os.Environment;
 import android.util.Log;
 
 public class SharpFixApplicationClass extends Application{
+	
+	/*
+	 * Developer Fields - Fields that are manually edited by the developer based on mood swings.
+	 */
 	
 	private final boolean LOGCAT = true;
 	private final String TAG = this.getClass().getName();
@@ -20,9 +28,16 @@ public class SharpFixApplicationClass extends Application{
 		return this.DEVELOPER_MODE;
 	}
 	
+	/*
+	 * Handset Fields - Fields that are based on the phone's data
+	 */
+	
+	
 	private File extFileDir;
 	private File intFileDir;
 	private File dbFileDir;
+	private HashMap<String, File> mountedVolumeDirs;
+	private HashMap<String, String> mountedVolumeState = new HashMap<String, String>();
 	
 	public File getDbFileDirFile(){
 		return this.dbFileDir;
@@ -49,10 +64,91 @@ public class SharpFixApplicationClass extends Application{
 		return this.extFileDir.toString();
 	}
 	
+	public HashMap<String,File> getMountedVolumeDirs(){
+		
+		// mount types: primary, mounted, usbdisk
+		
+		String state = Environment.getExternalStorageState();
+		if ( Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) ) {  // we can read the External Storage...           
+		    //Retrieve the primary External Storage:
+		    final File primaryExternalStorage = Environment.getExternalStorageDirectory();
+
+		    //Retrieve the External Storages root directory:
+		    String externalStorageRootDir = null;
+		    if ( (externalStorageRootDir = primaryExternalStorage.getParent()) == null ) {  // no parent...
+		    	this.mountedVolumeState.put("primary", (Environment.isExternalStorageRemovable() ? " Removable SD-CARD" : "Internal Memory"));
+		    	return (
+		    			new HashMap<String, File>() { 
+		    					{
+		    						put("primary", primaryExternalStorage); 
+		    						
+		    				}
+		    			}
+		    	);
+		    }
+		    else {
+		        File externalStorageRoot = new File( externalStorageRootDir );
+		        File[] files = externalStorageRoot.listFiles(new FilenameFilter(){
+
+					@Override
+					public boolean accept(File dir, String filename) {
+						// TODO Auto-generated method stub
+						
+						File file = new File(dir, filename);
+						if(file.isDirectory() && file.canRead() && file.canWrite() 
+		            		&& !file.isHidden()){
+							return true;
+						}
+						return false;
+					}
+		        	
+		        }); //.listFiles();
+		        HashMap <String,File> data = new HashMap< String, File>();
+		        if(files.length > 1){
+		        	//data.add("MULTIPLE VOLUMES HAS BEEN DETECTED!");
+			        //data.add("Enumerating detected volumes . . .");
+			    }else{
+		        	//data.add("ONLY A SINGLE VOLUME HAS BEEN DETECTED!");
+			    }
+		        
+		        for ( File file : files ) {
+		            if ( file.isDirectory() && file.canRead() && file.canWrite() 
+		            		&& !file.isHidden() && (files.length > 0) ) {  // it is a real directory (not a USB drive)...
+		            	if(file.toString().equals(primaryExternalStorage.toString())){
+		            		this.mountedVolumeState.put("primary", (Environment.isExternalStorageRemovable() ? "Removable SD-CARD" : "Internal Memory"));
+		            		data.put("primary", file);
+		            				/*
+		            				(Environment.isExternalStorageRemovable() ? "(REMOVABLE SD-CARD)" : "(INTERNAL Memory)")
+					    			+ " PRIMARY STORAGE: " + file.getAbsolutePath()
+					    			*/
+					    		
+		            	}else{
+		            		this.mountedVolumeState.put("mounted",  ((file.toString().contains("usb") || 
+		            				file.toString().contains("USB")) ? "Removable USB Disk" : "Internal Memory"));
+		            		data.put("mounted", file);
+		            		
+		            	}
+		            }
+		        }
+		        return data;
+		    }
+		}else{
+			// we cannot read the External Storage..., return null
+			return null;
+		}
+		
+	}
+	
+	
 	
 	
 	private Boolean rootAccess; // this is just to know whether the device is rooted or not, do not base on this when calling root commands
 	private Boolean root; // current permission given to a root command, this is the dynamic variable to watch when calling root commands
+	
+	
+	/*
+	 * SQLite-based Fields - Fields that are saved and retrieved in the SQLite Database 
+	 */
 	
 	private Integer accountId;
 	private Integer fddSwitch;

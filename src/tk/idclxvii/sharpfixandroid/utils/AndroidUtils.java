@@ -13,6 +13,7 @@ public abstract class AndroidUtils {
 	
 	private final static String TAG = AndroidUtils.class.getName();
 	
+	
 	public static enum API_CODE_NAME{
 		BASE,
 		BASE_1_1,

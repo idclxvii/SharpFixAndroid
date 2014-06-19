@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tk.idclxvii.sharpfixandroid"
     android:versionCode="999999"
-    android:versionName="1.0.0 (DEVELOPMENT PROTOTYPE VERSION)" >
+    android:versionName="999999 (DEVELOPMENT PROTOTYPE VERSION)" >
 	
 	<!-- Give users the choice whether to install the application on SD Card or Internal Memory
 	manifest .....
@@ -11,7 +11,7 @@
 	-->
     <uses-sdk
         android:minSdkVersion="9"
-        android:targetSdkVersion="17" />
+        android:targetSdkVersion="19" />
 	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_SUPERUSER" />

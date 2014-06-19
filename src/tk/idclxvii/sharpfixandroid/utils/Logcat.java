@@ -109,4 +109,14 @@ public abstract class Logcat {
 		}
 	}
 	
+	public static void logCaughtException(Context c, StackTraceElement[] stackTrace ){
+		if(stackTrace != null){
+			for(int y= 0; y <stackTrace.length; y++){
+				Log.w(c.getPackageName(), stackTrace[y].toString());
+			}
+		}else{
+			Log.e(TAG, "Stacktrace unavailable for Logcat.logCaughtException from " +c.getClass().getName());
+		}
+	}
+	
 }

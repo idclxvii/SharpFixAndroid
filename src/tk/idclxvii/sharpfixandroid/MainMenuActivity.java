@@ -16,6 +16,7 @@ import android.view.View.*;
 import android.widget.*;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
+import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
 public class MainMenuActivity extends Activity implements OnClickListener{
 	
@@ -94,7 +95,7 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 					Dialog d = new Dialog(MainMenuActivity.this);
 					d.setContentView(R.layout.fd_sub_menu_rules);
 					
-					d.setTitle("{DEVELOPER MODE} " + (MainMenuActivity.this.SF.getRootAccess() ? "root" : "h4x0r"));
+					d.setTitle("{ } DEVELOPER MODE " + (MainMenuActivity.this.SF.getRootAccess() ? "root" : "h4x0r"));
 					TextView title = (TextView) d.findViewById(R.id.title);
 					title.setText("Active and Mounted Volumes Detection");
 					TextView noRules = (TextView) d.findViewById(R.id.noRules);
@@ -135,7 +136,7 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 							try{
 								final String selection = ((String)parent.getItemAtPosition(position));
 								final String dir = selection.substring(selection.indexOf("/"), selection.length());
-								FileDialog f = new FileDialog(MainMenuActivity.this, new File(dir));
+								FileDialog f = new FileDialog(MainMenuActivity.this, new File(dir), true);
 								f.addFileListener(new FileDialog.FileSelectedListener(){
 	
 									@Override
@@ -150,10 +151,7 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 								
 							}catch(Exception e){
 								if(LOGCAT){
-					    			StackTraceElement[] st = e.getStackTrace();
-									for(int y= 0; y <st.length; y++){
-										Log.w(TAG, st[y].toString());
-									}
+					    			Logcat.logCaughtException(MainMenuActivity.this, e.getStackTrace());
 					    		}
 								
 							}

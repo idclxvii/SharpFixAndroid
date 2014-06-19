@@ -602,7 +602,7 @@ public class SubMenuFilterRulesActivity extends Activity implements
 					
 				}else{
 					// user selected file filtering					
-					FileDialog f = new FileDialog(SubMenuFilterRulesActivity.this,Environment.getExternalStorageDirectory());
+					FileDialog f = new FileDialog(SubMenuFilterRulesActivity.this, new File(""), false);
 					f.addFileListener(SubMenuFilterRulesActivity.this);
 					f.setSelectDirectoryOption(false);
 					f.createFileDialog();
