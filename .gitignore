@@ -9,7 +9,11 @@
 *.class
 
 # Generated files
-bin/
+bin/classes
+bin/dexedLibs
+bin/res
+bin/jarlist.cache
+bin/classes.dex
 gen/
 
 # Gradle files

@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="tk.idclxvii.sharpfixandroid"
+    android:versionCode="999999"
+    android:versionName="999999 (DEVELOPMENT PROTOTYPE VERSION)" >
+	
+	<!-- Give users the choice whether to install the application on SD Card or Internal Memory
+	manifest .....
+	android:installLocation="" >
+	Values are: auto, preferExternal,	 
+	-->
+    <uses-sdk
+        android:minSdkVersion="9"
+        android:targetSdkVersion="19" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+	<uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
+	
+	<!-- Prevent users from deleting database records
+	<application 
+		android:manageSpaceActivity=".MainActivity" 
+		> 
+	-->
+    <application
+        
+        android:allowBackup="true"
+        android:icon="@drawable/logo2"
+        android:label="@string/app_name"
+        android:theme="@style/AppTheme"
+        android:name="tk.idclxvii.sharpfixandroid.SharpFixApplicationClass" >
+        
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+				<category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.MainMenuActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFddActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFdActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFdRulesActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFiltersActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuServicesActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuSchedScanSettingsActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuAboutActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.ViewRuleActivity"
+            android:label="@string/app_name" >
+        </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity"
+            android:label="@string/app_name" >
+        </activity><service 
+            android:enabled="true" 
+            android:name=".FileDesignationService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/fdService" 
+            />
+        <service 
+            android:enabled="true" 
+            android:name=".FileDuplicationDetectionService"
+            android:icon="@drawable/ic_launcher"
+            android:label="@string/fddService" 
+            />
+        
+    </application>
+    
+    <intent-filter>
+        <action android:name="android.intent.action.SEND" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <data android:mimeType="text/plain" />
+        
+        	
+        <!-- FILE ASSOCIATION:  
+        	
+	        <action android:name="android.intent.action.VIEW" />
+		    <category android:name="android.intent.category.DEFAULT" />
+		    <data android:scheme="file" />
+		    <data android:host="*" />
+		    <data android:pathPattern=".*\.zip" />
+    	-->
+        
+    </intent-filter>
+
+</manifest>
