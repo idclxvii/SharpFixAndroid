@@ -95,7 +95,8 @@ public class AndroidLayoutUtils {
 
 		    @Override
 		    public View getView(int position, View convertView, ViewGroup parent) {
-		        LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+
+		    	LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
 
 		        View rowView = inflater.inflate(rowResourceId, parent, false);
 		        ImageView imageView = (ImageView) rowView.findViewById(R.id.imageView);
@@ -120,6 +121,8 @@ public class AndroidLayoutUtils {
 			        return rowView;
 		       
 		    }
+		    
+		    
 		}
 	}
 	

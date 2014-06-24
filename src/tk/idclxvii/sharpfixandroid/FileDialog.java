@@ -37,6 +37,7 @@ public class FileDialog {
     private boolean developer = false;
     private String[] fileList;
     private File currentPath;
+    
     public interface FileSelectedListener {
         void fileSelected(File file);
     }
@@ -99,6 +100,7 @@ public class FileDialog {
      * @return file dialog
      */
     public Dialog createFileDialog() {
+    	loadFileList(currentPath);
     	Dialog dialog = null;
         final AlertDialog.Builder builder = new AlertDialog.Builder(activity);
         
@@ -306,9 +308,13 @@ public class FileDialog {
 								if(LOGCAT){
 									Log.e(TAG,"An error occured in getting the file's n-bytes signature!");
 									Log.e(TAG,"Checking root cause of the error occurence . . .");
-									
 									Log.e(TAG, (f.isDirectory() ? "The file " +f.toString() + " is a directory! Directories do not have Magic Number Signatures." :
 										"Please recheck the file \"" + f.toString() + "\" as it does not seem to be a directory to encounter this error!"));
+									if(f.isDirectory()){
+										fileTypeVal.setText("Folder");
+									}else{
+										fileTypeVal.setText("Unknown File");
+									}
 									
 								}
 							}
@@ -357,7 +363,6 @@ public class FileDialog {
        dialog.show();
        return dialog;
     }
-
 
     public void addFileListener(FileSelectedListener listener) {
         fileListenerList.add(listener);
@@ -413,6 +418,8 @@ public class FileDialog {
     private void loadFileList(File path) {
         this.currentPath = path;
         List<String> r = new ArrayList<String>();
+        List<String> dirs = new ArrayList<String>(); // array list of folders
+        List<String> files = new ArrayList<String>(); // array list of files
             if (path.exists()) {
 	            
 	        	// ################################################################################################
@@ -440,16 +447,30 @@ public class FileDialog {
 	            		
 	            		for (String file : fileList1) {
 	                    	File f = new File(currentPath,file);
-	                    	
-	                    	if(f.isDirectory()){
-	                    		
-	                    		r.add(file); //("{Dir} " +file);
-	                    		// key = file name, value = image 
-	                    		fileListWithImage.put(file.toString(), "folder_icon.png");
-	                    	}else{
-	                    		r.add(file); //("{File} " +file);
-	                    		fileListWithImage.put(file.toString(), "file_icon.png");
-	                    	}
+		                    if(selectDirectoryOption){
+		                    	if(f.isDirectory()){
+		                    		
+		                    		dirs.add(file);
+		                    		// r.add(file); //("{Dir} " +file);
+		                    		// key = file name, value = image 
+		                    		fileListWithImage.put(file.toString(), "folder_icon_2.png");
+		                    	}
+		                    	
+		                    }else{
+		                    	if(f.isDirectory()){
+		                    		
+		                    		dirs.add(file);
+		                    		// r.add(file); //("{Dir} " +file);
+		                    		// key = file name, value = image 
+		                    		fileListWithImage.put(file.toString(), "folder_icon_2.png");
+		                    	}else{
+		                    		
+		                    		files.add(file);
+		                    		//r.add(file); //("{File} " +file);
+		                    		fileListWithImage.put(file.toString(), "file_icon_2.png");
+		                    	}
+		                    	
+		                    }
 	                        
 	                    }
 	            	}else{
@@ -458,15 +479,30 @@ public class FileDialog {
 	            		try{
 		                    for (String file : fileList1) {
 		                    	File f = new File(currentPath,file);	
-		                    	if(f.isDirectory()){
-		                    		
-		                    		r.add(file); //("{Dir} " +file);
-		                    		// key = file name, value = image 
-		                    		fileListWithImage.put(file.toString(), "folder_icon.png");
-		                    	}else{
-		                    		r.add(file); //("{File} " +file);
-		                    		fileListWithImage.put(file.toString(), "file_icon.png");
-		                    	}
+		                    	if(selectDirectoryOption){
+			                    	if(f.isDirectory()){
+			                    		
+			                    		dirs.add(file);
+			                    		// r.add(file); //("{Dir} " +file);
+			                    		// key = file name, value = image 
+			                    		fileListWithImage.put(file.toString(), "folder_icon_2.png");
+			                    	}
+			                    	
+			                    }else{
+			                    	if(f.isDirectory()){
+			                    		
+			                    		dirs.add(file);
+			                    		// r.add(file); //("{Dir} " +file);
+			                    		// key = file name, value = image 
+			                    		fileListWithImage.put(file.toString(), "folder_icon_2.png");
+			                    	}else{
+			                    		
+			                    		files.add(file);
+			                    		//r.add(file); //("{File} " +file);
+			                    		fileListWithImage.put(file.toString(), "file_icon_2.png");
+			                    	}
+			                    	
+			                    }
 		                        
 		                    }
 	            		}catch(Exception e){
@@ -479,30 +515,62 @@ public class FileDialog {
 	            	String[] fileList1 = path.list(filter);
 	                for (String file : fileList1) {
 	                	File f = new File(currentPath,file);
-	                	if(f.isDirectory()){
-	                		
-	                		r.add(file); //("{Dir} " +file);
-	                		// key = file name, value = image 
-	                		fileListWithImage.put(file.toString(), "folder_icon.png");
-	                	}else{
-	                		r.add(file); //("{File} " +file);
-	                		fileListWithImage.put(file.toString(), "file_icon.png");
-	                	}
+	                	if(selectDirectoryOption){
+	                    	if(f.isDirectory()){
+	                    		
+	                    		dirs.add(file);
+	                    		// r.add(file); //("{Dir} " +file);
+	                    		// key = file name, value = image 
+	                    		fileListWithImage.put(file.toString(), "folder_icon_2.png");
+	                    	}
+	                    	
+	                    }else{
+	                    	if(f.isDirectory()){
+	                    		
+	                    		dirs.add(file);
+	                    		// r.add(file); //("{Dir} " +file);
+	                    		// key = file name, value = image 
+	                    		fileListWithImage.put(file.toString(), "folder_icon_2.png");
+	                    	}else{
+	                    		
+	                    		files.add(file);
+	                    		//r.add(file); //("{File} " +file);
+	                    		fileListWithImage.put(file.toString(), "file_icon_2.png");
+	                    	}
+	                    	
+	                    }
 	                    
 	                }
 	            }
 	            
 	        }
-	        fileList = (String[]) r.toArray(new String[]{});
-	        
-	
-	    	AndroidLayoutUtils.CustomListView.Model.refreshModel();
-	        for (int i= 0; i < fileList.length; i++){
-	        	AndroidLayoutUtils.CustomListView.Model.LoadModel(i,
-	        			(fileListWithImage.get(fileList[i]) != null ? fileListWithImage.get(fileList[i]): 
-	        				"folder_icon.png")
-	        				, fileList[i]);
-	        }
+            
+            // sort all r
+            if(selectDirectoryOption){
+            	Collections.sort(dirs);
+                r.addAll(dirs);
+                fileList = (String[]) r.toArray(new String[]{});
+                AndroidLayoutUtils.CustomListView.Model.refreshModel();
+    	        for (int i= 0; i < fileList.length; i++){
+    	        	AndroidLayoutUtils.CustomListView.Model.LoadModel(i,
+    	        			"folder_icon_2.png"
+    	        				, fileList[i]);
+    	        }
+            }else{
+            	Collections.sort(dirs);
+                Collections.sort(files);
+                r.addAll(dirs);
+                r.addAll(files);
+                fileList = (String[]) r.toArray(new String[]{});
+                AndroidLayoutUtils.CustomListView.Model.refreshModel();
+    	        for (int i= 0; i < fileList.length; i++){
+    	        	AndroidLayoutUtils.CustomListView.Model.LoadModel(i,
+    	        			(fileListWithImage.get(fileList[i]) != null ? fileListWithImage.get(fileList[i]): 
+    	        				"folder_icon_2.png")
+    	        				, fileList[i]);
+    	        }
+            }
+            
 	        
         
 
@@ -523,28 +591,28 @@ public class FileDialog {
  }
 
 class ListenerList<L> {
-private List<L> listenerList = new ArrayList<L>();
-
-public interface FireHandler<L> {
-    void fireEvent(L listener);
-}
-
-public void add(L listener) {
-    listenerList.add(listener);
-}
-
-public void fireEvent(FireHandler<L> fireHandler) {
-    List<L> copy = new ArrayList<L>(listenerList);
-    for (L l : copy) {
-        fireHandler.fireEvent(l);
-    }
-}
-
-public void remove(L listener) {
-    listenerList.remove(listener);
-}
-
-public List<L> getListenerList() {
-    return listenerList;
-}
+	private List<L> listenerList = new ArrayList<L>();
+	
+	public interface FireHandler<L> {
+	    void fireEvent(L listener);
+	}
+	
+	public void add(L listener) {
+	    listenerList.add(listener);
+	}
+	
+	public void fireEvent(FireHandler<L> fireHandler) {
+	    List<L> copy = new ArrayList<L>(listenerList);
+	    for (L l : copy) {
+	        fireHandler.fireEvent(l);
+	    }
+	}
+	
+	public void remove(L listener) {
+	    listenerList.remove(listener);
+	}
+	
+	public List<L> getListenerList() {
+	    return listenerList;
+	}
 }

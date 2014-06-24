@@ -14,6 +14,7 @@ import android.widget.*;
 import android.widget.AdapterView.OnItemClickListener;
 import android.widget.CompoundButton.*;
 
+import tk.idclxvii.sharpfixandroid.FileDialog.FileSelectedListener;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 
 import java.io.*;
@@ -21,7 +22,7 @@ import java.util.*;
 
 public class SubMenuFdRulesActivity extends Activity implements
 		OnClickListener, OnCheckedChangeListener,
-		FolderDialog.ChosenDirectoryListener {
+		/*FolderDialog.ChosenDirectoryListener, */ FileDialog.DirectorySelectedListener {
 
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
@@ -522,9 +523,18 @@ public class SubMenuFdRulesActivity extends Activity implements
 				@Override
 				public void onClick(View v){
 					// call FolderDialog
+					
+					/*
 					FolderDialog fd = new FolderDialog(SubMenuFdRulesActivity.this,SubMenuFdRulesActivity.this);
 					fd.setNewFolderEnabled(true);
 					fd.chooseDirectory("");
+					
+					*/
+					FileDialog f = new FileDialog(SubMenuFdRulesActivity.this, new File(""), false);
+					f.addDirectoryListener(SubMenuFdRulesActivity.this);
+					f.setSelectDirectoryOption(true);
+					
+					f.createFileDialog();
 					SubMenuFdRulesActivity.this.chosenDir = null;
 					designationDir.setText("Target Designation Directory:");
 					
@@ -703,7 +713,7 @@ public class SubMenuFdRulesActivity extends Activity implements
 	}
 	
 	
-
+/*
 	@Override
 	public void onChosenDir(String chosenDir) {
 		// TODO Auto-generated method stub
@@ -723,6 +733,37 @@ public class SubMenuFdRulesActivity extends Activity implements
 				Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
 						" cannot be used as a Designation Directory due to System Permissions");
 				Log.d(TAG, chosenDir + " Properties:");
+				Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
+				Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
+				Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));
+				Log.d(TAG, "Is Hidden?: (This should be false!)" + Boolean.toString(f.isHidden()));
+				
+			}
+		}
+	}
+*/
+
+
+
+	@Override
+	public void directorySelected(File directory) {
+		// TODO Auto-generated method stub
+		designationDir.setText("Target Designation Directory:"+"\n" + directory.getAbsolutePath());
+		Toast.makeText(
+            	SubMenuFdRulesActivity.this, "Chosen directory: " + 
+            			directory.getAbsolutePath(), Toast.LENGTH_LONG).show();
+		File f = directory;
+		if(f.exists() && f.canRead() && f.canWrite()  && !(f.isHidden()) ){
+			// check if the directory exists, can be read, is not hidden and can be accessed to write
+			SubMenuFdRulesActivity.this.chosenDir = directory.getAbsolutePath();
+		}else{
+			SubMenuFdRulesActivity.this.chosenDir = null;
+			designationDir.setText("Target Designation Directory:"+"\n" + "The chosen directory " + directory.getAbsolutePath() +
+					" cannot be used as a Designation Directory due to System Permissions");
+			if(LOGCAT){
+				Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + directory.getAbsolutePath() +
+						" cannot be used as a Designation Directory due to System Permissions");
+				Log.d(TAG, directory.getAbsolutePath() + " Properties:");
 				Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
 				Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
 				Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));

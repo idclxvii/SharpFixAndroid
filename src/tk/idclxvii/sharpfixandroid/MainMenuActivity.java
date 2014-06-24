@@ -142,7 +142,12 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 									@Override
 									public void fileSelected(File file) {
 										// TODO Auto-generated method stub
-										
+										try{
+											tk.idclxvii.sharpfixandroid.utils.AndroidUtils.openFile(MainMenuActivity.this, file);
+										}catch(Exception e){
+											tk.idclxvii.sharpfixandroid.utils.Logcat.logCaughtException(
+													MainMenuActivity.this, e.getStackTrace());
+										}
 									}
 									
 								});

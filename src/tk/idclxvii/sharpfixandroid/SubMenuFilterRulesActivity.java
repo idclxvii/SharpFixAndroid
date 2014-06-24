@@ -21,7 +21,7 @@ import java.util.*;
 
 public class SubMenuFilterRulesActivity extends Activity implements
 		OnClickListener, OnCheckedChangeListener,
-		FolderDialog.ChosenDirectoryListener, FileDialog.FileSelectedListener {
+		FileDialog.DirectorySelectedListener, FileDialog.FileSelectedListener {
 
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
@@ -192,7 +192,13 @@ public class SubMenuFilterRulesActivity extends Activity implements
 									(filterType.equals("Directory Filter Rule") ? ((ModelDirFilter)rule).getDir() :
 										 ((ModelFileFilter)rule).getFile()
 											));
-									SubMenuFilterRulesActivity.this.dirFilter = (filterType.equals("Directory Filter Rule") ? true : false);						/*
+									SubMenuFilterRulesActivity.this.dirFilter = (filterType.equals("Directory Filter Rule") ? true : false);		
+									SubMenuFilterRulesActivity.this.chosenFiltered = (filterType.equals("Directory Filter Rule") ? 
+											((ModelDirFilter)rule).getDir() :
+												 ((ModelFileFilter)rule).getFile()
+											);		
+									
+									/*
 									SubMenuFilterRulesActivity.this.ruleName.setText(((ModelFdSettings)rule).getRule_name());
 									SubMenuFilterRulesActivity.this.chosenFilter.setText("Item(s) to be filtered: "+"\n" + ((ModelFdSettings)rule).getDesignation_path());
 									*/
@@ -596,10 +602,17 @@ public class SubMenuFilterRulesActivity extends Activity implements
 				SubMenuFilterRulesActivity.this.chosenFiltered = null;
 				if(SubMenuFilterRulesActivity.this.dirFilter){
 					// user selected directory filtering 
+					
+					/*
 					FolderDialog fd = new FolderDialog(SubMenuFilterRulesActivity.this,SubMenuFilterRulesActivity.this);
 					fd.setNewFolderEnabled(true);
 					fd.chooseDirectory("");
+					*/
 					
+					FileDialog f = new FileDialog(SubMenuFilterRulesActivity.this, new File(""), false);
+					f.addDirectoryListener(SubMenuFilterRulesActivity.this);
+					f.setSelectDirectoryOption(true);
+					f.createFileDialog();
 				}else{
 					// user selected file filtering					
 					FileDialog f = new FileDialog(SubMenuFilterRulesActivity.this, new File(""), false);
@@ -896,25 +909,25 @@ public class SubMenuFilterRulesActivity extends Activity implements
 	}
 
 	@Override
-	public void onChosenDir(String chosenDir) {
+	public void directorySelected(File chosenDir) {
 		// TODO Auto-generated method stub
 		try{
-			chosenFilter.setText("Item(s) to be filtered: "+"\n" + chosenDir);
+			chosenFilter.setText("Item(s) to be filtered: "+"\n" + chosenDir.getAbsolutePath());
 			Toast.makeText(
 	            	SubMenuFilterRulesActivity.this, "Chosen directory: " + 
-	              chosenDir, Toast.LENGTH_LONG).show();
-			File f = new File(chosenDir);
+	            			chosenDir.getAbsolutePath(), Toast.LENGTH_LONG).show();
+			File f = chosenDir;
 			if(f.exists() && f.canRead() && f.canWrite()  && !(f.isHidden()) ){
 				// check if the directory exists, can be read, is not hidden and can be accessed to write
-				SubMenuFilterRulesActivity.this.chosenFiltered = chosenDir;
+				SubMenuFilterRulesActivity.this.chosenFiltered = chosenDir.getAbsolutePath();
 			}else{
 				SubMenuFilterRulesActivity.this.chosenFiltered = null;
-				chosenFilter.setText("Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
+				chosenFilter.setText("Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir.getAbsolutePath() +
 						" cannot be used as a Designation Directory due to System Permissions");
 				if(LOGCAT){
-					Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir +
+					Log.d(TAG, "Target Designation Directory:"+"\n" + "The chosen directory " + chosenDir.getAbsolutePath() +
 							" cannot be used as a Designation Directory due to System Permissions");
-					Log.d(TAG, chosenDir + " Properties:");
+					Log.d(TAG, chosenDir.getAbsolutePath() + " Properties:");
 					Log.d(TAG, "Exists?: " + Boolean.toString(f.exists()));
 					Log.d(TAG, "Can Read?: " + Boolean.toString(f.canRead()));
 					Log.d(TAG, "Can Write?: " + Boolean.toString(f.canWrite()));
