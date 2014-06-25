@@ -74,6 +74,9 @@
     <string name="sssUpdateLabel3">If Internet connection is available, SharpFix checks for the latest file signature definitions to be used by File Designation Scan before initializing the said scheduled scan.</string>    
     <string name="sssUpdateSelection4">Enable Scheduled Scan Notifications</string>    
     <string name="sssUpdateLabel4">SharpFix gives User Notifications when starting Scheduled Scans</string>    
+    <string name="sssUpdateSelection5">Start Scan Now</string>    
+    <string name="sssUpdateSelection6">Stop Scan</string>    
+    <string name="sssUpdateSelection7">Direct Scan Controls</string>    
     
     
     

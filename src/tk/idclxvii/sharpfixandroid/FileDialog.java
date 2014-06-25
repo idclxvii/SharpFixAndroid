@@ -25,6 +25,7 @@ import android.widget.TextView;
 public class FileDialog {
 	
 	// LogCat switch and tag
+	private String[] rootFileList;
 	private SharpFixApplicationClass SF;
 	private boolean LOGCAT = true;
 	private final String TAG = getClass().getName();
@@ -438,11 +439,17 @@ public class FileDialog {
 	            };
 	            if(this.SF.getRootAccess()){ // device is rooted
 	            	
+	            	
+	            	/*
+	            	 	Use this to get access to full directory of the file system, avoiding redundant SU permission
+	            		this.rootFileList = Shell.sendShellCommand(new String[]{"su","-c", "find /"}, this.activity);
+	            	 */
 	            	String[] fileList1 = Shell.sendShellCommand(
 	            			(this.developer) ? new String[]{"su","-c", "ls "+path.toString()} :
 	            				new String[] {"ls " +path.toString()},
 	            			
 	            			this.activity);
+	            		
 	            	if( ((SharpFixApplicationClass)this.activity.getApplicationContext()).getRootPermission() ){
 	            		
 	            		for (String file : fileList1) {
