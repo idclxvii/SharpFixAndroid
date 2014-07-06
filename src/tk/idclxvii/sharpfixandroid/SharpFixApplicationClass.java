@@ -2,8 +2,8 @@ package tk.idclxvii.sharpfixandroid;
 
 import java.io.File;
 import java.io.FilenameFilter;
-import java.util.ArrayList;
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
@@ -11,6 +11,7 @@ import tk.idclxvii.sharpfixandroid.utils.ExecuteAsRootBase;
 import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
 import android.app.Application;
+import android.content.Context;
 import android.os.Environment;
 import android.util.Log;
 
@@ -23,7 +24,6 @@ public class SharpFixApplicationClass extends Application{
 	private final boolean LOGCAT = true;
 	private final String TAG = this.getClass().getName();
 	private final boolean DEVELOPER_MODE = true;
-	
 	public boolean getDevMode(){
 		return this.DEVELOPER_MODE;
 	}
@@ -209,19 +209,33 @@ public class SharpFixApplicationClass extends Application{
 		this.setRootAccess(ExecuteAsRootBase.canRunRootCommands());
 		Log.e(TAG, (this.getRootAccess()) ? "{Root Access} available!" : "{Root Access} unavailable!");
 		Log.i(TAG, "{Active and Mounted Volumes} Detection Initializing . . .");
-		Logcat.i(this,  AndroidUtils.getMountedVolumes());
-		
+		Logcat.i(this, AndroidUtils.getMountedVolumes());
 	}
 	
 	@Override
 	public void onCreate(){
 		super.onCreate();
-
 		extFileDir = this.getExternalFilesDir(null).getParentFile();
 		intFileDir = this.getFilesDir().getParentFile();
 		dbFileDir = this.getDatabasePath("sharpfix_database.db").getParentFile();
 		bootMessage();
-		bootTasks();
+		new GlobalAsyncTask<Void,Void,Void>(){
+
+			@Override
+			protected Void doTask(Void... params) throws Exception {
+				// TODO Auto-generated method stub
+				bootTasks();
+				return null;
+			}
+
+			@Override
+			protected void onException(Exception e) {
+				// TODO Auto-generated method stub
+				
+			}
+			
+		}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
+		
 	}
 	
 	@Override

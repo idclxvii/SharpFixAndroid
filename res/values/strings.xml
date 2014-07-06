@@ -106,6 +106,7 @@
     <!--  Rules Sub Menu-->
     
     <!--  DUMMY (Automatically Edited On Java Files) -->
+    <string name="loading">Loading ...</string>
     <string name="dummy">Dummy Text Here . . .</string>
     <string name="blankdummy"></string>
     

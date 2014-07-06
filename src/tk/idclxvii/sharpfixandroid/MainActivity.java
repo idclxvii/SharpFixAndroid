@@ -7,12 +7,12 @@ import java.util.List;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.*;
 
-import android.os.*;
 import android.app.*;
 import android.view.*;
 import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.content.*;
+import android.os.Bundle;
 import android.text.*;
 import android.util.*;
 import android.widget.*;
@@ -49,6 +49,10 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		return this.db;
 	  }
 	  
+	private abstract class SQLiteTask<Params, Progress, Result> extends GlobalAsyncTask<Params, Progress, Result>{
+	
+	}
+	
 	  
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -58,148 +62,188 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){
 			Log.d(this.TAG, this.TAG +  " onCreate()");
-			
-			
-			
 		}
 		// initialize database connection
 		db = this.getDb(getApplicationContext());//new SQLiteHelper(getApplicationContext());
 			try{
-				if(db.selectAll(Tables.accounts_info,ModelAccountsInfo.class, null).length > 0){
+				if(
+				new GlobalAsyncTask<Void, Void, Object[]>(this, "Loading", "Fetching from database, please wait . . ."){
+					@Override
+					protected Object[] doTask(Void... params)throws Exception{
+							return db.selectAll(Tables.accounts_info,ModelAccountsInfo.class, null);
+					}
+
+					@Override
+					protected void onException(Exception e) {
+						// TODO Auto-generated method stub
+						
+					}
+				}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR)/*.execute()*/.get().length > 0){
 					if(this.LOGCAT){
 						Log.d(this.TAG, "An account exists in this instance of SharpFix!");
 					}
 			    	// an account exist in this instance
 			    	setContentView(R.layout.activity_main);
-			    	username = (EditText) findViewById(R.id.username);
-			    	password = (EditText) findViewById(R.id.password);
-			    	username.setOnEditorActionListener(new OnEditorActionListener(){
+			    	new GlobalAsyncTask<Void,Void,Void>(this, "Loading", ""){
 			    		@Override
-						public boolean onEditorAction(TextView v, int actionId,
-								KeyEvent event) {
-			    			boolean handled = false;
-			    			
-			    			if(actionId == EditorInfo.IME_ACTION_NEXT){
-			    				password.requestFocus();
-			    				handled = true;
-			    			}
-			    			
-			    			return handled;
-						}
+			    		protected Void doTask(Void... params) throws Exception{
+			    			username = (EditText) findViewById(R.id.username);
+					    	password = (EditText) findViewById(R.id.password);
+					    	username.setOnEditorActionListener(new OnEditorActionListener(){
+					    		@Override
+								public boolean onEditorAction(TextView v, int actionId,
+										KeyEvent event) {
+					    			boolean handled = false;
+					    			
+					    			if(actionId == EditorInfo.IME_ACTION_NEXT){
+					    				password.requestFocus();
+					    				handled = true;
+					    			}
+					    			
+					    			return handled;
+								}
+					    		
+					    	});
+					    	
+					    	login = (Button) findViewById(R.id.login);
+					    	login.setOnClickListener(MainActivity.this);
+					    	ch = (CheckBox) findViewById(R.id.autoLogin);
+					    	ch.setOnCheckedChangeListener(MainActivity.this);
+					    	ModelPreferences result = (ModelPreferences) db.selectAll(Tables.preferences, ModelPreferences.class,null)[0];
+					    	((SharpFixApplicationClass) getApplication()).setAutoLogin(result.getAuto_login());
+				    		if(((SharpFixApplicationClass) getApplication()).getAutoLogin() == 1){
+					    		ch.setChecked(true);
+					    		if(MainActivity.this.LOGCAT){
+									Log.d(MainActivity.this.TAG, "Autologin feature activated! Immediately granting access to user");
+								}
+					    		((SharpFixApplicationClass) getApplication()).setAccountId(result.getAccount());
+					    		((SharpFixApplicationClass) getApplication()).setFddPref(result.getFdd_pref());
+				    			((SharpFixApplicationClass) getApplication()).setFddSwitch(result.getFdd_switch());
+				    			((SharpFixApplicationClass) getApplication()).setFdSwitch(result.getFd_switch());
+				    			((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(result.getFdd_Filter_switch());
+				    			((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(result.getFd_Filter_switch());
+				    			((SharpFixApplicationClass) getApplication()).setServiceSwitch(result.getSss_switch());
+								((SharpFixApplicationClass) getApplication()).setServiceHour(result.getSss_hh());
+								((SharpFixApplicationClass) getApplication()).setServiceMin(result.getSss_mm());
+								((SharpFixApplicationClass) getApplication()).setServiceAMPM(result.getSss_ampm());
+								((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(result.getSss_update());
+								((SharpFixApplicationClass) getApplication()).setServiceRepeat(result.getSss_repeat());
+								((SharpFixApplicationClass) getApplication()).setServiceNoti(result.getSss_noti());
+								((SharpFixApplicationClass) getApplication()).setAuSwitch(result.getAu_switch());
+			    				
+				    			
+				    			
+				    			//startActivity(new Intent(this, MainMenuActivity.class));
+								publishProgress();
+				    			
+					    	}else{
+					    		if(MainActivity.this.LOGCAT){
+									Log.d(MainActivity.this.TAG, "Autologin feature inactive! Authentication is required to continue.");
+								}
+					    	}
+				    		return null;
+			    		}
+
+			    		@Override
+			    		protected void onProgressUpdate(Void... params){
+			    			Log.d(MainActivity.this.TAG, "Starting startAcivityForResult()");
+							MainActivity.this.startActivityForResult(new Intent(MainActivity.this, MainMenuActivity.class), 1);
+			    		}
 			    		
-			    	});
+						@Override
+						protected void onException(Exception e) {
+							// TODO Auto-generated method stub
+						
+						}
+			    	}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);//.execute();
 			    	
-			    	login = (Button) findViewById(R.id.login);
-			    	login.setOnClickListener(this);
-			    	ch = (CheckBox) findViewById(R.id.autoLogin);
-			    	ch.setOnCheckedChangeListener(this);
-			    	ModelPreferences result = (ModelPreferences) this.db.selectAll(Tables.preferences, ModelPreferences.class,null)[0];
-	        		((SharpFixApplicationClass) getApplication()).setAutoLogin(result.getAuto_login());
-		    		
-			    	if(((SharpFixApplicationClass) getApplication()).getAutoLogin() == 1){
-			    		ch.setChecked(true);
-			    		if(this.LOGCAT){
-							Log.d(this.TAG, "Autologin feature activated! Immediately granting access to user");
-						}
-			    		((SharpFixApplicationClass) getApplication()).setAccountId(result.getAccount());
-			    		((SharpFixApplicationClass) getApplication()).setFddPref(result.getFdd_pref());
-		    			((SharpFixApplicationClass) getApplication()).setFddSwitch(result.getFdd_switch());
-		    			((SharpFixApplicationClass) getApplication()).setFdSwitch(result.getFd_switch());
-		    			((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(result.getFdd_Filter_switch());
-		    			((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(result.getFd_Filter_switch());
-		    			((SharpFixApplicationClass) getApplication()).setServiceSwitch(result.getSss_switch());
-						((SharpFixApplicationClass) getApplication()).setServiceHour(result.getSss_hh());
-						((SharpFixApplicationClass) getApplication()).setServiceMin(result.getSss_mm());
-						((SharpFixApplicationClass) getApplication()).setServiceAMPM(result.getSss_ampm());
-						((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(result.getSss_update());
-						((SharpFixApplicationClass) getApplication()).setServiceRepeat(result.getSss_repeat());
-						((SharpFixApplicationClass) getApplication()).setServiceNoti(result.getSss_noti());
-						((SharpFixApplicationClass) getApplication()).setAuSwitch(result.getAu_switch());
-	    				
-		    			
-		    			
-		    			//startActivity(new Intent(this, MainMenuActivity.class));
-		    			startActivityForResult(new Intent(this, MainMenuActivity.class), 1);
-			    	}else{
-			    		if(this.LOGCAT){
-							Log.d(this.TAG, "Autologin feature inactive! Authentication is required to continue.");
-						}
-			    	}
 			    }else{
 			    	if(this.LOGCAT){
 						Log.d(this.TAG, "No account has been detected in this instance of SharpFix");
 					}
 			    	setContentView(R.layout.main_no_account);
-			    	createAccount = (Button) findViewById(R.id.createAccount);
-			    	createAccount.setOnClickListener(this);
-			    	
-			    	desiredLogin = (EditText) findViewById(R.id.desiredLogin);
-					desiredPass = (EditText) findViewById(R.id.desiredPassword);
-					confirmPass = (EditText) findViewById(R.id.confirmPassword);
-					
-					desiredLogin.setOnEditorActionListener(new OnEditorActionListener(){
+			    	new GlobalAsyncTask<Void,Void,Void>(this,"Loading", "Preparing UI . . ."){
 			    		@Override
-						public boolean onEditorAction(TextView v, int actionId,
-								KeyEvent event) {
-			    			boolean handled = false;
-			    			
-			    			if(actionId == EditorInfo.IME_ACTION_NEXT){
-			    				desiredPass.requestFocus();
-			    				handled = true;
-			    			}
-			    			
-			    			return handled;
+			    		protected Void doTask(Void... params) throws Exception{
+			    			createAccount = (Button) findViewById(R.id.createAccount);
+					    	createAccount.setOnClickListener(MainActivity.this);
+					    	
+					    	desiredLogin = (EditText) findViewById(R.id.desiredLogin);
+							desiredPass = (EditText) findViewById(R.id.desiredPassword);
+							confirmPass = (EditText) findViewById(R.id.confirmPassword);
+							
+							desiredLogin.setOnEditorActionListener(new OnEditorActionListener(){
+					    		@Override
+								public boolean onEditorAction(TextView v, int actionId,
+										KeyEvent event) {
+					    			boolean handled = false;
+					    			
+					    			if(actionId == EditorInfo.IME_ACTION_NEXT){
+					    				desiredPass.requestFocus();
+					    				handled = true;
+					    			}
+					    			
+					    			return handled;
+								}
+					    		
+					    	});
+							
+							desiredPass.setOnEditorActionListener(new OnEditorActionListener(){
+					    		@Override
+								public boolean onEditorAction(TextView v, int actionId,
+										KeyEvent event) {
+					    			boolean handled = false;
+					    			
+					    			if(actionId == EditorInfo.IME_ACTION_NEXT){
+					    				confirmPass.requestFocus();
+					    				handled = true;
+					    			}
+					    			
+					    			return handled;
+								}
+					    		
+					    	});
+							
+							confirmPass.setOnEditorActionListener(new OnEditorActionListener(){
+					    		@Override
+								public boolean onEditorAction(TextView v, int actionId,
+										KeyEvent event) {
+					    			boolean handled = false;
+					    			
+					    			if(actionId == EditorInfo.IME_ACTION_DONE){
+					    				createAccount.performClick();
+					    				handled = true;
+					    			}
+					    			
+					    			return handled;
+								}
+					    		
+					    	});
+							desiredLogin.addTextChangedListener(MainActivity.this);
+							desiredPass.addTextChangedListener(MainActivity.this);
+							confirmPass.addTextChangedListener(MainActivity.this);
+							
+							 try{
+								 if(desiredPass.getText().toString().length() > 4 && desiredLogin.getText().toString().length() > 4 
+					    				  && desiredPass.getText().toString().equals(confirmPass.getText().toString()) && 
+					    				 ! (desiredPass.getText().toString().isEmpty() && confirmPass.getText().toString().isEmpty()) &&
+					    				 ! desiredLogin.getText().toString().isEmpty() ){
+									createAccount.setEnabled(true);
+					    		  }else{
+					    			  createAccount.setEnabled(false); 
+					    		  }
+					    	  }catch(Exception e){
+					    		  createAccount.setEnabled(false); 
+					    	  }
+							 return null;
+			    		}
+
+						@Override
+						protected void onException(Exception e) {
+							// TODO Auto-generated method stub
+							
 						}
-			    		
-			    	});
-					
-					desiredPass.setOnEditorActionListener(new OnEditorActionListener(){
-			    		@Override
-						public boolean onEditorAction(TextView v, int actionId,
-								KeyEvent event) {
-			    			boolean handled = false;
-			    			
-			    			if(actionId == EditorInfo.IME_ACTION_NEXT){
-			    				confirmPass.requestFocus();
-			    				handled = true;
-			    			}
-			    			
-			    			return handled;
-						}
-			    		
-			    	});
-					
-					confirmPass.setOnEditorActionListener(new OnEditorActionListener(){
-			    		@Override
-						public boolean onEditorAction(TextView v, int actionId,
-								KeyEvent event) {
-			    			boolean handled = false;
-			    			
-			    			if(actionId == EditorInfo.IME_ACTION_DONE){
-			    				createAccount.performClick();
-			    				handled = true;
-			    			}
-			    			
-			    			return handled;
-						}
-			    		
-			    	});
-					desiredLogin.addTextChangedListener(this);
-					desiredPass.addTextChangedListener(this);
-					confirmPass.addTextChangedListener(this);
-					
-					 try{
-						 if(desiredPass.getText().toString().length() > 4 && desiredLogin.getText().toString().length() > 4 
-			    				  && desiredPass.getText().toString().equals(confirmPass.getText().toString()) && 
-			    				 ! (desiredPass.getText().toString().isEmpty() && confirmPass.getText().toString().isEmpty()) &&
-			    				 ! desiredLogin.getText().toString().isEmpty() ){
-							createAccount.setEnabled(true);
-			    		  }else{
-			    			  createAccount.setEnabled(false); 
-			    		  }
-			    	  }catch(Exception e){
-			    		  createAccount.setEnabled(false); 
-			    	  }
+			    	}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR); //.execute();
 			 
 			    }	 
 			  }catch(Exception e){
@@ -212,7 +256,8 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		    		}
 			  }
 			    db.closeConnection();
-		
+			   
+				
 	  	}
 
 	
@@ -303,33 +348,51 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 			case R.id.createAccount:
 				//this.db.insertAccountInfo(new ModelAccountsInfo(desiredLogin.getText().toString(),
 					//	this.md5Hash(desiredPass.getText().toString())));
-				try{
-					if(this.db.insert(Tables.accounts_info, new ModelAccountsInfo(desiredLogin.getText().toString(),
-							Security.md5Hash(desiredPass.getText().toString())), null )){
-						ModelAccountsInfo mai = (ModelAccountsInfo) this.db.select(Tables.accounts_info, ModelAccountsInfo.class, 
-								new Object[][]{{"login",desiredLogin.getText().toString()}, {"password", Security.md5Hash(desiredPass.getText().toString())}}, null);
-						this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 0,0,0,0,0,0,0,0,0,0,0,0,0,0),null);
-						
-						if(this.LOGCAT){
-							Log.d(this.TAG, "An account has been successfully created!");
-						}
-						Toast.makeText(this, "Successfully created an account!", Toast.LENGTH_LONG).show();
+				
+				new GlobalAsyncTask<Void,Void,Void>(this, "Loading","Creating your account, please wait . . ."){
 
-						this.restartActivity();
-					}else{
-						if(this.LOGCAT){
-							Log.w(TAG, "SQL FAILED: INSERT INTO accounts_info (login, password) VALUES("+desiredLogin.getText().toString()+", "+
-								desiredPass.getText().toString()+")");
+					@Override
+					protected Void doTask(Void... params) throws Exception {
+						// TODO Auto-generated method stub
+						try{
+							if(MainActivity.this.db.insert(Tables.accounts_info, new ModelAccountsInfo(desiredLogin.getText().toString(),
+									Security.md5Hash(desiredPass.getText().toString())), null )){
+								ModelAccountsInfo mai = (ModelAccountsInfo) MainActivity.this.db.select(Tables.accounts_info, ModelAccountsInfo.class, 
+										new Object[][]{{"login",desiredLogin.getText().toString()}, {"password", Security.md5Hash(desiredPass.getText().toString())}}, null);
+								MainActivity.this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 0,0,0,0,0,0,0,0,0,0,0,0,0,0),null);
+								
+								if(MainActivity.this.LOGCAT){
+									Log.d(MainActivity.this.TAG, "An account has been successfully created!");
+								}
+								//Toast.makeText(this, "Successfully created an account!", Toast.LENGTH_LONG).show();
+
+								MainActivity.this.restartActivity();
+							}else{
+								if(MainActivity.this.LOGCAT){
+									Log.w(TAG, "SQL FAILED: INSERT INTO accounts_info (login, password) VALUES("+desiredLogin.getText().toString()+", "+
+										desiredPass.getText().toString()+")");
+								}
+								/*Toast.makeText(this, "Failed creating an account! Please be sure that no SQL Injection is being performed as it will" +
+										" be automatically blocked by SharpFix!", Toast.LENGTH_LONG).show();
+										*/
+							}
+						}catch(Exception e){
+							if(MainActivity.this.LOGCAT){
+								Log.w(TAG, "EXCEPTION OCCURED! SQL FAILED: INSERT INTO accounts_info (login, password) VALUES("+desiredLogin.getText().toString()+", "+
+									desiredPass.getText().toString()+")");
+							}
 						}
-						Toast.makeText(this, "Failed creating an account! Please be sure that no SQL Injection is being performed as it will" +
-								" be automatically blocked by SharpFix!", Toast.LENGTH_LONG).show();
+						return null;
 					}
-				}catch(Exception e){
-					if(this.LOGCAT){
-						Log.w(TAG, "EXCEPTION OCCURED! SQL FAILED: INSERT INTO accounts_info (login, password) VALUES("+desiredLogin.getText().toString()+", "+
-							desiredPass.getText().toString()+")");
+
+					@Override
+					protected void onException(Exception e) {
+						// TODO Auto-generated method stub
+						
 					}
-				}
+					
+				}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
+				
 				
 				
 				/*
@@ -342,71 +405,113 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		      
 		      break;
 		    case R.id.login:
-		    	try{
-		    		ModelAccountsInfo mai = (ModelAccountsInfo) this.db.select(Tables.accounts_info, ModelAccountsInfo.class,
-		    				new Object[][]{{"login",username.getText().toString()}}, null);//this.db.getAccountInfo(username.getText().toString());
-		    		if(mai.getPassword().equals(Security.md5Hash(password.getText().toString()))){
-		    			Toast.makeText(this, "Welcome "+ mai.getLogin()+" !", Toast.LENGTH_LONG).show();
-		    			//i.putExtra("accountId", mai.getId());
-		    			((SharpFixApplicationClass) getApplication()).setAccountId(mai.getId());
-		    			try{
-		    				ModelPreferences oldParams = (ModelPreferences) this.db.select(Tables.preferences, ModelPreferences.class, new Object[][] {{"account",
-		    					mai.getId()}},null);
-		    				((SharpFixApplicationClass) getApplication()).setFddPref(oldParams.getFdd_pref());
-		    				((SharpFixApplicationClass) getApplication()).setFddSwitch(oldParams.getFdd_switch());
-		    				((SharpFixApplicationClass) getApplication()).setFdSwitch(oldParams.getFd_switch());
-		    				((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(oldParams.getFdd_Filter_switch());
-		    				((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(oldParams.getFd_Filter_switch());
-		    				
-		    				((SharpFixApplicationClass) getApplication()).setServiceSwitch(oldParams.getSss_switch());
-							((SharpFixApplicationClass) getApplication()).setServiceHour(oldParams.getSss_hh());
-							((SharpFixApplicationClass) getApplication()).setServiceMin(oldParams.getSss_mm());
-							((SharpFixApplicationClass) getApplication()).setServiceAMPM(oldParams.getSss_ampm());
-							((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(oldParams.getSss_update());
-							((SharpFixApplicationClass) getApplication()).setServiceRepeat(oldParams.getSss_repeat());
-							((SharpFixApplicationClass) getApplication()).setServiceNoti(oldParams.getSss_noti());
-							((SharpFixApplicationClass) getApplication()).setAuSwitch(oldParams.getAu_switch());
-		    				
+		    	new GlobalAsyncTask<Void,EditText,Void>(this, "Loading","Checking account, please wait . . ."){
 
-		    				if((ch.isChecked() && oldParams.getAuto_login() == 0) ||
-		    						!ch.isChecked() && oldParams.getAuto_login() == 1){
-		    					// changes has been made, update database
-		    					ModelPreferences newParams = new ModelPreferences();
-			    				newParams.setAuto_login((ch.isChecked() ? 1 : 0));
-			    				this.db.update(Tables.preferences, oldParams, newParams, null);
-			    				((SharpFixApplicationClass) getApplication()).updatePreferences(this.db);
-		    				}
-		    				
-		    			
-		    			}catch(Exception e){
-		    				
-		    			}
-		    			//startActivity(new Intent(this, MainMenuActivity.class));
-		    			if(this.LOGCAT){
-							Log.d(this.TAG, "Login successful! Access granted.");
-						}
-		    			startActivityForResult(new Intent(this, MainMenuActivity.class), 1);
-		    			username.setText(null);
-		    			password.setText(null);
-		    			
-		    		}else{
-		    			Toast.makeText(this, "Incorrect password!", Toast.LENGTH_LONG).show();
-		    			if(this.LOGCAT){
-							Log.d(this.TAG, "Login failure! Access denied!");
-						}
-		    			password.setText(null);
-		    			password.requestFocus();
-		    		}
-		    	}catch(Exception e){
-		    		if(this.LOGCAT){
-						Log.d(this.TAG, "Username does not exist! Login failure!");
+					@Override
+					protected Void doTask(Void... params) throws java.lang.reflect.InvocationTargetException,
+					NoSuchMethodException, IllegalAccessException, InstantiationException{
+						// TODO Auto-generated method stub
+						//try{
+				    		ModelAccountsInfo mai = (ModelAccountsInfo) MainActivity.this.db.select(Tables.accounts_info, ModelAccountsInfo.class,
+				    				new Object[][]{{"login",username.getText().toString()}}, null);//this.db.getAccountInfo(username.getText().toString());
+				    		if(mai.getPassword().equals(Security.md5Hash(password.getText().toString()))){
+				    			//Toast.makeText(this, "Welcome "+ mai.getLogin()+" !", Toast.LENGTH_LONG).show();
+				    			//i.putExtra("accountId", mai.getId());
+				    			((SharpFixApplicationClass) getApplication()).setAccountId(mai.getId());
+				    			try{
+				    				ModelPreferences oldParams = (ModelPreferences) MainActivity.this.db.select(Tables.preferences, ModelPreferences.class, new Object[][] {{"account",
+				    					mai.getId()}},null);
+				    				((SharpFixApplicationClass) getApplication()).setFddPref(oldParams.getFdd_pref());
+				    				((SharpFixApplicationClass) getApplication()).setFddSwitch(oldParams.getFdd_switch());
+				    				((SharpFixApplicationClass) getApplication()).setFdSwitch(oldParams.getFd_switch());
+				    				((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(oldParams.getFdd_Filter_switch());
+				    				((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(oldParams.getFd_Filter_switch());
+				    				
+				    				((SharpFixApplicationClass) getApplication()).setServiceSwitch(oldParams.getSss_switch());
+									((SharpFixApplicationClass) getApplication()).setServiceHour(oldParams.getSss_hh());
+									((SharpFixApplicationClass) getApplication()).setServiceMin(oldParams.getSss_mm());
+									((SharpFixApplicationClass) getApplication()).setServiceAMPM(oldParams.getSss_ampm());
+									((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(oldParams.getSss_update());
+									((SharpFixApplicationClass) getApplication()).setServiceRepeat(oldParams.getSss_repeat());
+									((SharpFixApplicationClass) getApplication()).setServiceNoti(oldParams.getSss_noti());
+									((SharpFixApplicationClass) getApplication()).setAuSwitch(oldParams.getAu_switch());
+				    				
+
+				    				if((ch.isChecked() && oldParams.getAuto_login() == 0) ||
+				    						!ch.isChecked() && oldParams.getAuto_login() == 1){
+				    					// changes has been made, update database
+				    					ModelPreferences newParams = new ModelPreferences();
+					    				newParams.setAuto_login((ch.isChecked() ? 1 : 0));
+					    				MainActivity.this.db.update(Tables.preferences, oldParams, newParams, null);
+					    				((SharpFixApplicationClass) getApplication()).updatePreferences(MainActivity.this.db);
+				    				}
+				    				
+				    			
+				    			}catch(Exception e){
+				    				
+				    			}
+				    			//startActivity(new Intent(this, MainMenuActivity.class));
+				    			if(MainActivity.this.LOGCAT){
+									Log.d(MainActivity.this.TAG, "Login successful! Access granted.");
+								}
+				    			MainActivity.this.startActivityForResult(new Intent(MainActivity.this, MainMenuActivity.class), 1);
+				    			
+				    			publishProgress(new EditText[]{password,username});
+				    			/*
+				    			username.setText(null);
+				    			password.setText(null);
+				    			*/
+				    		}else{
+				    			//Toast.makeText(this, "Incorrect password!", Toast.LENGTH_LONG).show();
+				    			if(MainActivity.this.LOGCAT){
+									Log.d(MainActivity.this.TAG, "Login failure! Access denied!");
+								}
+				    			publishProgress(new EditText[]{password});
+				    			/*
+				    			password.setText(null);
+				    			password.requestFocus();
+				    			*/
+				    		}
+				    	//}catch(Exception e){
+				    		
+				    		/*
+				    		username.setText(null);
+				    		password.setText(null);
+				    		username.requestFocus();
+			    			*/
+				    	//}
+						return null;
 					}
-		    		Toast.makeText(this, "Username does not exist!", Toast.LENGTH_LONG).show();
-		    		username.setText(null);
-		    		password.setText(null);
-		    		username.requestFocus();
-	    			
-		    	}
+
+					@Override
+					protected void onException(Exception e) {
+						// TODO Auto-generated method stub
+						if(MainActivity.this.LOGCAT){
+							Log.d(MainActivity.this.TAG, "Exception cause: " +e.getCause().toString());
+							Log.d(MainActivity.this.TAG, "Username does not exist! Login failure!");
+							
+						}
+			    		//Toast.makeText(this, "Username does not exist!", Toast.LENGTH_LONG).show();
+			    		publishProgress(new EditText[]{password,username});
+						
+					}
+					
+					@Override
+					protected void onProgressUpdate(EditText... params){
+						
+						for(EditText et : params){
+							et.setText(null);
+							et.requestFocus();
+						}
+						/*
+						username.setText(null);
+			    		password.setText(null);
+			    		username.requestFocus();
+						*/
+					}
+		    		
+		    	}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
+		    	
 		    	/*
 		    	stopService(new Intent(this, FileDesignationService.class));
 		  		stopService(new Intent(this, FileDuplicationDetectionService.class));

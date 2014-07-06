@@ -534,163 +534,97 @@ public class SQLiteHelper extends SQLiteOpenHelper {
      */ 
     public Object[] selectAll(final Tables table, final Class<?> cls, SQLiteDatabase db) 
     		throws InstantiationException, IllegalAccessException,
-    		NoSuchMethodException, IllegalArgumentException, InvocationTargetException, InterruptedException, ExecutionException{
+    		NoSuchMethodException, IllegalArgumentException, InvocationTargetException {
     	
     	
-    		SQLiteAsyncTask<Void, Boolean, List<Object>> task =  new SQLiteAsyncTask<Void, Boolean, List<Object>>(table, cls, db){
-	    		
-	    		@Override
-	    		protected List<Object> doInBackground(Void... params){
-	    			List<Object> resultSet = new ArrayList<Object>();
-	    			Object cl = new Object();
-	    			Method m;
-	    			String[] fields = new String[]{};
-	    			try{
-		    	     	 cl =  cls.newInstance();
-		    	     	 m = cls.getMethod("getFields");
-		    	     	 fields = (String[]) m.invoke(cl, null);
-	    			}catch(Exception e){
-	    				Logcat.logCaughtException(SQLiteHelper.this.TAG, e.getStackTrace());
-	    			}
-	    	     	
-	    	     	
-	    	    	String sql = "SELECT * FROM " +table.toString();
-	    	    	if(LOGCAT){
-	    	    		Log.d(TAG,"Select All SQL: " +sql);
-	    	    		
-	    	    	}
-	    	    	if(db != null){
-	    	    		
-	    	    	}else{
-	    	    		db = SQLiteHelper.this.getReadableDatabase();
-	    	        }
-	    	    	Cursor c = db.rawQuery(sql, null);
-	    	    	if (c.moveToFirst()) {
-	    	            do {
-	    	            	try{
-	    	            	cl = cls.newInstance();
-	    	            	}catch(Exception e){
-	    	            		Logcat.logCaughtException(SQLiteHelper.this.TAG, e.getStackTrace());
-	    	            	}
-	    	           	 	for(String field : fields){
-	    	           	 		String methodName = "set"+field;
-	    	            		try{
-	    	            		 // try if the current method is of type Integer
-	    	            			Integer arg = c.getInt((c.getColumnIndex(field.toLowerCase())));
-	    		            		m = cls.getMethod(methodName, Integer.class);
-	    		            		m.invoke(cl,arg);
-	    		        		}catch(Exception e){
-	    		        			try{
-	    	            			// try if the current method is of type Long
-	    		        				Long arg = c.getLong((c.getColumnIndex(field.toLowerCase())));
-	    	            				m = cls.getMethod(methodName, Long.class);
-	    	    	            		m.invoke(cl,arg);
-	    	            			}catch(Exception ee){
-	    	            				try{
-	    	            				// try if the current method is of type String
-	    	            					String arg = c.getString((c.getColumnIndex(field.toLowerCase())));
-	    	            					m = cls.getMethod(methodName, String.class);
-	    	        	            		m.invoke(cl,arg);
-	    	            				}catch(Exception eee){
-	    	            					if(LOGCAT){
-	    	            		    			StackTraceElement[] st = e.getStackTrace();
-	    	            						for(int y= 0; y <st.length; y++){
-	    	            							Log.w(TAG, st[y].toString());
-	    	            							
-	    	            						}
-	    	            		    		}
-	    	            				}
-	    	            			 }
-	    	            		 }
-	    	            	 }
-	    	            	 resultSet.add(cl);
-	    	             } while (c.moveToNext());
-	    	         }
-	    	    	c.close();
-	    	    	try{
-	    	    		SQLiteHelper.this.close();
-	    	    	}catch(Exception e){
-	    	    		if(LOGCAT){
-	    					Log.w(TAG, "Closing the current instance of SQLiteHelper failed at: SelectAll()");
-	    				}
-	    	    	}
-	    	    	return resultSet;
-	    		}
-	    		
-	    		@Override 
-	    		protected void onPostExecute(List<Object> returnedResult){
-	    			
-	    			/*
-	    			 * This runs on the UI thread and is called after doInBackground finishes,
-	    			 * 	doInBackground passes its return value to this method after finishing its task
-	    			 */
-	    			 
-	    			Logcat.d(SQLiteHelper.this.TAG, new String[]{
-	    					"SQLiteHelper AsyncTask Status: Finished",
-	    			});
-	    		}
-	    		
-	    		@Override
-	    		protected void onProgressUpdate(Boolean... value){
-	    			/*
-	    			 * invoked on the UI thread after a call to publishProgress. The timing of the execution is undefined. 
-	    			 * This method is used to display any form of progress in the user interface while the background computation
-	    			 *  is still executing. For instance, it can be used to animate a progress bar or show logs in a text field. 
-	    			 */
-	    			Logcat.d(SQLiteHelper.this.TAG, new String[]{
-	    					"SQLiteHelper AsyncTask Status: "+ this.getStatus().name(),
-	    			});
-	    		}
-	    		
-	    		@Override
-	    		protected void onPreExecute(){
-	    			/*
-	    			 *  runs on the UI thread before doInBackground is called
-	    			 *	generally used to prepare for progress bars, etc.
-	    			 */
-	    			Logcat.d(SQLiteHelper.this.TAG, 
-	    					new String[]{
-	    						"SQLiteHelper AsyncTask Initializing",
-	    						"Method: SelectAll()",
-	    						"Class: " +this.cls.getClass().getName(),
-	    						"Table: " +this.table.name(),
-	    						"SQLiteDatabase: " + ((this.db != null) ? "Database provided" : "Database not provided")
-	    					});
-	    		}
-	    		
-	    	};
-	    	
-	    	
-	    	return task.execute().get().toArray();
+// class manipulation
     	
-    	// class manipulation
-    	
-        // return resultSet.toArray();
-    }
-
-    public Object[] selectMulti(Tables table, Class<?> cls, Object[][] params, SQLiteDatabase db)
-    		throws InstantiationException, IllegalAccessException,
-    		NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
-    	
-    	String sql = "SELECT * FROM "+table.toString()+" WHERE ";   	
-    	for(int x =0; x < params.length; x++){
-    		if(x == params.length - 1){
-    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"';");
-        		
-    		}else{
-    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"' AND ");
-        		
-    		}
-    	}
+    	List<Object> resultSet = new ArrayList<Object>();
+     	Object cl =  cls.newInstance();
+     	Method m = cls.getMethod("getFields");
+     	String[] fields = (String[]) m.invoke(cl, null);
+     	
+    	String sql = "SELECT * FROM " +table.toString();
     	if(LOGCAT){
-    		Log.d(TAG,"Select Multi SQL: " +sql);
+    		Log.d(TAG,"Select All SQL: " +sql);
     		
     	}
     	if(db != null){
     		
     	}else{
     		db = this.getReadableDatabase();
-        }// class manipulation
+        }
+    	Cursor c = db.rawQuery(sql, null);
+    	if (c.moveToFirst()) {
+            do {
+            	cl = cls.newInstance();
+           	 	for(String field : fields){
+           	 		String methodName = "set"+field;
+            		try{
+            		 // try if the current method is of type Integer
+            			Integer arg = c.getInt((c.getColumnIndex(field.toLowerCase())));
+	            		m = cls.getMethod(methodName, Integer.class);
+	            		m.invoke(cl,arg);
+	        		}catch(Exception e){
+	        			try{
+            			// try if the current method is of type Long
+	        				Long arg = c.getLong((c.getColumnIndex(field.toLowerCase())));
+            				m = cls.getMethod(methodName, Long.class);
+    	            		m.invoke(cl,arg);
+            			}catch(Exception ee){
+            				try{
+            				// try if the current method is of type String
+            					String arg = c.getString((c.getColumnIndex(field.toLowerCase())));
+            					m = cls.getMethod(methodName, String.class);
+        	            		m.invoke(cl,arg);
+            				}catch(Exception eee){
+            					if(LOGCAT){
+            		    			StackTraceElement[] st = e.getStackTrace();
+            						for(int y= 0; y <st.length; y++){
+            							Log.w(TAG, st[y].toString());
+            							
+            						}
+            		    		}
+            				}
+            			 }
+            		 }
+            	 }
+            	 resultSet.add(cl);
+             } while (c.moveToNext());
+         }
+    	c.close();
+    	try{
+    		this.close();
+    	}catch(Exception e){
+    		if(LOGCAT){
+				Log.w(TAG, "Closing the current instance of SQLiteHelper failed at: SelectAll()");
+			}
+    	}
+        return resultSet.toArray();
+    }
+
+    public Object[] selectMulti(Tables table, Class<?> cls, Object[][] params, SQLiteDatabase db)
+    		throws InstantiationException, IllegalAccessException,
+    		NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
+    	
+    	
+    	String sql = "SELECT * FROM "+table.toString()+" WHERE ";   	
+    	for(int x =0; x < params.length; x++){
+    		if(x == params.length - 1){
+    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"';");
+        	}else{
+    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"' AND ");
+        	}
+    	}
+    	if(LOGCAT){
+    		Log.d(TAG,"Select Multi SQL: " +sql);
+    	}
+    	if(db != null){
+    		
+    	}else{
+    		db = this.getReadableDatabase();
+        }
+    	// class manipulation
 		List<Object> resultSet = new ArrayList<Object>();
 		Object cl =  cls.newInstance();
 		Method m = cls.getMethod("getFields");
@@ -723,7 +657,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		    		    			StackTraceElement[] st = e.getStackTrace();
 		    						for(int y= 0; y <st.length; y++){
 		    							Log.w(TAG, st[y].toString());
-		    							
+
 		    						}
 		    		    		}
 		    				}

@@ -5,6 +5,7 @@ import java.util.Locale; // used on API 10 above: .toString(Locale)
 
 import android.app.*;
 import android.content.*;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.util.Log;
@@ -19,6 +20,7 @@ import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
 public class MainMenuActivity extends Activity implements OnClickListener{
+	
 	
 	
 	private SharpFixApplicationClass SF;
@@ -44,7 +46,8 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 		db = new SQLiteHelper(context);
 		return this.db;
 	  }
-	  
+	
+	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -56,37 +59,36 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 		if(this.LOGCAT){
 			Log.d(this.TAG, this.TAG +  "onCreate()");
 		}
-		
 		title = (TextView)findViewById(R.id.title);
 		title.setText(title.getText().toString().toUpperCase(Locale.getDefault()));
 		
 		fdds = (TextView) findViewById(R.id.selection1);
-		fdds.setOnClickListener(this);
+		fdds.setOnClickListener(MainMenuActivity.this);
 		fddl = (TextView)findViewById(R.id.label1);
-		fddl.setOnClickListener(this);
+		fddl.setOnClickListener(MainMenuActivity.this);
 		
 		fds = (TextView) findViewById(R.id.selection2);
-		fds.setOnClickListener(this);
+		fds.setOnClickListener(MainMenuActivity.this);
 		fdl = (TextView) findViewById(R.id.label2);
-		fdl.setOnClickListener(this);
+		fdl.setOnClickListener(MainMenuActivity.this);
 		
 		filters = (TextView) findViewById(R.id.selection3);
-		filters.setOnClickListener(this);
+		filters.setOnClickListener(MainMenuActivity.this);
 		filtersl = (TextView) findViewById(R.id.label3);
-		filtersl.setOnClickListener(this);
+		filtersl.setOnClickListener(MainMenuActivity.this);
 		
 		services = (TextView) findViewById(R.id.selection4);
-		services.setOnClickListener(this);
+		services.setOnClickListener(MainMenuActivity.this);
 		servicesl = (TextView) findViewById(R.id.label4);
-		servicesl.setOnClickListener(this);
+		servicesl.setOnClickListener(MainMenuActivity.this);
 		
 		abouts = (TextView) findViewById(R.id.selection5);
-		abouts.setOnClickListener(this);
+		abouts.setOnClickListener(MainMenuActivity.this);
 		aboutl = (TextView) findViewById(R.id.label5);
-		aboutl.setOnClickListener(this);
+		aboutl.setOnClickListener(MainMenuActivity.this);
 		
 		// DEVELOPER MODE:
-		if(this.SF.getDevMode()){
+		if(MainMenuActivity.this.SF.getDevMode()){
 			abouts.setOnLongClickListener(new OnLongClickListener(){
 	
 				@Override
@@ -181,6 +183,8 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 				
 			});
 		}
+		
+		
 	}
 	
 	@Override
