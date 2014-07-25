@@ -5,6 +5,8 @@ import tk.idclxvii.sharpfixandroid.databasemodel.Tables;
 import tk.idclxvii.sharpfixandroid.utils.*;
 
 import android.app.Activity;
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
@@ -14,8 +16,10 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
@@ -30,7 +34,10 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 	// layout fields
 	CheckBox  chSchedScan, chAutoUpd;
 	TextView title, schedScanLabel, schedScanSettings, schedScanSettingsLabel, autoUpdLabel;
+	Button start, stop;
 	
+	// service Intents
+	private Intent dsIntent, fdsIntent, fddsIntent;
 	
 	private synchronized SQLiteHelper getDb(Context context){
 		db = new SQLiteHelper(context);
@@ -53,8 +60,9 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 		}
 		// initialize database connection
 		db = this.getDb(getApplicationContext());
-		
 		setContentView(R.layout.services_sub_menu);
+		
+		createServiceIntents();
 		
 		title = (TextView)findViewById(R.id.title);
 		title.setText(title.getText().toString().toUpperCase());
@@ -110,6 +118,27 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 		});
 		
 		
+		start = (Button) findViewById(R.id.scan);
+		start.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				SubMenuServicesActivity.this.startService(dsIntent);
+			}
+			
+		});
+		stop = (Button) findViewById(R.id.stop);
+		stop.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				SubMenuServicesActivity.this.stopService(dsIntent);
+			}
+		
+		});
+		
 		if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.JELLY_BEAN) {
 			
 		}else{
@@ -119,6 +148,12 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 		
 	}
 
+	
+	
+	private void createServiceIntents(){
+		this.dsIntent = new Intent(this, DirectoryScanner.class);
+	}
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onStart()
 	 */

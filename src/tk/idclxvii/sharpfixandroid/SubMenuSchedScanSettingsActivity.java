@@ -1,12 +1,25 @@
 package tk.idclxvii.sharpfixandroid;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.Calendar;
+
+import tk.idclxvii.sharpfixandroid.databasemodel.ModelPreferences;
+import tk.idclxvii.sharpfixandroid.databasemodel.Tables;
 import tk.idclxvii.sharpfixandroid.utils.AndroidLayoutUtils;
 import android.app.Activity;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.app.TimePickerDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.View;
+import android.view.View.OnClickListener;
 import android.widget.CheckBox;
 import android.widget.TextView;
+import android.widget.TimePicker;
+import android.widget.Toast;
 
 public class SubMenuSchedScanSettingsActivity extends Activity {
 
@@ -17,9 +30,9 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 	SQLiteHelper db;
 	
 	// layout fields
-	CheckBox  chUpd, chAlert;
-	TextView title, timeSelection, timeLabel, repeatSelection, repeatLabel, updLabel, alertLabel;
-	
+	private CheckBox  chUpd, chAlert;
+	private TextView title, timeSelection, timeLabel, repeatSelection, repeatLabel, updLabel, alertLabel;
+	private int hour, minute;
 	
 	private synchronized SQLiteHelper getDb(Context context){
 		db = new SQLiteHelper(context);
@@ -50,10 +63,128 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 		title.setText(title.getText().toString().toUpperCase());
 		
 		 
+		final Calendar c = Calendar.getInstance();
+		hour = c.get(Calendar.HOUR_OF_DAY);
+		minute = c.get(Calendar.MINUTE);
+		
 		timeSelection = (TextView) findViewById(R.id.sssUpdateSelection1);
+		timeSelection.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				new TimePickerDialog(SubMenuSchedScanSettingsActivity.this,
+						new TimePickerDialog.OnTimeSetListener(){
+							@Override
+							public void onTimeSet(TimePicker view, int selectedHour,int selectedMinute) {
+								hour = selectedHour;
+								minute = selectedMinute;
+					 
+								// set current time into textview
+								
+								// set current time into timepicker
+								
+								
+								ModelPreferences newParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+										((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+										((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+										((SharpFixApplicationClass) getApplication()).getFddPref(),
+										((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+										((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+										((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+										
+										// new fields
+										// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+										((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+										((SharpFixApplicationClass) getApplication()).getServiceHour(),
+										((SharpFixApplicationClass) getApplication()).getServiceMin(),
+										((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+										((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+										((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+										((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+										((SharpFixApplicationClass) getApplication()).getAuSwitch());
+								
+								ModelPreferences oldParams = new ModelPreferences(((SharpFixApplicationClass) getApplication()).getAccountId(),
+										((SharpFixApplicationClass) getApplication()).getFddSwitch(),
+										((SharpFixApplicationClass) getApplication()).getFdSwitch(),
+										((SharpFixApplicationClass) getApplication()).getFddPref(),
+										((SharpFixApplicationClass) getApplication()).getAutoLogin(),
+										((SharpFixApplicationClass) getApplication()).getFddFilterSwitch(),
+										((SharpFixApplicationClass) getApplication()).getFdFilterSwitch(),
+										
+										// new fields
+										// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+										((SharpFixApplicationClass) getApplication()).getServiceSwitch(),
+										((SharpFixApplicationClass) getApplication()).getServiceHour(),
+										((SharpFixApplicationClass) getApplication()).getServiceMin(),
+										((SharpFixApplicationClass) getApplication()).getServiceAMPM(),
+										((SharpFixApplicationClass) getApplication()).getServiceUpdateSwitch(),
+										((SharpFixApplicationClass) getApplication()).getServiceRepeat(),
+										((SharpFixApplicationClass) getApplication()).getServiceNoti(),
+										((SharpFixApplicationClass) getApplication()).getAuSwitch());
+								newParams.setSss_hh(hour);
+								newParams.setSss_mm(minute);
+								
+								
+								// ##################################################################################
+								// temporary everyday alarm
+								newParams.setSss_repeat(7);
+								// ##################################################################################
+								
+								
+								try {
+									db.update(Tables.preferences,oldParams, newParams,null);
+									Calendar c = Calendar.getInstance();
+									c.setTimeInMillis(System.currentTimeMillis());
+									c.set(Calendar.HOUR_OF_DAY, hour);
+									c.set(Calendar.MINUTE,minute);
+									
+									AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+									Intent intent = new Intent(SubMenuSchedScanSettingsActivity.this, Alarm.class);
+									PendingIntent pendingIntent = PendingIntent.getBroadcast(SubMenuSchedScanSettingsActivity.this, 0, intent, 0);
+									alarm.setRepeating(AlarmManager.RTC_WAKEUP,  c.getTimeInMillis(),
+											((newParams.getSss_repeat() != 7) ? AlarmManager.INTERVAL_DAY * 7 : AlarmManager.INTERVAL_DAY)
+											, pendingIntent);
+									
+									
+								} catch(Exception e){
+									
+								}
+								
+								
+								
+								timeLabel.setText( (hour > 12) ? ((hour-12) + " : " + minute + " PM") : (hour + " : " + minute + " AM"));
+								
+								Toast.makeText(SubMenuSchedScanSettingsActivity.this, "Time was set to " + hour + " : " + minute
+										, Toast.LENGTH_LONG).show();
+								
+							}}
+				
+				
+					, hour, minute,false).show();
+				 
+			}
+			
+			
+			
+		});
 		
 		timeLabel = (TextView) findViewById(R.id.sssUpdateLabel1);
+		timeLabel.setText( ( ((SharpFixApplicationClass) getApplication()).getServiceHour() > 12) ? 
+				((((SharpFixApplicationClass) getApplication()).getServiceHour()-12) + " : " + ((SharpFixApplicationClass) getApplication()).getServiceMin() + " PM" )
+				: (((SharpFixApplicationClass) getApplication()).getServiceHour() + " : " + ((SharpFixApplicationClass) getApplication()).getServiceMin() + " AM"));
+		
+		timeLabel.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				timeSelection.performClick();
+			}
 			
+		});
+		
+		
 		repeatSelection = (TextView) findViewById(R.id.sssUpdateSelection2);
 		
 		repeatLabel =  (TextView) findViewById(R.id.sssUpdateLabel2);

@@ -135,6 +135,57 @@ public abstract class AndroidUtils {
 		
 	}
 	
+	
+	public static File[] getMountedVolumesAsFile(){
+		final String state = Environment.getExternalStorageState();
+		if ( Environment.MEDIA_MOUNTED.equals(state) || Environment.MEDIA_MOUNTED_READ_ONLY.equals(state) ) {  // we can read the External Storage...           
+		    //Retrieve the primary External Storage:
+		    final File primaryExternalStorage = Environment.getExternalStorageDirectory();
+
+		    //Retrieve the External Storages root directory:
+		    String externalStorageRootDir = null;
+		    if ( (externalStorageRootDir = primaryExternalStorage.getParent()) == null ) {  // no parent...
+		    	return (new File[] {primaryExternalStorage});
+		    }else{
+		        final File externalStorageRoot = new File( externalStorageRootDir );
+		        final File[] files = externalStorageRoot.listFiles(new FilenameFilter(){
+
+					@Override
+					public boolean accept(File dir, String filename) {
+						// TODO Auto-generated method stub
+						
+						File file = new File(dir, filename);
+						if(file.isDirectory() && file.canRead() && file.canWrite() 
+		            		&& !file.isHidden()){
+							return true;
+						}
+						return false;
+					}
+		        	
+		        }); //.listFiles();
+		        List<File> data = new ArrayList<File>();
+		        
+		        
+		        for ( final File file : files ) {
+		            if ( file.isDirectory() && file.canRead() && file.canWrite() 
+		            		&& !file.isHidden() && (files.length > 0) ) {  // it is a real directory (not a USB drive)...
+		            	if(file.toString().equals(primaryExternalStorage.toString()))
+		            		data.add(file);
+		            	else{
+		            		if(!file.toString().contains("usb") || !file.toString().contains("USB")){
+		            			data.add(file);
+		            		}
+		            	}
+		            }
+		        }
+		        return data.toArray(new File[data.size()]);
+		    }
+		}else{
+			// we cannot read the External Storage..., return null
+			return null;
+		}
+	}
+		
 	 public static void openFile(Context context, File url) throws IOException {
 	        // Create URI
 	        File file=url;

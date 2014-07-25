@@ -1,6 +1,8 @@
 package tk.idclxvii.sharpfixandroid;
 
 
+import java.io.File;
+import java.io.FilenameFilter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -13,6 +15,7 @@ import android.view.View.OnClickListener;
 import android.view.inputmethod.EditorInfo;
 import android.content.*;
 import android.os.Bundle;
+import android.os.Environment;
 import android.text.*;
 import android.util.*;
 import android.widget.*;
@@ -49,9 +52,6 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		return this.db;
 	  }
 	  
-	private abstract class SQLiteTask<Params, Progress, Result> extends GlobalAsyncTask<Params, Progress, Result>{
-	
-	}
 	
 	  
 	@Override
@@ -66,192 +66,178 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 		// initialize database connection
 		db = this.getDb(getApplicationContext());//new SQLiteHelper(getApplicationContext());
 			try{
-				if(
-				new GlobalAsyncTask<Void, Void, Object[]>(this, "Loading", "Fetching from database, please wait . . ."){
-					@Override
-					protected Object[] doTask(Void... params)throws Exception{
-							return db.selectAll(Tables.accounts_info,ModelAccountsInfo.class, null);
-					}
-
-					@Override
-					protected void onException(Exception e) {
-						// TODO Auto-generated method stub
-						
-					}
-				}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR)/*.execute()*/.get().length > 0){
+				if(db.selectAll(Tables.accounts_info,ModelAccountsInfo.class, null).length > 0){
 					if(this.LOGCAT){
 						Log.d(this.TAG, "An account exists in this instance of SharpFix!");
 					}
 			    	// an account exist in this instance
 			    	setContentView(R.layout.activity_main);
-			    	new GlobalAsyncTask<Void,Void,Void>(this, "Loading", ""){
+			    	username = (EditText) findViewById(R.id.username);
+			    	password = (EditText) findViewById(R.id.password);
+			    	username.setOnEditorActionListener(new OnEditorActionListener(){
 			    		@Override
-			    		protected Void doTask(Void... params) throws Exception{
-			    			username = (EditText) findViewById(R.id.username);
-					    	password = (EditText) findViewById(R.id.password);
-					    	username.setOnEditorActionListener(new OnEditorActionListener(){
-					    		@Override
-								public boolean onEditorAction(TextView v, int actionId,
-										KeyEvent event) {
-					    			boolean handled = false;
-					    			
-					    			if(actionId == EditorInfo.IME_ACTION_NEXT){
-					    				password.requestFocus();
-					    				handled = true;
-					    			}
-					    			
-					    			return handled;
-								}
-					    		
-					    	});
-					    	
-					    	login = (Button) findViewById(R.id.login);
-					    	login.setOnClickListener(MainActivity.this);
-					    	ch = (CheckBox) findViewById(R.id.autoLogin);
-					    	ch.setOnCheckedChangeListener(MainActivity.this);
-					    	ModelPreferences result = (ModelPreferences) db.selectAll(Tables.preferences, ModelPreferences.class,null)[0];
-					    	((SharpFixApplicationClass) getApplication()).setAutoLogin(result.getAuto_login());
-				    		if(((SharpFixApplicationClass) getApplication()).getAutoLogin() == 1){
-					    		ch.setChecked(true);
-					    		if(MainActivity.this.LOGCAT){
-									Log.d(MainActivity.this.TAG, "Autologin feature activated! Immediately granting access to user");
-								}
-					    		((SharpFixApplicationClass) getApplication()).setAccountId(result.getAccount());
-					    		((SharpFixApplicationClass) getApplication()).setFddPref(result.getFdd_pref());
-				    			((SharpFixApplicationClass) getApplication()).setFddSwitch(result.getFdd_switch());
-				    			((SharpFixApplicationClass) getApplication()).setFdSwitch(result.getFd_switch());
-				    			((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(result.getFdd_Filter_switch());
-				    			((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(result.getFd_Filter_switch());
-				    			((SharpFixApplicationClass) getApplication()).setServiceSwitch(result.getSss_switch());
-								((SharpFixApplicationClass) getApplication()).setServiceHour(result.getSss_hh());
-								((SharpFixApplicationClass) getApplication()).setServiceMin(result.getSss_mm());
-								((SharpFixApplicationClass) getApplication()).setServiceAMPM(result.getSss_ampm());
-								((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(result.getSss_update());
-								((SharpFixApplicationClass) getApplication()).setServiceRepeat(result.getSss_repeat());
-								((SharpFixApplicationClass) getApplication()).setServiceNoti(result.getSss_noti());
-								((SharpFixApplicationClass) getApplication()).setAuSwitch(result.getAu_switch());
-			    				
-				    			
-				    			
-				    			//startActivity(new Intent(this, MainMenuActivity.class));
-								publishProgress();
-				    			
-					    	}else{
-					    		if(MainActivity.this.LOGCAT){
-									Log.d(MainActivity.this.TAG, "Autologin feature inactive! Authentication is required to continue.");
-								}
-					    	}
-				    		return null;
-			    		}
+						public boolean onEditorAction(TextView v, int actionId,
+								KeyEvent event) {
+			    			boolean handled = false;
 
-			    		@Override
-			    		protected void onProgressUpdate(Void... params){
-			    			Log.d(MainActivity.this.TAG, "Starting startAcivityForResult()");
-							MainActivity.this.startActivityForResult(new Intent(MainActivity.this, MainMenuActivity.class), 1);
-			    		}
-			    		
-						@Override
-						protected void onException(Exception e) {
-							// TODO Auto-generated method stub
-						
+			    			if(actionId == EditorInfo.IME_ACTION_NEXT){
+			    				password.requestFocus();
+			    				handled = true;
+			    			}
+
+			    			return handled;
 						}
-			    	}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);//.execute();
-			    	
+
+			    	});
+
+			    	login = (Button) findViewById(R.id.login);
+			    	login.setOnClickListener(this);
+			    	ch = (CheckBox) findViewById(R.id.autoLogin);
+			    	ch.setOnCheckedChangeListener(this);
+			    	ModelPreferences result = (ModelPreferences) this.db.selectAll(Tables.preferences, ModelPreferences.class,null)[0];
+	        		((SharpFixApplicationClass) getApplication()).setAutoLogin(result.getAuto_login());
+
+			    	if(((SharpFixApplicationClass) getApplication()).getAutoLogin() == 1){
+			    		ch.setChecked(true);
+			    		if(this.LOGCAT){
+							Log.d(this.TAG, "Autologin feature activated! Immediately granting access to user");
+						}
+			    		((SharpFixApplicationClass) getApplication()).setAccountId(result.getAccount());
+			    		((SharpFixApplicationClass) getApplication()).setFddPref(result.getFdd_pref());
+		    			((SharpFixApplicationClass) getApplication()).setFddSwitch(result.getFdd_switch());
+		    			((SharpFixApplicationClass) getApplication()).setFdSwitch(result.getFd_switch());
+		    			((SharpFixApplicationClass) getApplication()).setFddFilterSwitch(result.getFdd_Filter_switch());
+		    			((SharpFixApplicationClass) getApplication()).setFdFilterSwitch(result.getFd_Filter_switch());
+		    			((SharpFixApplicationClass) getApplication()).setServiceSwitch(result.getSss_switch());
+						((SharpFixApplicationClass) getApplication()).setServiceHour(result.getSss_hh());
+						((SharpFixApplicationClass) getApplication()).setServiceMin(result.getSss_mm());
+						((SharpFixApplicationClass) getApplication()).setServiceAMPM(result.getSss_ampm());
+						((SharpFixApplicationClass) getApplication()).setServiceUpdateSwitch(result.getSss_update());
+						((SharpFixApplicationClass) getApplication()).setServiceRepeat(result.getSss_repeat());
+						((SharpFixApplicationClass) getApplication()).setServiceNoti(result.getSss_noti());
+						((SharpFixApplicationClass) getApplication()).setAuSwitch(result.getAu_switch());
+
+
+
+		    			//startActivity(new Intent(this, MainMenuActivity.class));
+		    			startActivityForResult(new Intent(this, MainMenuActivity.class), 1);
+			    	}else{
+			    		if(this.LOGCAT){
+							Log.d(this.TAG, "Autologin feature inactive! Authentication is required to continue.");
+						}
+			    	}
 			    }else{
 			    	if(this.LOGCAT){
 						Log.d(this.TAG, "No account has been detected in this instance of SharpFix");
 					}
 			    	setContentView(R.layout.main_no_account);
-			    	new GlobalAsyncTask<Void,Void,Void>(this,"Loading", "Preparing UI . . ."){
-			    		@Override
-			    		protected Void doTask(Void... params) throws Exception{
-			    			createAccount = (Button) findViewById(R.id.createAccount);
-					    	createAccount.setOnClickListener(MainActivity.this);
-					    	
-					    	desiredLogin = (EditText) findViewById(R.id.desiredLogin);
-							desiredPass = (EditText) findViewById(R.id.desiredPassword);
-							confirmPass = (EditText) findViewById(R.id.confirmPassword);
+			    	
+			    	new GlobalAsyncTask<Void, Void, Void>(){
+			    		
+			    		// first instance of SharpFix, scan all mounted dirs
+			    		
+			    		
+						@Override
+						protected Void doTask(Void... params) throws Exception {
+							// TODO Auto-generated method stub
+							File[] f = AndroidUtils.getMountedVolumesAsFile();
+							for(File file : f){
+								MainActivity.this.db.insert(Tables.sd_info, new ModelSD(file.getAbsolutePath(), file.lastModified()), null);
+							}
+							MainActivity.this.startService(new Intent(MainActivity.this, DirectoryScanner.class));
 							
-							desiredLogin.setOnEditorActionListener(new OnEditorActionListener(){
-					    		@Override
-								public boolean onEditorAction(TextView v, int actionId,
-										KeyEvent event) {
-					    			boolean handled = false;
-					    			
-					    			if(actionId == EditorInfo.IME_ACTION_NEXT){
-					    				desiredPass.requestFocus();
-					    				handled = true;
-					    			}
-					    			
-					    			return handled;
-								}
-					    		
-					    	});
-							
-							desiredPass.setOnEditorActionListener(new OnEditorActionListener(){
-					    		@Override
-								public boolean onEditorAction(TextView v, int actionId,
-										KeyEvent event) {
-					    			boolean handled = false;
-					    			
-					    			if(actionId == EditorInfo.IME_ACTION_NEXT){
-					    				confirmPass.requestFocus();
-					    				handled = true;
-					    			}
-					    			
-					    			return handled;
-								}
-					    		
-					    	});
-							
-							confirmPass.setOnEditorActionListener(new OnEditorActionListener(){
-					    		@Override
-								public boolean onEditorAction(TextView v, int actionId,
-										KeyEvent event) {
-					    			boolean handled = false;
-					    			
-					    			if(actionId == EditorInfo.IME_ACTION_DONE){
-					    				createAccount.performClick();
-					    				handled = true;
-					    			}
-					    			
-					    			return handled;
-								}
-					    		
-					    	});
-							desiredLogin.addTextChangedListener(MainActivity.this);
-							desiredPass.addTextChangedListener(MainActivity.this);
-							confirmPass.addTextChangedListener(MainActivity.this);
-							
-							 try{
-								 if(desiredPass.getText().toString().length() > 4 && desiredLogin.getText().toString().length() > 4 
-					    				  && desiredPass.getText().toString().equals(confirmPass.getText().toString()) && 
-					    				 ! (desiredPass.getText().toString().isEmpty() && confirmPass.getText().toString().isEmpty()) &&
-					    				 ! desiredLogin.getText().toString().isEmpty() ){
-									createAccount.setEnabled(true);
-					    		  }else{
-					    			  createAccount.setEnabled(false); 
-					    		  }
-					    	  }catch(Exception e){
-					    		  createAccount.setEnabled(false); 
-					    	  }
-							 return null;
-			    		}
+							return null;
+						}
 
 						@Override
 						protected void onException(Exception e) {
 							// TODO Auto-generated method stub
 							
 						}
-			    	}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR); //.execute();
-			 
+						
+						
+						
+			    		
+			    		
+			    	}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
+			    	createAccount = (Button) findViewById(R.id.createAccount);
+			    	createAccount.setOnClickListener(this);
+
+			    	desiredLogin = (EditText) findViewById(R.id.desiredLogin);
+					desiredPass = (EditText) findViewById(R.id.desiredPassword);
+					confirmPass = (EditText) findViewById(R.id.confirmPassword);
+
+					desiredLogin.setOnEditorActionListener(new OnEditorActionListener(){
+			    		@Override
+						public boolean onEditorAction(TextView v, int actionId,
+								KeyEvent event) {
+			    			boolean handled = false;
+
+			    			if(actionId == EditorInfo.IME_ACTION_NEXT){
+			    				desiredPass.requestFocus();
+			    				handled = true;
+			    			}
+
+			    			return handled;
+						}
+
+			    	});
+
+					desiredPass.setOnEditorActionListener(new OnEditorActionListener(){
+			    		@Override
+						public boolean onEditorAction(TextView v, int actionId,
+								KeyEvent event) {
+			    			boolean handled = false;
+
+			    			if(actionId == EditorInfo.IME_ACTION_NEXT){
+			    				confirmPass.requestFocus();
+			    				handled = true;
+			    			}
+
+			    			return handled;
+						}
+
+			    	});
+
+					confirmPass.setOnEditorActionListener(new OnEditorActionListener(){
+			    		@Override
+						public boolean onEditorAction(TextView v, int actionId,
+								KeyEvent event) {
+			    			boolean handled = false;
+
+			    			if(actionId == EditorInfo.IME_ACTION_DONE){
+			    				createAccount.performClick();
+			    				handled = true;
+			    			}
+
+			    			return handled;
+						}
+
+			    	});
+					desiredLogin.addTextChangedListener(this);
+					desiredPass.addTextChangedListener(this);
+					confirmPass.addTextChangedListener(this);
+
+					 try{
+						 if(desiredPass.getText().toString().length() > 4 && desiredLogin.getText().toString().length() > 4 
+			    				  && desiredPass.getText().toString().equals(confirmPass.getText().toString()) && 
+			    				 ! (desiredPass.getText().toString().isEmpty() && confirmPass.getText().toString().isEmpty()) &&
+			    				 ! desiredLogin.getText().toString().isEmpty() ){
+							createAccount.setEnabled(true);
+			    		  }else{
+			    			  createAccount.setEnabled(false); 
+			    		  }
+			    	  }catch(Exception e){
+			    		  createAccount.setEnabled(false); 
+			    	  }
+
 			    }	 
 			  }catch(Exception e){
 				  if(LOGCAT){
 		    			StackTraceElement[] st = e.getStackTrace();
 						for(int y= 0; y <st.length; y++){
 							Log.w(TAG, st[y].toString());
-							
+
 						}
 		    		}
 			  }

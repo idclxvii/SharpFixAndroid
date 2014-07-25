@@ -9,7 +9,7 @@ public class ModelDirsInfo {
 	private Long lastMod;
 
 	public enum fields{
-		sd_Id, Path, Last_mod
+		Sd_id, Path, Last_mod
 	}
 	
 	public String[] getFields(){
@@ -29,6 +29,11 @@ public class ModelDirsInfo {
         this.path = path;
     }
  
+    public ModelDirsInfo(Integer id, String path ) {
+        this.id = id;
+        this.path = path;
+    }
+    
     public ModelDirsInfo(Integer id, String path, Long lastMod) {
         this.id = id;
         this.path = path;
@@ -44,7 +49,7 @@ public class ModelDirsInfo {
         this.path = path;
     }
  
-    public void setLast_mod(long lastMod) {
+    public void setLast_mod(Long lastMod) {
         this.lastMod = lastMod;
     }
      

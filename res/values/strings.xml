@@ -10,6 +10,7 @@
     <string name="Logs">Logs</string>
     <string name="Check">Check Logs</string>
     <string name="Delete">Delete Logs</string>
+    <string name="dScanner">Directory Scanner Service</string>
     <string name="fdService">File Designation Service</string>
     <string name="fddService">File Duplication Detection Service</string>    
     <string name="logo">SharpFix Android File Administration Utility</string>    

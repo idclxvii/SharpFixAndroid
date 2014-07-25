@@ -182,6 +182,9 @@ public abstract class GlobalAsyncTask<Params, Progress, Result> extends
 		// TODO Auto-generated method stub
 		try{
 			return doTask(params);
+		}catch(InterruptedException ie){
+			this.onCancelled();
+			return null;
 		}catch(Exception e){
 			this.exception = e;
 			onException(e);

@@ -20,7 +20,6 @@ public class SharpFixApplicationClass extends Application{
 	/*
 	 * Developer Fields - Fields that are manually edited by the developer based on mood swings.
 	 */
-	
 	private final boolean LOGCAT = true;
 	private final String TAG = this.getClass().getName();
 	private final boolean DEVELOPER_MODE = true;
@@ -139,14 +138,11 @@ public class SharpFixApplicationClass extends Application{
 		
 	}
 	
-	
-	
-	
 	private Boolean rootAccess; // this is just to know whether the device is rooted or not, do not base on this when calling root commands
 	private Boolean root; // current permission given to a root command, this is the dynamic variable to watch when calling root commands
 	
 	
-	/*
+	/*																											
 	 * SQLite-based Fields - Fields that are saved and retrieved in the SQLite Database 
 	 */
 	
@@ -262,6 +258,7 @@ public class SharpFixApplicationClass extends Application{
 		this.auSwitch = null; 
 		
 		this.root = null;
+		
 	}
 	
 	// getters:

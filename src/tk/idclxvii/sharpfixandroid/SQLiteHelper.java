@@ -682,12 +682,18 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     		throws InstantiationException, IllegalAccessException,
     		NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
     
-    	String sql = "SELECT * FROM "+table.toString()+" WHERE ";   	
+    	String sql = "SELECT * FROM "+table.toString()+" WHERE "; 
+    	String[] args = new String[params.length];
     	for(int x =0; x < params.length; x++){
     		if(x == params.length - 1){
-    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"';");
-        	}else{
-    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"' AND ");
+    			// sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"';");
+    			sql+= (params[x][0].toString()+" = ? ;");
+    			args[x] = params[x][1].toString();
+    		}else{
+    			// sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"' AND ");
+    			
+    			sql+= (params[x][0].toString()+" = ? AND ");
+    			args[x] = params[x][1].toString();
         	}
     	}
     	if(LOGCAT){
@@ -702,7 +708,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		Object resultSet =  cls.newInstance();
 		Method m = cls.getMethod("getFields");
 		String[] fields = (String[]) m.invoke(resultSet, null);
-		Cursor c = db.rawQuery(sql, null);
+		Cursor c = db.rawQuery(sql, args);
 
 		if (c != null){
 			c.moveToFirst();
