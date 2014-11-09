@@ -1,7 +1,7 @@
 package tk.idclxvii.sharpfixandroid;
 
 import java.io.*;
-import java.security.MessageDigest;
+import java.security.*;
 import java.util.zip.*;
 
 public class Security {
@@ -44,7 +44,7 @@ public class Security {
 		return result;
 	}
 	
-	public  static String getMD5Checksum(String filename) throws Exception {
+	public  static String getMD5Checksum(String filename) throws FileNotFoundException, NoSuchAlgorithmException, IOException     {
 		   byte[] b = createMD5Checksum(filename);
 		   String result = "";
 
@@ -54,7 +54,8 @@ public class Security {
 		   return result;
 	}
 	
-	public  static byte[] createMD5Checksum(String filename) throws Exception {
+	public  static byte[] createMD5Checksum(String filename)  throws FileNotFoundException,
+		IOException, NoSuchAlgorithmException{
 		   InputStream fis =  new FileInputStream(filename);
 
 		   byte[] buffer = new byte[1024];
@@ -73,8 +74,8 @@ public class Security {
 	}
 	
 	
-	public  static String getSHA1Checksum(String filename) throws Exception {
-		   byte[] b = createMD5Checksum(filename);
+	public  static String getSHA1Checksum(String filename) throws FileNotFoundException, NoSuchAlgorithmException, IOException  {
+		   byte[] b = createSHA1Checksum(filename);
 		   String result = "";
 
 		   for (int i=0; i < b.length; i++) {
@@ -83,7 +84,8 @@ public class Security {
 		   return result;
 	}
 	
-	public  static byte[] createSHA1Checksum(String filename) throws Exception {
+	public  static byte[] createSHA1Checksum(String filename) throws FileNotFoundException,
+			IOException, NoSuchAlgorithmException   {
 		   InputStream fis =  new FileInputStream(filename);
 
 		   byte[] buffer = new byte[1024];

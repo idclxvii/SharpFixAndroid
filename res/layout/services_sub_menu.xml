@@ -136,73 +136,43 @@
 	        android:layout_below="@+id/services_label3"
 	        android:background="#c0c0c0" />
 
-	     <TextView
-		        android:id="@+id/services_label4"
-		        android:layout_width="fill_parent"
-		        android:layout_height="wrap_content"
-		        android:layout_below="@+id/services_hr5"
-		        android:text="@string/sssUpdateSelection7"
-		        android:textSize="20sp" 
-		        android:textStyle="bold"
-		        android:clickable="true"
-		        android:textColor="@color/text_selector"
-		        android:background="@color/background_selector"
-		        android:paddingTop="5dp"
-		        android:paddingBottom="5dp"
-		        android:paddingRight="5dp"
-	         />
-	
-	     
-			<View
-		        android:id="@+id/services_hr6"
-		        android:layout_width="fill_parent"
-		        android:layout_height="0.5dp"
-		        android:layout_below="@+id/services_label4"
-		        android:background="#c0c0c0" />
-	     
-	    <RelativeLayout
-	        android:id="@+id/scanControls"
-	        android:padding="10dp" 
+	      <TextView
+	        android:id="@+id/services_selection4"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/services_hr6"
+	        android:layout_below="@+id/services_hr5"
+	        android:text="@string/sssUpdateSelection5"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
 	        >
-	        
-	       
-		        
-		   	<Button
-		        android:id="@+id/scan"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerHorizontal="true"
-		        android:text="@string/sssUpdateSelection5"
-		        android:textSize="15sp" 
-		        android:textColor="@color/text_selector_labels"
-		        android:textStyle="italic"
-		        android:padding="10dp"
-		        android:background="@drawable/start_button"
-		        android:layout_margin="10dp"
-		        android:clickable="true"
-		         />
-		     
-		     <Button
-		        android:id="@+id/stop"
-		        android:layout_width="wrap_content"
-		        android:layout_height="wrap_content"
-		        android:layout_centerHorizontal="true"
-		        android:layout_below="@+id/scan"
-		        android:text="@string/sssUpdateSelection6"
-		        android:textSize="15sp" 
-		        android:textColor="@color/text_selector_labels"
-		        android:textStyle="italic"
-		        android:padding="10dp"
-		        android:background="@drawable/stop_button"
-		        android:layout_margin="10dp"
-		        android:clickable="true"
-		         />
-		        
-	        
-	    </RelativeLayout>
+	    </TextView>
+	   <TextView
+	        android:id="@+id/services_label4"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/services_selection4"
+	        android:text="@string/sssUpdateLabel5"
+	        android:textSize="15sp" 
+	        android:textColor="@color/text_selector_labels"
+	        android:textStyle="italic"
+	        android:padding="10dp" />
+	 <View
+	     	android:id="@+id/services_hr6"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/services_label4"
+            android:background="#c0c0c0"/>
+	
+	
+	     
+			
+	     
+	    
 	     
 	    
 	</RelativeLayout>

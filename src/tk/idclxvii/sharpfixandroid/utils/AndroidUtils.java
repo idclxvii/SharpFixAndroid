@@ -259,5 +259,4 @@ public abstract class AndroidUtils {
 	}
 	
 	
-	
 }

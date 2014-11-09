@@ -345,7 +345,7 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 									Security.md5Hash(desiredPass.getText().toString())), null )){
 								ModelAccountsInfo mai = (ModelAccountsInfo) MainActivity.this.db.select(Tables.accounts_info, ModelAccountsInfo.class, 
 										new Object[][]{{"login",desiredLogin.getText().toString()}, {"password", Security.md5Hash(desiredPass.getText().toString())}}, null);
-								MainActivity.this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 0,0,0,0,0,0,0,0,0,0,0,0,0,0),null);
+								MainActivity.this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 1,0,1,0,0,0,0,0,0,0,0,7,1,1),null);
 								
 								if(MainActivity.this.LOGCAT){
 									Log.d(MainActivity.this.TAG, "An account has been successfully created!");

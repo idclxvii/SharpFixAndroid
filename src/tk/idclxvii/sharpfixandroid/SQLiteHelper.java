@@ -13,6 +13,7 @@ import android.widget.Toast;
 
 import java.lang.reflect.*;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
 public class SQLiteHelper extends SQLiteOpenHelper {
@@ -607,13 +608,18 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     		throws InstantiationException, IllegalAccessException,
     		NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
     	
-    	
     	String sql = "SELECT * FROM "+table.toString()+" WHERE ";   	
+    	String[] args = new String[params.length];
+    	
     	for(int x =0; x < params.length; x++){
     		if(x == params.length - 1){
-    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"';");
+    			//sql+= (params[x][0].toString()+" = '" + AndroidUtils.sanitizeSQL(params[x][1].toString())+"';");
+    			sql+= (params[x][0].toString()+" = ? ;");
+    			args[x] = params[x][1].toString();
         	}else{
-    			sql+= (params[x][0].toString()+" = '" + params[x][1].toString()+"' AND ");
+    			// sql+= (params[x][0].toString()+" = '" + AndroidUtils.sanitizeSQL(params[x][1].toString())+"' AND ");
+        		sql+= (params[x][0].toString()+" = ? AND ");
+    			args[x] = params[x][1].toString(); 
         	}
     	}
     	if(LOGCAT){
@@ -629,7 +635,92 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		Object cl =  cls.newInstance();
 		Method m = cls.getMethod("getFields");
 		String[] fields = (String[]) m.invoke(cl, null);
-		Cursor c = db.rawQuery(sql, null);
+		Cursor c = db.rawQuery(sql, args);
+		if (c.moveToFirst()) {
+			do{
+				cl = cls.newInstance();
+				for(String field : fields){
+					String methodName = "set"+field;
+		    		try{
+		    			// try if the current method is of type Integer
+		        		Integer arg = c.getInt((c.getColumnIndex(field.toLowerCase())));
+		        		m = cls.getMethod(methodName, Integer.class);
+		        		m.invoke(cl,arg);
+		    		}catch(Exception e){
+		    			try{
+		    				// try if the current method is of type Long
+		    				Long arg = c.getLong((c.getColumnIndex(field.toLowerCase())));
+		    				m = cls.getMethod(methodName, Long.class);
+			        		m.invoke(cl,arg);
+		    			}catch(Exception ee){
+		    				try{
+		    					// try if the current method is of type String
+		    					String arg = c.getString((c.getColumnIndex(field.toLowerCase())));
+		    					m = cls.getMethod(methodName, String.class);
+				        		m.invoke(cl,arg);
+		    				}catch(Exception eee){
+		    					if(LOGCAT){
+		    		    			StackTraceElement[] st = e.getStackTrace();
+		    						for(int y= 0; y <st.length; y++){
+		    							Log.w(TAG, st[y].toString());
+
+		    						}
+		    		    		}
+		    				}
+		    			}
+		    		}
+		    	}
+		    	resultSet.add(cl);
+		    }while (c.moveToNext());
+		}
+		c.close();
+		try{
+    		this.close();
+    	}catch(Exception e){
+    		if(LOGCAT){
+				Log.w(TAG, "Closing the current instance of SQLiteHelper failed at: SelectMulti()");
+			}
+    	}
+		return resultSet.toArray();	
+    }
+    
+    
+    public Object[] selectConditional(Tables table, Class<?> cls, Object[][] params, SQLiteDatabase db)
+    		throws InstantiationException, IllegalAccessException,
+    		NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
+    	
+    	
+    	
+    	
+    	// String sql = "SELECT * FROM "+table.toString()+" WHERE " + AndroidUtils.sanitizeSQL(conditionalSql);   	
+    	String sql = "SELECT * FROM "+table.toString()+" WHERE ";   	
+    	String[] args = new String[params.length];
+    	
+    	for(int x =0; x < params.length; x++){
+    		if(x == params.length - 1){
+    			//sql+= (params[x][0].toString()+" = '" + AndroidUtils.sanitizeSQL(params[x][1].toString())+"';");
+    			sql+= (params[x][0].toString()+" = ? ;");
+    			args[x] = params[x][1].toString();
+        	}else{
+    			// sql+= (params[x][0].toString()+" = '" + AndroidUtils.sanitizeSQL(params[x][1].toString())+"' AND ");
+        		sql+= (params[x][0].toString()+" = ? " + params[x][2]);
+    			args[x] = params[x][1].toString(); 
+        	}
+    	}
+    	if(LOGCAT){
+    		Log.d(TAG,"Select Multi SQL: " +sql);
+    	}
+    	if(db != null){
+    		
+    	}else{
+    		db = this.getReadableDatabase();
+        }
+    	// class manipulation
+		List<Object> resultSet = new ArrayList<Object>();
+		Object cl =  cls.newInstance();
+		Method m = cls.getMethod("getFields");
+		String[] fields = (String[]) m.invoke(cl, null);
+		Cursor c = db.rawQuery(sql, args);
 		if (c.moveToFirst()) {
 			do{
 				cl = cls.newInstance();

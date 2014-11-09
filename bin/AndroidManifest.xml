@@ -16,6 +16,8 @@
 	<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 	<uses-permission android:name="android.permission.ACCESS_SUPERUSER" />
 	
+	
+	<uses-permission android:name="android.permission.WAKE_LOCK" />
 	<uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
 	<uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED"/>
 	
@@ -89,6 +91,10 @@
             android:name="tk.idclxvii.sharpfixandroid.SubMenuFilterRulesActivity"
             android:label="@string/app_name" >
         </activity>
+        <activity
+            android:name="tk.idclxvii.sharpfixandroid.SubMenuDirectScanControls"
+            android:label="@string/app_name" >
+        </activity>
         
         <service 
             android:enabled="true" 
@@ -99,13 +105,13 @@
         
         <service 
             android:enabled="true" 
-            android:name=".FileDesignationService"
+            android:name=".FileDesignationScanner"
             android:icon="@drawable/ic_launcher"
             android:label="@string/fdService" 
             />
         <service 
             android:enabled="true" 
-            android:name=".FileDuplicationDetectionService"
+            android:name=".FileDuplicationDetectionScanner"
             android:icon="@drawable/ic_launcher"
             android:label="@string/fddService" 
             />

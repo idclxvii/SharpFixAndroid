@@ -95,17 +95,18 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 				public boolean onLongClick(View v) {
 					// TODO Auto-generated method stub
 					Dialog d = new Dialog(MainMenuActivity.this);
-					d.setContentView(R.layout.fd_sub_menu_rules);
+					d.setContentView(R.layout.dev_mode /*fd_sub_menu_rules*/);
 					
 					d.setTitle("{ } DEVELOPER MODE " + (MainMenuActivity.this.SF.getRootAccess() ? "root" : "h4x0r"));
-					TextView title = (TextView) d.findViewById(R.id.title);
-					title.setText("Active and Mounted Volumes Detection");
-					TextView noRules = (TextView) d.findViewById(R.id.noRules);
-					View noRulesHr = (View) d.findViewById(R.id.noRulesHr);
-					TextView createRule = (TextView) d.findViewById(R.id.createRule);
-					noRules.setVisibility(View.GONE);
-					noRulesHr.setVisibility(View.GONE);
-					ListView RULES = (ListView) d.findViewById(R.id.listViewRules);
+					
+					//TextView title = (TextView) d.findViewById(R.id.title);
+					//title.setText("Active and Mounted Volumes Detection");
+					//TextView noRules = (TextView) d.findViewById(R.id.noRules);
+					//View noRulesHr = (View) d.findViewById(R.id.noRulesHr);
+					TextView volumesNote = (TextView) d.findViewById(R.id.selection1);
+					//noRules.setVisibility(View.GONE);
+					//noRulesHr.setVisibility(View.GONE);
+					ListView VOLUMES = (ListView) d.findViewById(R.id.listViewVolumes);
 					ArrayAdapter<String> adapter = new ArrayAdapter<String>(MainMenuActivity.this,
 							R.layout.custom_textview);
 					String[] storage = AndroidUtils.getMountedVolumes();
@@ -114,22 +115,22 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 						if(storage.length > 2){
 							// multiple storage detected
 							if(i == 0){
-								createRule.setText(storage[i]);
+								volumesNote.setText(storage[i]);
 							}else if( i > 1){
 								adapter.add(storage[i]);
 							}
 							
 						}else{
 							if(i == 0){
-								createRule.setText(storage[i]);
+								volumesNote.setText(storage[i]);
 							}else{
 								adapter.add(storage[i]);
 							}
 						}
 					}
 					
-					RULES.setAdapter(adapter);
-					RULES.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+					VOLUMES.setAdapter(adapter);
+					VOLUMES.setOnItemClickListener(new AdapterView.OnItemClickListener(){
 	
 						@Override
 						public void onItemClick(AdapterView<?> parent, View view,
@@ -166,8 +167,64 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 	
 						
 					});
+					
+					TextView titleDatabase = (TextView) d.findViewById(R.id.titleDatabase);
+					//noRules.setVisibility(View.GONE);
+					//noRulesHr.setVisibility(View.GONE);
+					ListView DATABASE = (ListView) d.findViewById(R.id.listViewDatabase);
+					ArrayAdapter<String> adapter2 = new ArrayAdapter<String>(MainMenuActivity.this,
+							R.layout.custom_textview);
+					adapter2.add("Import Database");
+					adapter2.add("Export Database");
+					adapter2.add("Drop Database");
+					
+					
+					DATABASE.setAdapter(adapter2);
+					DATABASE.setOnItemClickListener(new AdapterView.OnItemClickListener(){
+	
+						@Override
+						public void onItemClick(AdapterView<?> parent, View view,
+								int position, long id) {
+							// TODO Auto-generated method stub
+							try{
+								final String selection = ((String)parent.getItemAtPosition(position));
+								//final String dir = selection.substring(selection.indexOf("/"), selection.length());
+								// 0 = import, 1 = xport, 2 = drop
+								
+								Log.i(TAG,"Selected item: " +position);
+								FileDialog f = new FileDialog(MainMenuActivity.this, new File(""), true);
+								f.addFileListener(new FileDialog.FileSelectedListener(){
+	
+									@Override
+									public void fileSelected(File file) {
+										// TODO Auto-generated method stub
+										try{
+											tk.idclxvii.sharpfixandroid.utils.AndroidUtils.openFile(MainMenuActivity.this, file);
+										}catch(Exception e){
+											tk.idclxvii.sharpfixandroid.utils.Logcat.logCaughtException(
+													MainMenuActivity.this, e.getStackTrace());
+										}
+									}
+									
+								});
+								f.setSelectDirectoryOption(false);
+								f.createFileDialog();
+								
+							}catch(Exception e){
+								if(LOGCAT){
+					    			Logcat.logCaughtException(MainMenuActivity.this, e.getStackTrace());
+					    		}
+								
+							}
+						}
+	
+						
+					});
+					
 					d.show();
 					return true;
+					
+					
 				}
 				
 			});

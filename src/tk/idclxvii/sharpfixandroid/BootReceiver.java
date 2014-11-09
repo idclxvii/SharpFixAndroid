@@ -25,6 +25,8 @@ public class BootReceiver extends BroadcastReceiver {
 				protected Void doTask(Void... params) throws Exception {
 					// TODO Auto-generated method stub
 					
+					android.os.Debug.waitForDebugger();
+					
 					Calendar c = Calendar.getInstance();
 					c.setTimeInMillis(System.currentTimeMillis());
 					ModelPreferences mp = (ModelPreferences) db.selectAll(Tables.preferences, ModelPreferences.class, null)[0];
@@ -33,7 +35,21 @@ public class BootReceiver extends BroadcastReceiver {
 					
 					AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 					Intent intent = new Intent(context, Alarm.class);
+					
+					long current = System.currentTimeMillis();
+					long set = c.getTimeInMillis();
+										
+					if((current - set) > 900000){ // if more than 15 minutes has passed, then scan wont initialize immediately
+						intent.putExtra("lapse", (current - set) );
+						intent.putExtra("start", false);
+					}else{
+						intent.putExtra("lapse", (current - set) );
+						intent.putExtra("start", true);
+					}
+					
+					
 					PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
+					
 					alarm.setRepeating(AlarmManager.RTC_WAKEUP,  c.getTimeInMillis(),
 							((mp.getSss_repeat() != 7) ? AlarmManager.INTERVAL_DAY * 7 : AlarmManager.INTERVAL_DAY)
 							, pendingIntent);

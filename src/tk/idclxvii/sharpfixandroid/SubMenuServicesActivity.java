@@ -33,8 +33,7 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 	
 	// layout fields
 	CheckBox  chSchedScan, chAutoUpd;
-	TextView title, schedScanLabel, schedScanSettings, schedScanSettingsLabel, autoUpdLabel;
-	Button start, stop;
+	TextView title, schedScanLabel, schedScanSettings, schedScanSettingsLabel, autoUpdLabel, directScanSettings, directScanSettingsLabel;
 	
 	// service Intents
 	private Intent dsIntent, fdsIntent, fddsIntent;
@@ -118,26 +117,32 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 		});
 		
 		
-		start = (Button) findViewById(R.id.scan);
-		start.setOnClickListener(new OnClickListener(){
+		// ###########################################################
+		
+		directScanSettingsLabel = (TextView) findViewById(R.id.services_label4);
+		directScanSettingsLabel.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				SubMenuServicesActivity.this.startService(dsIntent);
+				directScanSettings.performClick();
 			}
 			
 		});
-		stop = (Button) findViewById(R.id.stop);
-		stop.setOnClickListener(new OnClickListener(){
+		directScanSettings = (TextView) findViewById(R.id.services_selection4);
+		directScanSettings.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				SubMenuServicesActivity.this.stopService(dsIntent);
+				// call scheduled scan settings Activity
+				startActivity(new Intent(SubMenuServicesActivity.this, SubMenuDirectScanControls.class));
+				
 			}
-		
+			
 		});
+		
+		
 		
 		if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.JELLY_BEAN) {
 			
@@ -145,6 +150,12 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 			chSchedScan = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, chSchedScan,50.0f);
 			chAutoUpd = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, chAutoUpd,50.0f);
 		}
+		
+		
+		
+		
+	
+		
 		
 	}
 
@@ -315,7 +326,7 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 				}
 					
 			}
-
+			((SharpFixApplicationClass) getApplication()).updatePreferences(db);
 		}else{
 			// Toast.makeText(this, "File Duplication Detection Filtering Settings was not changed" ,Toast.LENGTH_LONG).show();
 		}

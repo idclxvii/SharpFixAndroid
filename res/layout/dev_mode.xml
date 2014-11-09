@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="fill_parent"
+	    android:id="@+id/Rules"
+	    xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000" >
+	   <!-- 
+		<TextView
+	        android:id="@+id/title"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/subMenuFdRules"
+	        android:textSize="30sp" 
+	        android:textStyle="bold"
+	        android:textColor="#FFFFFF"
+	        >
+	    </TextView>
+	     
+	    <View
+	        android:id="@+id/hr1"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/title"
+            android:background="#c0c0c0"/>
+		<View
+		    android:id="@+id/hr2"
+             android:layout_width="fill_parent"
+             android:layout_height="0.5dp"
+             android:layout_below="@+id/hr1"
+             android:background="#c0c0c0"/>
+             -->
+     	<RelativeLayout 
+		    android:layout_width="match_parent"
+		    android:layout_height="wrap_content"
+		    android:id="@+id/volumes"
+		    android:background="#000000" >
+			<TextView
+		 	    android:id="@+id/titleVolumes"
+		 	    android:layout_width="fill_parent"
+		 	    android:layout_height="wrap_content"
+		 	    android:gravity="center"
+		 	    android:padding="5dp"
+		 	    android:text="@string/titleVolumes"
+		 	    android:textSize="20sp" 
+		        android:textStyle="bold"
+		        android:clickable="true"
+		        android:textColor="@color/text_selector"
+		        android:background="@color/background_selector"
+		        
+		 	     />
+			<View
+		     	android:id="@+id/hr1"
+	            android:layout_width="fill_parent"
+	            android:layout_height="0.5dp"
+	            android:layout_below="@+id/titleVolumes"
+	            android:background="#c0c0c0" />
+			<TextView
+		 	    android:id="@+id/selection1"
+		 	    android:layout_width="fill_parent"
+		 	    android:layout_height="wrap_content"
+		 	    android:gravity="center"
+		 	    android:padding="5dp"
+		 	    android:text="@string/dummy"
+		 	    android:textSize="20sp" 
+		        android:textStyle="bold"
+		        android:clickable="false"
+		        android:textColor="@color/text_selector"
+		        android:background="@color/background_selector"
+		        android:layout_below="@+id/hr1"
+			    
+		 	     />
+			<View
+		     	android:id="@+id/hr2"
+	            android:layout_width="fill_parent"
+	            android:layout_height="0.5dp"
+	            android:layout_below="@+id/selection1"
+	            android:background="#c0c0c0" />
+			<ListView
+			    android:layout_width="fill_parent"
+			    android:layout_height="wrap_content"
+			    android:id="@+id/listViewVolumes"
+			    android:layout_below="@+id/hr2"
+			    android:cacheColorHint="#000000"
+			    android:gravity="center"
+		 	    android:padding="5dp"
+		 	    android:textSize="20sp" 
+		        android:textStyle="bold"
+		        android:clickable="false"
+		        android:longClickable="false"
+		        />
+			    
+			
+			<View
+		     	android:id="@+id/hr3"
+	            android:layout_width="fill_parent"
+	            android:layout_height="0.5dp"
+	            android:layout_below="@+id/listViewVolumes"
+	            android:background="#c0c0c0" />
+		</RelativeLayout>
+		
+		<RelativeLayout 
+	    android:layout_width="match_parent"
+	    android:layout_height="wrap_content"
+	    android:id="@+id/database"
+	    android:layout_below="@+id/volumes"
+	    android:background="#000000" >
+		<TextView
+	 	    android:id="@+id/titleDatabase"
+	 	    android:layout_width="fill_parent"
+	 	    android:layout_height="wrap_content"
+	 	    android:gravity="center"
+	 	    android:padding="5dp"
+	 	    android:text="@string/titleDatabase"
+	 	    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        
+	 	     />
+		<View
+		     	android:id="@+id/hr4"
+	            android:layout_width="fill_parent"
+	            android:layout_height="0.5dp"
+	            android:layout_below="@+id/titleDatabase"
+	            android:background="#c0c0c0" />
+		
+		<ListView
+		    android:layout_width="fill_parent"
+		    android:layout_height="wrap_content"
+		    android:id="@+id/listViewDatabase"
+		    android:layout_below="@+id/hr4"
+		    android:cacheColorHint="#000000"
+		    android:gravity="center"
+	 	    android:padding="5dp"
+	 	    android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="false"
+	        android:longClickable="false"
+	        />
+		</RelativeLayout>
+		
+</RelativeLayout>

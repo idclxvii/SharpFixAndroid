@@ -1,7 +1,13 @@
 package tk.idclxvii.sharpfixandroid.databasemodel;
 
+import java.io.*;
 
-public class ModelDirsInfo {
+public class ModelDirsInfo implements Serializable{
+	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1612830864349521210L;
 	
 	// data structure
 	private Integer id = null;
