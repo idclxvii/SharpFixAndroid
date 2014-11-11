@@ -71,7 +71,7 @@ Code contributions are welcome!
 
 You should fork the repo as described here: http://help.github.com/fork-a-repo/
 
-See the Issues list for bug reports: https://github.com/cyclestreets/android/issues
+See the Issues list for bug reports: https://github.com/idclxvii/SharpFixAndroid/issues
 
 Before adding new features, please contact c0d3s1x mailing list:
 cisqua.and.kuea.13@gmail.com
