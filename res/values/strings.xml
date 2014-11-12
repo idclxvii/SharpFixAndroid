@@ -114,6 +114,11 @@
     <string name="titleDatabase">Database Functions</string>    
     
     
+    <!-- About -->
+    <string name="currentVersion"><a href="https://github.com/idclxvii/SharpFixAndroid">https://github.com/idclxvii/SharpFixAndroid</a></string>    
+    <string name="GNU"><a href="http://www.gnu.org/licenses">http://www.gnu.org/licenses</a></string>    
+    
+    
     <!--  DUMMY (Automatically Edited On Java Files) -->
     <string name="loading">Loading ...</string>
     <string name="dummy">Dummy Text Here . . .</string>
