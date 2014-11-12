@@ -144,8 +144,55 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 							for(File file : f){
 								MainActivity.this.db.insert(Tables.sd_info, new ModelSD(file.getAbsolutePath(), file.lastModified()), null);
 							}
-							MainActivity.this.startService(new Intent(MainActivity.this, DirectoryScanner.class));
+							// MainActivity.this.db.insert(Tables.preferences, new ModelPreferences(1,0,1,0,0,0,0,0,0,0,0,7,1,1),null);
+							/*
+							 * 
+							 * public ModelPreferences(Integer id, Integer account, Integer fddSw, Integer fdSw, Integer fddPref, Integer autoLogin,
+			Integer fddFilterSwitch, Integer fdFilterSwitch, Integer srvcSw, Integer srvcHH, Integer srvcMM,
+			Integer srvcAMPM, Integer srvcUSw, Integer srvcRepeat, Integer srvcNoti, Integer auSw){
+		this.id = id;
+		this.accountId = account;
+		this.fddSwitch = fddSw;
+		this.fdSwitch = fdSw;
+		this.fdFilterSwitch = fdFilterSwitch;
+		this.fddFilterSwitch = fddFilterSwitch;
+		this.fddPref = fddPref;
+		this.autoLogin = autoLogin;
+		this.serviceSwitch = srvcSw;
+		this.serviceHour = srvcHH;
+		this.serviceMin = srvcMM;
+		this.serviceAMPM = srvcAMPM;
+		this.serviceUpdateSwitch = srvcUSw;
+		this.serviceRepeat = srvcRepeat;
+		this.auSwitch = auSw;
+		this.serviceNoti = srvcNoti;
+		
+	}
+		
+	}
+							 * 
+							 * */
+							SF.setAccountId(0);
+							SF.setAutoLogin(0);
+							SF.setFddPref(0);
+							SF.setFddSwitch(1);
+							SF.setFdSwitch(0);
+							SF.setFdFilterSwitch(0);
+							SF.setFdFilterSwitch(0);
+							// new fields
+							// Sss_switch, Sss_hh, Sss_mm, Sss_ampm, Sss_update, Sss_repeat, Au_switch
 							
+							SF.setServiceSwitch(1);
+							SF.setServiceHour(12);
+							SF.setServiceMin(0);
+							SF.setServiceAMPM(1);
+							SF.setServiceUpdateSwitch(1);
+							SF.setServiceRepeat(7);
+							SF.setServiceNoti(1);
+							SF.setAuSwitch(1);
+							//SF.updatePreferences(db);
+							
+							MainActivity.this.startService(new Intent(MainActivity.this, DirectoryScanner.class));
 							return null;
 						}
 
@@ -345,7 +392,15 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 									Security.md5Hash(desiredPass.getText().toString())), null )){
 								ModelAccountsInfo mai = (ModelAccountsInfo) MainActivity.this.db.select(Tables.accounts_info, ModelAccountsInfo.class, 
 										new Object[][]{{"login",desiredLogin.getText().toString()}, {"password", Security.md5Hash(desiredPass.getText().toString())}}, null);
-								MainActivity.this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 1,0,1,0,0,0,0,0,0,0,0,7,1,1),null);
+								MainActivity.this.db.insert(Tables.preferences, new ModelPreferences(mai.getId(), 1,0,1,0,0,0,1,12,0,1,1,7,1,1),null);
+								
+								/*
+								 * public ModelPreferences(Integer account, Integer fddSw, Integer fdSw, Integer fddPref, Integer autoLogin,
+			Integer fddFilterSwitch, Integer fdFilterSwitch, Integer srvcSw, Integer srvcHH, Integer srvcMM,
+			Integer srvcAMPM, Integer srvcUSw, Integer srvcRepeat, Integer srvcNoti, Integer auSw){
+								 * 
+								 * */
+								
 								
 								if(MainActivity.this.LOGCAT){
 									Log.d(MainActivity.this.TAG, "An account has been successfully created!");

@@ -45,6 +45,7 @@ public class FileDuplicationDetectionScanner extends Service{
 	private String TAG = "FileDuplicationDetectionScanner";
 	private SharpFixApplicationClass SF;
 	
+	private long deletedFileSize;
 	/*
 	private Object[] tempFilesQueue;
 	private Object[] tempDirsQueue;
@@ -154,7 +155,8 @@ public class FileDuplicationDetectionScanner extends Service{
 			
 			
 			
-			
+			Log.i(TAG, "########################################");
+			Log.i(TAG, "File Duplication Detection Scanner Finished!");
 			return null;
 		}
 
@@ -506,8 +508,9 @@ public class FileDuplicationDetectionScanner extends Service{
 				}
 				
 				it.remove();
-				checkDirsQueue();
+				
 			}
+			checkDirsQueue();
 		}
 		
 		
@@ -645,7 +648,7 @@ public class FileDuplicationDetectionScanner extends Service{
 		mBuilder.setContentTitle("SharpFix File Duplication Detection Scanner");
 		mBuilder.setContentIntent(dspendingIntent);
 		mBuilder.setContentText("Scanning For Duplicate Files");
-	    mBuilder.setSmallIcon(R.drawable.ic_launcher);
+	    mBuilder.setSmallIcon(R.drawable.fdd_icon);//setSmallIcon(R.drawable.ic_launcher);
 		
 	   /*
 	    tempFilesQueue = (Object[]) intent.getExtras().getSerializable("files");

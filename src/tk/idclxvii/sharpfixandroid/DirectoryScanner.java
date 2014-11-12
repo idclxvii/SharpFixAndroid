@@ -38,6 +38,7 @@ public class DirectoryScanner extends Service{
 		return this.db;
 	}
 	
+	
 	private SharpFixApplicationClass SF;
 	
 	private class Task extends GlobalAsyncTask<File, String, Void>{
@@ -88,13 +89,15 @@ public class DirectoryScanner extends Service{
 				publishProgress(new String[] {"", f.getAbsolutePath()});
 				if( f.isDirectory() && f.canRead() && f.canWrite() && /*!f.isHidden() && */ f.exists()){
 					// the recorded data is a dir, readable, writeable, not hidden and exists
+					Log.i(TAG, "Folder " +f.getAbsolutePath() + " still exists in the file system!");
 					
 					// check if the current file instance has greater lastMod than the recorded data on the database (recency check)
+					Log.i(TAG, "Checking if " +f.getAbsolutePath() + " has been modified since the last scan . . .");
 					if(Long.valueOf(f.lastModified()).compareTo(((ModelDirsInfo) o).getLast_mod()) > 0){
 						// file was modified
+						Log.i(TAG, "Folder " +f.getAbsolutePath() + " was modified!");
+							
 						
-						
-						Log.i(TAG, "Old directory was modified: " +f.getAbsolutePath());
 						
 						int sdCard = 0;
 						boolean notFound = true;
@@ -109,19 +112,20 @@ public class DirectoryScanner extends Service{
 							}
 						}
 						// add to directories to be scanned later by duplication detection and file designation
+						Log.i("DirectoryScanner",  "Adding this directory to directory queue . . .");
 						SF.dirsQueue.add(new ModelDirsInfo(sdCard, f.getAbsolutePath(), f.lastModified()));
 						
 						// rewrite lastmod, crc32, md5, sha1, pathname to database
 						// db.update(Tables.dirs_info, ((ModelDirsInfo)o),  new ModelDirsInfo(sdCard, f.getAbsolutePath(), f.lastModified()), null);
 					}else{
 						// file was unmodified
-						
+						Log.i(TAG, "Folder " +f.getAbsolutePath() + " was NOT modified!");
 					}
 					
 				}else{
 					// invalid file or unreadable, delete this record on the databse
 					
-					
+					Log.i(TAG, "Folder " +f.getAbsolutePath() + " is unreadable! Deleting from database records . . .");
 					  db.delete(Tables.dirs_info, new ModelDirsInfo(((ModelDirsInfo) o).getSd_id(), ((ModelDirsInfo) o).getPath(),  
 							((ModelDirsInfo) o).getLast_mod()), null);
 					
@@ -135,12 +139,17 @@ public class DirectoryScanner extends Service{
 				File f = new File(((ModelFilesInfo) o).getPath());
 				publishProgress(new String[] {"", f.getAbsolutePath()});
 				if( !f.isDirectory() && f.canRead() && f.canWrite() && !f.isHidden() && f.exists()){
+					Log.i(TAG, "File " +f.getAbsolutePath() + " still exists in the file system!");
+					
+					// check if the current file instance has greater lastMod than the recorded data on the database (recency check)
+					Log.i(TAG, "Checking if " +f.getAbsolutePath() + " has been modified since the last scan . . .");
 					// the recorded data is a dir, readable, writeable, not hidden and exists
 					if(Long.valueOf(f.lastModified()).compareTo(((ModelFilesInfo) o).getLast_mod()) > 0){
 						// file was modified
+						Log.i(TAG, "Folder " +f.getAbsolutePath() + " was modified!");
 						
 		// public ModelFilesInfo(String path, String dir, Long lastMod, String crc32, String md5, String sha1, String size){
-						
+						Log.i("DirectoryScanner",  "Adding this directory to file queue . . .");
 						SF.filesQueue.add(new ModelFilesInfo(f.getAbsolutePath(),f.getParent()));
 						
 						/*
@@ -152,12 +161,13 @@ public class DirectoryScanner extends Service{
 						*/
 						
 					}else{
+						Log.i(TAG, "Folder " +f.getAbsolutePath() + " was NOT modified!");
 						
 					}
 					
 				}else{
 					// invalid file or unreadable, delete this record on the databse
-					
+					Log.i(TAG, "Folder " +f.getAbsolutePath() + " is unreadable! Deleting from database records . . .");
 					//public ModelFilesInfo(String path, String dir, Long lastMod, String crc32, String md5, String sha1, String size){
 					db.delete(Tables.files_info, new ModelFilesInfo(((ModelFilesInfo) o).getPath(), ((ModelFilesInfo) o).getDir(),
 							((ModelFilesInfo) o).getLast_mod(), ((ModelFilesInfo) o).getCrc32(), ((ModelFilesInfo) o).getMd5(),
@@ -204,11 +214,14 @@ public class DirectoryScanner extends Service{
 
 		@Override
 		protected void onProgressUpdate(String... params){
+			
 			if(params.length > 2){
-				mBuilder.setProgress(0, 0, true);
-				mBuilder.setContentTitle(params[0]);
-				mBuilder.setContentText(params[1]);
+				if(SF.getServiceNoti() == 1){
+					mBuilder.setContentTitle(params[0]);
+					mBuilder.setProgress(0, 0, true);
+					mBuilder.setContentText(params[1]);
 				mNotifyManager.notify(1, mBuilder.build());
+				}
 				DirectoryScanner.this.wakeLock.release();
 				//NotifyManager.cancel(1);
 				//stopForeground(true);
@@ -341,15 +354,20 @@ public class DirectoryScanner extends Service{
 				
 				if(params[0].length() > 0){
 					// there are changes in notification title
-					mBuilder.setContentTitle(params[0]);
-					mBuilder.setProgress(0, 0, true);
-					mBuilder.setContentText(params[1]);
-					mNotifyManager.notify(1, mBuilder.build());
+					if(SF.getServiceNoti() == 1){
+						mBuilder.setContentTitle(params[0]);
+						mBuilder.setProgress(0, 0, true);
+						mBuilder.setContentText(params[1]);
+						mNotifyManager.notify(1, mBuilder.build());
+					}
 				}else{
 					// there are no changes in notification title
-					mBuilder.setProgress(0, 0, true);
-					mBuilder.setContentText(params[1]);
-					mNotifyManager.notify(1, mBuilder.build());
+					if(SF.getServiceNoti() == 1){
+						mBuilder.setProgress(0, 0, true);
+						mBuilder.setContentText(params[1]);
+						mNotifyManager.notify(1, mBuilder.build());
+					}
+					
 				}
 			}
 			
@@ -398,14 +416,25 @@ public class DirectoryScanner extends Service{
 									{"path", ff.getAbsolutePath()}}, null);
 						if(mdi.getPath() != null){
 							Thread.sleep(100);
-							Log.i("DirectoryScanner", mdi.getPath() + " already exists in the database, skipping . . .");
+							Log.i("DirectoryScanner", mdi.getPath() + " already exists in the database!");
+							Log.i("DirectoryScanner", "Checking if directory has been modified since the last scan . . .");
+							
 							// check if directory last mod was changed
 							if(Long.valueOf(ff.lastModified()).compareTo(mdi.getLast_mod()) > 0){
+								Log.i("DirectoryScanner",  mdi.getPath() + " was modified!");
+								Log.i("DirectoryScanner",  "Traversing this directory and adding to directory queue . . .");
+								
 								// dir was modified
 								
 								SF.dirsQueue.add(mdi);
 								// update dirs_info
 								//db.update(Tables.dirs_info, mdi,  new ModelDirsInfo(sdCard, ff.getAbsolutePath(), ff.lastModified()), null);
+							
+								// traverse the current directory only when modified!
+								checkDir(ff, mdi.getSd_id());
+							}else{
+								Log.i("DirectoryScanner",  mdi.getPath() + " was not modified!");
+								Log.i("DirectoryScanner",  "Skipping . . .");
 								
 							}
 							
@@ -413,12 +442,12 @@ public class DirectoryScanner extends Service{
 							// if it does, add it to the dirQueue
 							
 							
-							checkDir(ff, mdi.getSd_id());
+							
 						}else{
-							Log.i("DirectoryScanner", "Directory " + ff.getPath() + " does not exist in the database, adding to dirs queue . . .");
+							Log.i("DirectoryScanner", "Directory " + ff.getPath() + " does not exist in the database!");
+							Log.i("DirectoryScanner",  "Traversing this directory and adding to directory queue . . .");
 							// add this dir to dirQueue
 							SF.dirsQueue.add(new ModelDirsInfo(sdCard, ff.getAbsolutePath(), ff.lastModified()));
-							
 							// disable adding to database because scans can be cancelled
 							// add it later to database when the current item was successfully scanned
 							//db.insert(Tables.dirs_info, new ModelDirsInfo(sdCard, ff.getAbsolutePath(), ff.lastModified()), null);
@@ -445,9 +474,12 @@ public class DirectoryScanner extends Service{
 						
 						Thread.sleep(100);
 						if(mfi.getPath() != null){
-							Log.i("DirectoryScanner",  "File " + mfi.getPath() + " already exists in the database, skipping . . .");
+							Log.i("DirectoryScanner",  "File " + mfi.getPath() + " already exists in the database!");
+							Log.i("DirectoryScanner", "Checking if file has been modified since the last scan . . .");
 							if(Long.valueOf(ff.lastModified()).compareTo(mfi.getLast_mod()) > 0){
 								// file was modified
+								Log.i("DirectoryScanner", "File " + mfi.getPath() + " was modified!");
+								Log.i("DirectoryScanner",  "Adding this file to file queue . . .");
 								
 								SF.filesQueue.add(mfi);
 								

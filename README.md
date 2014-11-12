@@ -4,7 +4,7 @@ SharpFixAndroid
 What is it?
 -----------
 
-ShaprfFixAndroid is a File Management Utility for mobile phones using 
+SharpFixAndroid is a File Management Utility for mobile phones using 
 Android Operating System. It automatically performs the tasks of file 
 administration such as file duplication deletion and file segregation.
 It is targeted for Android 2.3 (Gingerbread – API Level 10) and above.

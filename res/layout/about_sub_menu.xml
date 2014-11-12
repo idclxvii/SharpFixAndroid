@@ -1,0 +1,272 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView android:layout_width="fill_parent" android:layout_height="fill_parent"
+     xmlns:android="http://schemas.android.com/apk/res/android"
+	    xmlns:tools="http://schemas.android.com/tools" 
+	    android:background="#000000">
+
+<RelativeLayout
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:gravity="top"
+    android:orientation="vertical"
+    android:paddingBottom="25dp"
+    android:paddingLeft="8dp"
+    android:paddingRight="8dp"
+    >
+	<TextView
+	        android:id="@+id/title"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/mainMenuAboutSelection"
+	        android:textSize="30sp" 
+	        android:textStyle="bold"
+	        android:textColor="#FFFFFF"
+	        >
+	    </TextView>
+	
+
+	<RelativeLayout
+	    android:layout_width="fill_parent"
+	    android:layout_height="wrap_content"
+	    android:layout_below="@+id/title"
+	    android:layout_centerHorizontal="true"
+	    android:orientation="vertical"
+	    android:paddingBottom="25dp"
+	    android:paddingLeft="8dp"
+	    android:paddingRight="8dp"
+	    android:paddingTop="8dp"
+	    >
+	   <!-- android:background="@drawable/logo2"  -->  
+    
+    	
+		
+   		<!-- What is it?  -->  
+		<TextView
+	        android:id="@+id/whatIsItMain"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/mainMenuFddSelection"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+		<TextView
+	        android:id="@+id/whatIsItLabel1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/whatIsItMain"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+		<TextView
+	        android:id="@+id/whatIsItLabel2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/whatIsItLabel1"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+		<TextView
+	        android:id="@+id/whatIsItLabel3"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/whatIsItLabel2"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+	    
+		<!-- Current Version  -->  
+    	
+		<TextView
+	        android:id="@+id/currentVersionMain"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/mainMenuFddSelection"
+	        android:layout_below="@+id/whatIsItLabel3"
+	        
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+		<TextView
+	        android:id="@+id/currentVersionLabel1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/currentVersionMain"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+    
+		<TextView
+	        android:id="@+id/currentVersionLabel2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/currentVersionLabel1"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+		
+		<TextView
+	        android:id="@+id/currentVersionLabel3"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/currentVersionLabel2"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp" />
+		
+		
+		<!-- Latest Version -->
+		<TextView
+	        android:id="@+id/latestVersionMain"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/mainMenuFddSelection"
+	        android:layout_below="@+id/currentVersionLabel3"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+	    
+		<TextView
+	        android:id="@+id/latestVersionLabel1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/latestVersionMain"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp"/>
+		
+		<TextView
+	        android:id="@+id/latestVersionLabel2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/latestVersionLabel1"
+	        android:text="@string/currentVersion"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp"
+	       	android:autoLink="web" />
+		
+		
+		<!-- License -->
+		<TextView
+	        android:id="@+id/licenseMain"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:text="@string/mainMenuFddSelection"
+	        android:layout_below="@+id/latestVersionLabel2"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+	    
+		<TextView
+	        android:id="@+id/licenseLabel1"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/licenseMain"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp"/>
+		
+		<TextView
+	        android:id="@+id/licenseLabel2"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/licenseLabel1"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp"/>
+		
+		<TextView
+	        android:id="@+id/licenseLabel3"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/licenseLabel2"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp"/>
+		
+		<TextView
+	        android:id="@+id/licenseLabel4"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/licenseLabel3"
+	        android:text="@string/mainMenuFddLabel"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp"/>
+		<TextView
+	        android:id="@+id/licenseLabel5"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/licenseLabel4"
+	        android:text="@string/GNU"
+	        android:textSize="15sp" 
+	        android:textStyle="italic"
+	        android:textColor="@color/text_selector_labels"
+	        android:padding="10dp"
+	        android:autoLink="web"
+	        />
+		
+		
+		<!-- Contacts -->
+		
+		
+		
+	</RelativeLayout>
+		
+</RelativeLayout>
+</ScrollView>
