@@ -30,13 +30,50 @@ public class BootReceiver extends BroadcastReceiver {
 					//Log.i("BootReceiver", "Awaiting debugger . . .");
 					Calendar c = Calendar.getInstance();
 					c.setTimeInMillis(System.currentTimeMillis());
-					ModelPreferences mp = (ModelPreferences) db.selectAll(Tables.preferences, ModelPreferences.class, null)[0];
-					c.set(Calendar.HOUR, mp.getSss_hh());
-					c.set(Calendar.MINUTE, mp.getSss_mm());
 					
+					ModelPreferences mp = (ModelPreferences) db.selectAll(Tables.preferences, ModelPreferences.class, null)[0];
+					c.set(Calendar.HOUR_OF_DAY, mp.getSss_hh());
+					c.set(Calendar.MINUTE, mp.getSss_mm());
+					/*
+					c.set(Calendar.AM_PM, (mp.getSss_ampm()) == 0 ? Calendar.AM : Calendar.PM);
+					switch(mp.getSss_repeat()+1 ){
+					
+					case 1 :
+						c.set(Calendar.DAY_OF_WEEK, Calendar.SUNDAY);
+						break;
+					case 2 :
+						c.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+						break;
+					case 3 :
+						c.set(Calendar.DAY_OF_WEEK, Calendar.TUESDAY);
+						break;
+					case 4 :
+						c.set(Calendar.DAY_OF_WEEK, Calendar.WEDNESDAY);
+						break;
+					case 5 :
+						c.set(Calendar.DAY_OF_WEEK, Calendar.THURSDAY);
+						break;
+					case 6 :
+						c.set(Calendar.DAY_OF_WEEK, Calendar.FRIDAY);
+						break;
+					case 7 :
+						c.set(Calendar.DAY_OF_WEEK, Calendar.SATURDAY);
+						break;
+					default :
+						// do nothing, use system's current day settings
+						break;
+					}
+					*/
+					
+					/*
+					if(mp.getSss_repeat() != 7){
+						c.set(Calendar.DAY_OF_WEEK, mp.getSss_repeat()+1);
+					}
+					*/
 					AlarmManager alarm = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 					Intent intent = new Intent(context, Alarm.class);
 					
+					/*
 					long current = System.currentTimeMillis();
 					long set = c.getTimeInMillis();
 										
@@ -47,8 +84,7 @@ public class BootReceiver extends BroadcastReceiver {
 						intent.putExtra("lapse", (current - set) );
 						intent.putExtra("start", true);
 					}
-					
-					
+					*/
 					PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, intent, 0);
 					
 					alarm.setRepeating(AlarmManager.RTC_WAKEUP,  c.getTimeInMillis(),

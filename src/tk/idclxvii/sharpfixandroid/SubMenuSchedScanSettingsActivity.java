@@ -36,7 +36,7 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 	// layout fields
 	private CheckBox  chUpd, chAlert;
 	private TextView title, timeSelection, timeLabel, repeatSelection, repeatLabel, updLabel, alertLabel;
-	private int hour, minute;
+	private int hour, minute, ampm;
 	private final String days[] = new String[] {"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ,"Everyday"};
 	private synchronized SQLiteHelper getDb(Context context){
 		db = new SQLiteHelper(context);
@@ -68,8 +68,9 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 		
 		 
 		final Calendar c = Calendar.getInstance();
-		hour = c.get(Calendar.HOUR);
+		hour = c.get(Calendar.HOUR_OF_DAY);
 		minute = c.get(Calendar.MINUTE);
+		ampm = c.get(Calendar.AM_PM);
 		
 		timeSelection = (TextView) findViewById(R.id.sssUpdateSelection1);
 		timeSelection.setOnClickListener(new OnClickListener(){
@@ -82,14 +83,16 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 							@Override
 							public void onTimeSet(TimePicker view, int selectedHour,int selectedMinute) {
 								// throws 24 hours counting
-								int ampm = 0; // am = 0, pm = 1
+								hour = selectedHour;
+								//ampm = 0; // am = 0, pm = 1
+								
 								if(selectedHour == 0){
 									// 12:00 AM
-									hour = 12;
+									//hour = 12;
 									ampm = 0;
 								}else{
-									hour = ((selectedHour > 12) ?  selectedHour - 12 : selectedHour);
-									ampm = ((selectedHour > 11) ?  1: 0);
+									ampm = ((selectedHour > 11) ?  1 : 0);
+									//hour = ((selectedHour > 12) ?  selectedHour - 12 : selectedHour);
 									
 								}
 								minute = selectedMinute;
@@ -151,9 +154,9 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 									SF.updatePreferences(db);
 									Calendar c = Calendar.getInstance();
 									c.setTimeInMillis(System.currentTimeMillis());
-									c.set(Calendar.HOUR, hour);
+									c.set(Calendar.HOUR_OF_DAY, hour);
 									c.set(Calendar.MINUTE,minute);
-									c.set(Calendar.AM_PM, ampm);
+									//c.set(Calendar.AM_PM, (ampm == 0 ? Calendar.AM : Calendar.PM));
 									
 									AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
 									Intent intent = new Intent(SubMenuSchedScanSettingsActivity.this, Alarm.class);
@@ -172,7 +175,7 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 								
 								
 								
-								timeLabel.setText(hour + " : " + minute + (ampm == 0 ? " AM": " PM"));
+								timeLabel.setText((hour == 0 ? "12" : (hour > 12 ? hour - 12: hour)) + " : " + minute + (ampm == 0 ? " AM": " PM"));
 								
 								Toast.makeText(SubMenuSchedScanSettingsActivity.this, "Time was set to " + hour + " : " + minute
 										, Toast.LENGTH_LONG).show();
@@ -189,7 +192,7 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 		});
 		
 		timeLabel = (TextView) findViewById(R.id.sssUpdateLabel1);
-		timeLabel.setText( hour + " : " + minute + (SF.getServiceAMPM() == 0 ? " AM": " PM"));
+		timeLabel.setText( (hour == 0 ? "12" : (hour > 12 ? hour - 12: hour)) + " : " + minute + (SF.getServiceAMPM() == 0 ? " AM": " PM"));
 		
 		timeLabel.setOnClickListener(new OnClickListener(){
 
@@ -208,8 +211,8 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				AlertDialog.Builder builder = new AlertDialog.Builder(SubMenuSchedScanSettingsActivity.this);
-				builder.setTitle("Repeat").setSingleChoiceItems(days,SF.getServiceRepeat(),
+				new AlertDialog.Builder(SubMenuSchedScanSettingsActivity.this)
+				.setTitle("Repeat").setSingleChoiceItems(days,SF.getServiceRepeat(),
 				           new DialogInterface.OnClickListener() {
 								
 			        			public void onClick(DialogInterface dialog, int item) {
@@ -265,9 +268,9 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 											SF.updatePreferences(db);
 											Calendar c = Calendar.getInstance();
 											c.setTimeInMillis(System.currentTimeMillis());
-											c.set(Calendar.HOUR, newParams.getSss_hh());
+											c.set(Calendar.HOUR_OF_DAY, newParams.getSss_hh());
 											c.set(Calendar.MINUTE,newParams.getSss_mm());
-											c.set(Calendar.AM_PM, newParams.getSss_ampm());
+											//c.set(Calendar.AM_PM, (newParams.getSss_ampm() == 0 ? Calendar.AM : Calendar.PM));
 											
 											
 											AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
@@ -365,7 +368,8 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 			Log.d(TAG, this.getClass().getName() + " onResume()");
 		}
 		
-		timeLabel.setText( SF.getServiceHour() + " : " + SF.getServiceMin() + (SF.getServiceAMPM() == 0 ? " AM": " PM"));
+		timeLabel.setText(( SF.getServiceHour() == 0 ? "12" : ( SF.getServiceHour() > 12 ?  SF.getServiceHour() - 12: SF.getServiceHour()))
+				+ " : " + SF.getServiceMin() + (SF.getServiceAMPM() == 0 ? " AM": " PM"));
 		repeatLabel.setText(days[SF.getServiceRepeat()]);
 		//  CheckBox  chUpd, chAlert;
 		try{
@@ -394,7 +398,9 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 	protected void onPause() {
 		// TODO Auto-generated method stub
 		super.onPause();
-		
+		timeLabel.setText(( SF.getServiceHour() == 0 ? "12" : ( SF.getServiceHour() > 12 ?  SF.getServiceHour() - 12: SF.getServiceHour()))
+				+ " : " + SF.getServiceMin() + (SF.getServiceAMPM() == 0 ? " AM": " PM"));
+		repeatLabel.setText(days[SF.getServiceRepeat()]);
 
 		// CheckBox  chUpd, chAlert;
 		// ###############################################################################################################

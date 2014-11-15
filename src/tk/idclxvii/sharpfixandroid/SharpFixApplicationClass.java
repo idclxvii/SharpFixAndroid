@@ -182,7 +182,7 @@ public class SharpFixApplicationClass extends Application{
 	private Integer serviceSwitch; // 1 = on, 0 = off
 	private Integer serviceHour; // 0-24 from hours
 	private Integer serviceMin; // 0 - 59 from min
-	private Integer serviceAMPM; // 1 = AM, 0 = PM
+	private Integer serviceAMPM; // 0 = AM, 1 = PM
 	private Integer serviceUpdateSwitch;  // 1 = on, 0 = off, database definition update switch
 	private Integer serviceRepeat; // 0 - 7, Monday = 0, Tue = 1 and so on ... 7 = everyday
 	private Integer serviceNoti; // 1 = on, 0 = off
