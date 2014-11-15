@@ -103,6 +103,11 @@ public class SQLiteHelper extends SQLiteOpenHelper {
     // Database Name
     private static final String DATABASE_NAME = "sharpfix_database.db";
     
+    public static String getDbName(){
+    	return DATABASE_NAME;
+    }
+    
+    
     public static String getDatabaseVersion(){
     	return (DATABASE_NAME + " v "
     			 + DATABASE_VERSION + "." + DATABASE_VERSION_REVISION);

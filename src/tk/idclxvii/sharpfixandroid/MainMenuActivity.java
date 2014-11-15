@@ -1,6 +1,7 @@
 package tk.idclxvii.sharpfixandroid;
 
-import java.io.File;
+import java.io.*;
+import java.nio.channels.FileChannel;
 import java.util.Locale; // used on API 10 above: .toString(Locale)
 
 import android.app.*;
@@ -186,39 +187,120 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 						public void onItemClick(AdapterView<?> parent, View view,
 								int position, long id) {
 							// TODO Auto-generated method stub
-							try{
-								final String selection = ((String)parent.getItemAtPosition(position));
-								//final String dir = selection.substring(selection.indexOf("/"), selection.length());
-								// 0 = import, 1 = xport, 2 = drop
+							final int selection = position;
+							Log.i(TAG,"Selected item: " + ((String)parent.getItemAtPosition(selection)));
+							switch(selection){
+							
+							case 0:
+								// import
+								importDB();
 								
-								Log.i(TAG,"Selected item: " +position);
-								FileDialog f = new FileDialog(MainMenuActivity.this, new File(""), true);
-								f.addFileListener(new FileDialog.FileSelectedListener(){
-	
-									@Override
-									public void fileSelected(File file) {
-										// TODO Auto-generated method stub
-										try{
-											tk.idclxvii.sharpfixandroid.utils.AndroidUtils.openFile(MainMenuActivity.this, file);
-										}catch(Exception e){
-											tk.idclxvii.sharpfixandroid.utils.Logcat.logCaughtException(
-													MainMenuActivity.this, e.getStackTrace());
-										}
-									}
-									
-								});
-								f.setSelectDirectoryOption(false);
-								f.createFileDialog();
 								
-							}catch(Exception e){
-								if(LOGCAT){
-					    			Logcat.logCaughtException(MainMenuActivity.this, e.getStackTrace());
-					    		}
+								break;
+							case 1:
+								// xport
+								exportDB();
+								break;
 								
+							case 2:
+								// delete
+								deleteDB();
+								break;
 							}
+							
 						}
 	
+						final private void deleteDB(){
+							Log.i(TAG, 
+									( MainMenuActivity.this.deleteDatabase(SQLiteHelper.getDbName())? "Successfully deleted database!":
+										"ERROR! Database was not successfully deleted!"));
+						}
 						
+						final private void exportDB(){
+							FileDialog f = new FileDialog(MainMenuActivity.this, new File(""), true);
+							f.addDirectoryListener(new FileDialog.DirectorySelectedListener(){
+								
+								@Override
+								public void directorySelected(File directory) {
+									// TODO Auto-generated method stub
+									try{
+										FileChannel source = null;
+									    FileChannel destination = null;
+									    String currentDBPath = SF.getDbFileDirPath()+ "/" + SQLiteHelper.getDbName(); //"/data/"+ "com.authorwjf.sqliteexport" +"/databases/"+SAMPLE_DB_NAME;
+									    
+									    File currentDB = new File(currentDBPath);
+									    File backupDB = new File(directory.getAbsolutePath(), "export.db");
+									    
+									    
+									    try {
+									    	source = new FileInputStream(currentDB).getChannel();
+									        destination = new FileOutputStream(backupDB).getChannel();
+									        destination.transferFrom(source, 0, source.size());
+									        source.close();
+									        destination.close();
+
+									    	Log.i(TAG, "Database successfully exported to: " + directory.getAbsolutePath());
+									    }catch(IOException e) {
+									    	Log.i(TAG, "Database exported failed!" );
+									    	e.printStackTrace();
+									    }
+										
+									}catch(Exception e){
+										tk.idclxvii.sharpfixandroid.utils.Logcat.logCaughtException(
+												MainMenuActivity.this, e.getStackTrace());
+									}
+								}
+
+								
+								
+							});
+							// set as dir browser
+							f.setSelectDirectoryOption(true);
+							f.createFileDialog();
+							
+						}
+						
+						final private void importDB(){
+							FileDialog f = new FileDialog(MainMenuActivity.this, new File(""), true);
+							f.addFileListener(new FileDialog.FileSelectedListener(){
+								
+								@Override
+								public void fileSelected(File file) {
+									// TODO Auto-generated method stub
+									try{
+										FileChannel source = null;
+									    FileChannel destination = null;
+									    String currentDBPath = SF.getDbFileDirPath()+ "/" +SQLiteHelper.getDbName(); //"/data/"+ "com.authorwjf.sqliteexport" +"/databases/"+SAMPLE_DB_NAME;
+									    
+									    File currentDB = new File(currentDBPath);
+									    File importDB = new File(file.getAbsolutePath());
+									    
+									    
+									    try {
+									    	source = new FileInputStream(importDB).getChannel();
+									        destination = new FileOutputStream(currentDB).getChannel();
+									        destination.transferFrom(source, 0, source.size());
+									        source.close();
+									        destination.close();
+
+									    	Log.i(TAG, "Database "+ file.getAbsolutePath() + "successfully imported to: " + currentDBPath);
+									    }catch(IOException e) {
+									    	Log.i(TAG, "Database import failed!" );
+									    	e.printStackTrace();
+									    }
+									}catch(Exception e){
+										tk.idclxvii.sharpfixandroid.utils.Logcat.logCaughtException(
+												MainMenuActivity.this, e.getStackTrace());
+									}
+								}
+								
+							});
+							// set as file browser
+							f.setSelectDirectoryOption(false);
+							f.createFileDialog();
+							
+						
+						}
 					});
 					
 					d.show();
