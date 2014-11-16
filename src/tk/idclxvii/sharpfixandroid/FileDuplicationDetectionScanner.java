@@ -350,54 +350,126 @@ public class FileDuplicationDetectionScanner extends Service{
 		private void scan() throws IllegalArgumentException, InstantiationException,
 		IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, 
 		IOException, NoSuchAlgorithmException{
-			
+			//android.os.Debug.waitForDebugger();
 			//for(Object queuedFile : filesQueue){
 			for(Iterator<Object> it = SF.filesQueue.iterator(); it.hasNext(); ){
 				Object queuedFile = it.next();
 				File ff = new File(((ModelFilesInfo)queuedFile).getPath());
 				publishProgress(new String[] {"", ff.getAbsolutePath()});
-				Object[] result = db.selectConditional(Tables.files_info, ModelFilesInfo.class, 
-					new Object[][] {
-							{"crc32", Security.getCRC32Checksum(((ModelFilesInfo)queuedFile).getPath()), "AND NOT "},
-							{"path",  ((ModelFilesInfo)queuedFile).getPath() }
-						
-					}
-						
-				/*
-						("crc32 = '" + Security.getCRC32Checksum(((ModelFilesInfo)queuedFile).getPath()) + "' AND " +
-						"NOT path = '" + ((ModelFilesInfo)queuedFile).getPath()+ "'" )
-						*/
-						
-				, null);
-				if(result.length > 0){
-					// the current file in queue has duplicate!
-					if(result.length > 1){
-						// there are 2 or more occurrence duplicate files (3 or more duplicate files)
-						Log.i(TAG, "########################################");
-						Log.i(TAG, "2 or more files detected as duplicates of " + ((ModelFilesInfo)queuedFile).getPath());
-						Log.i(TAG, "########################################");
-						
-						
-						
-						
-					}else{
-						// there's only 1 occurrence of duplicate file (2 duplicate files)
-						Log.i(TAG, "########################################");
-						Log.i(TAG, "1 file is detected as duplicate of " + ((ModelFilesInfo)queuedFile).getPath());
-						Log.i(TAG, "########################################");
-						/*
-						for(Object o : result){
-							Log.i(TAG, ((ModelFilesInfo)o).getPath() + " " +((ModelFilesInfo)o).getCrc32()  );
+				try{
+					
+					
+					Object[] result = db.selectConditional(Tables.files_info, ModelFilesInfo.class, 
+						new Object[][] {
+								{"crc32", Security.getCRC32Checksum(((ModelFilesInfo)queuedFile).getPath()), "AND NOT "},
+								{"path",  ((ModelFilesInfo)queuedFile).getPath() }
+							
 						}
-						*/
-					}
-					for(Object storedFile : result){
-						Log.i(TAG, ((ModelFilesInfo)storedFile).getPath() + " " + ((ModelFilesInfo)storedFile).getCrc32()  );
-						if(prefs.getFdd_pref() == 0){
-							// user prefers to delete the older file
-							if( Long.valueOf((new File(((ModelFilesInfo)queuedFile).getPath())).lastModified()).compareTo(
-									((ModelFilesInfo)storedFile).getLast_mod()) > 0 ){
-								if((new File(((ModelFilesInfo)storedFile).getPath())).delete()){
+							
+					/*
+							("crc32 = '" + Security.getCRC32Checksum(((ModelFilesInfo)queuedFile).getPath()) + "' AND " +
+							"NOT path = '" + ((ModelFilesInfo)queuedFile).getPath()+ "'" )
+							*/
+							
+					, null);
+					if(result.length > 0){
+						// the current file in queue has duplicate!
+						if(result.length > 1){
+							// there are 2 or more occurrence duplicate files (3 or more duplicate files)
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "2 or more files detected as duplicates of " + ((ModelFilesInfo)queuedFile).getPath());
+							Log.i(TAG, "########################################");
+							
+							
+							
+							
+						}else{
+							// there's only 1 occurrence of duplicate file (2 duplicate files)
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "1 file is detected as duplicate of " + ((ModelFilesInfo)queuedFile).getPath());
+							Log.i(TAG, "########################################");
+							/*
+							for(Object o : result){
+								Log.i(TAG, ((ModelFilesInfo)o).getPath() + " " +((ModelFilesInfo)o).getCrc32()  );
+							}
+							*/
+						}
+						for(Object storedFile : result){
+							Log.i(TAG, ((ModelFilesInfo)storedFile).getPath() + " " + ((ModelFilesInfo)storedFile).getCrc32()  );
+							if(prefs.getFdd_pref() == 0){
+								// user prefers to delete the older file
+								if( Long.valueOf((new File(((ModelFilesInfo)queuedFile).getPath())).lastModified()).compareTo(
+										((ModelFilesInfo)storedFile).getLast_mod()) > 0 ){
+									if((new File(((ModelFilesInfo)storedFile).getPath())).delete()){
+										// file successfully deleted
+										Log.i(TAG, "########################################");
+										Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!" );
+										Log.i(TAG, "########################################");
+									}else{
+										// file was not successfully deleted
+										Log.e(TAG, "########################################");
+										Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " was not successful!" );
+										Log.e(TAG, "########################################");
+									}
+									
+									db.delete(Tables.files_info, storedFile , null);
+										
+									if(db.insert(Tables.files_info,
+											new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
+													Security.getCRC32Checksum(ff.getAbsolutePath()), 
+													Security.getMD5Checksum(ff.getAbsolutePath()), 
+													Security.getSHA1Checksum(ff.getAbsolutePath()),
+													Long.toString(ff.length())),
+										null)){
+										Log.i(TAG, "########################################");
+										Log.i(TAG, "Inserting file" + ff.getAbsolutePath() + " successful!" );
+										Log.i(TAG, "########################################");
+									}else{
+										if(db.update(Tables.files_info,
+												db.selectMulti(Tables.files_info, ModelFilesInfo.class,
+														new Object[][] { {"path" , ff.getAbsolutePath()}, {"dir", ff.getParent()}}, null)[0]
+												
+												, 
+												new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
+														Security.getCRC32Checksum(ff.getAbsolutePath()), 
+														Security.getMD5Checksum(ff.getAbsolutePath()), 
+														Security.getSHA1Checksum(ff.getAbsolutePath()),
+														Long.toString(ff.length()))
+											, null)){
+											Log.i(TAG, "########################################");
+											Log.i(TAG, "Inserting file" + ff.getAbsolutePath()  + " not successful!" );
+											Log.i(TAG, "Trying update . . ." );
+											Log.i(TAG, "########################################");
+										}else{
+											Log.e(TAG, "########################################");
+											Log.e(TAG, "Updating file" + ff.getAbsolutePath()  + " not successful!" );
+											Log.e(TAG, "########################################");
+										}
+									}
+								}else{
+									if((new File(((ModelFilesInfo)queuedFile).getPath())).delete()){
+										// file successfully deleted
+										Log.i(TAG, "########################################");
+										Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!" );
+										Log.i(TAG, "########################################");
+									}else{
+										// file was not successfully deleted
+										Log.e(TAG, "########################################");
+										Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " was not successful!" );
+										Log.e(TAG, "########################################");
+									}
+									
+									db.delete(Tables.files_info, queuedFile , null);
+									
+								}
+								
+								
+								
+								
+								
+							}else{
+								// user prefers to delete the new file
+								if((new File(((ModelFilesInfo)queuedFile).getPath())).delete()){
 									// file successfully deleted
 									Log.i(TAG, "########################################");
 									Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!" );
@@ -408,105 +480,88 @@ public class FileDuplicationDetectionScanner extends Service{
 									Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " was not successful!" );
 									Log.e(TAG, "########################################");
 								}
-								
-								db.delete(Tables.files_info, storedFile , null);
-									
-								if(db.insert(Tables.files_info,
-										new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
-												Security.getCRC32Checksum(ff.getAbsolutePath()), 
-												Security.getMD5Checksum(ff.getAbsolutePath()), 
-												Security.getSHA1Checksum(ff.getAbsolutePath()),
-												Long.toString(ff.length())),
-									null)){
-									
-								}else{
-									db.update(Tables.files_info, storedFile, 
-											new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
-													Security.getCRC32Checksum(ff.getAbsolutePath()), 
-													Security.getMD5Checksum(ff.getAbsolutePath()), 
-													Security.getSHA1Checksum(ff.getAbsolutePath()),
-													Long.toString(ff.length()))
-										, null);
-								}
-							}else{
-								if((new File(((ModelFilesInfo)queuedFile).getPath())).delete()){
-									// file successfully deleted
-									Log.i(TAG, "########################################");
-									Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!" );
-									Log.i(TAG, "########################################");
-								}else{
-									// file was not successfully deleted
-									Log.e(TAG, "########################################");
-									Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " was not successful!" );
-									Log.e(TAG, "########################################");
-								}
-								
 								db.delete(Tables.files_info, queuedFile , null);
 								
 							}
-							
-							
-							
-							
-							
-						}else{
-							// user prefers to delete the new file
-							if((new File(((ModelFilesInfo)queuedFile).getPath())).delete()){
-								// file successfully deleted
-								Log.i(TAG, "########################################");
-								Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!" );
-								Log.i(TAG, "########################################");
-							}else{
-								// file was not successfully deleted
-								Log.e(TAG, "########################################");
-								Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " was not successful!" );
-								Log.e(TAG, "########################################");
-							}
-							db.delete(Tables.files_info, queuedFile , null);
-							
 						}
-					}
-					
-					
-					
-				}else{
-				
-				// file has no duplicate
-				// update the file information
-				
-				// try insert first
-				
-					
-					if(db.insert(Tables.files_info, new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
-							Security.getCRC32Checksum(ff.getAbsolutePath()), Security.getMD5Checksum(ff.getAbsolutePath()),
-							Security.getSHA1Checksum(ff.getAbsolutePath()), Long.toString(ff.length())), null)){
+						
+						
 						
 					}else{
-						// update
-						db.update(Tables.files_info, new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent()), 
-								new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
-										Security.getCRC32Checksum(ff.getAbsolutePath()), 
-										Security.getMD5Checksum(ff.getAbsolutePath()), 
-										Security.getSHA1Checksum(ff.getAbsolutePath()),
-										Long.toString(ff.length()))
-							, null);
+					
+					// file has no duplicate
+					// update the file information
+					
+					// try insert first
+					
+						
+						if(db.insert(Tables.files_info, new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
+								Security.getCRC32Checksum(ff.getAbsolutePath()), Security.getMD5Checksum(ff.getAbsolutePath()),
+								Security.getSHA1Checksum(ff.getAbsolutePath()), Long.toString(ff.length())), null)){
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "Inserting file" + ff.getAbsolutePath() + " successful!" );
+							Log.i(TAG, "########################################");
+						}else{
+							// update
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "Inserting file" + ff.getAbsolutePath()  + " not successful!" );
+							Log.i(TAG, "Trying update . . ." );
+							Log.i(TAG, "########################################");
+							if(db.update(Tables.files_info, 
+									db.selectMulti(Tables.files_info, ModelFilesInfo.class,
+											new Object[][] { {"path" , ff.getAbsolutePath()}, {"dir", ff.getParent()}}, null)[0]
+									, 
+									new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
+											Security.getCRC32Checksum(ff.getAbsolutePath()), 
+											Security.getMD5Checksum(ff.getAbsolutePath()), 
+											Security.getSHA1Checksum(ff.getAbsolutePath()),
+											Long.toString(ff.length()))
+								, null)){
+								Log.i(TAG, "########################################");
+								Log.i(TAG, "Updating file" + ff.getAbsolutePath() + " successful!" );
+							}else{
+								Log.e(TAG, "########################################");
+								Log.e(TAG, "Updating file" + ff.getAbsolutePath()  + " not successful!" );
+								Log.e(TAG, "########################################");
+							}
+						}
+						
+						/*
+						try {
+							db.insert(Tables.files_info, new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
+								Security.getCRC32Checksum(ff.getAbsolutePath()), Security.getMD5Checksum(ff.getAbsolutePath()),
+								Security.getSHA1Checksum(ff.getAbsolutePath()), Long.toString(ff.length())), null);
+						} catch (SQLiteConstraintException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						} catch (NoSuchAlgorithmException e) {
+							// TODO Auto-generated catch block
+							e.printStackTrace();
+						}
+						*/
+					}
+				}catch(Exception e){
+					/* when this code is run, it means that this record is previously existing in the database
+					 * but the actual file has been deleted due to duplication detection from this instance of 
+					 * fdd, and therefore, crc32 throws an Exception because the file cannot be found.
+					 * 
+					 * Current solution: delete this record in the database since the actual file is not existing
+					 * anymore
+					 * 
+					 */
+					Log.e(TAG,"CRC32 BUG EXCEPTION OCCURED! PLEASE CHECK IMMEDIATE DATABASE DELETION RESULT:");
+					Log.e(TAG, "Bug trigger:" + ((ModelFilesInfo)queuedFile).getPath() );
+					//android.os.Debug.waitForDebugger();
+					
+					if(db.delete(Tables.files_info, new ModelFilesInfo(((ModelFilesInfo) queuedFile).getPath(), ((ModelFilesInfo) queuedFile).getDir(),
+							((ModelFilesInfo) queuedFile).getLast_mod(), ((ModelFilesInfo) queuedFile).getCrc32(), ((ModelFilesInfo) queuedFile).getMd5(),
+							((ModelFilesInfo) queuedFile).getSha1(), ((ModelFilesInfo) queuedFile).getSize()), null) ){
+						Log.e(TAG,"File" + ((ModelFilesInfo)queuedFile).getPath() + " was successfully deleted from database records!");
+					}else{
+						Log.e(TAG,"File" + ((ModelFilesInfo)queuedFile).getPath() + " WAS NOT SUCCESSFULLY DELETED FROM DATABASE RECORDS!");
 					}
 					
-					/*
-					try {
-						db.insert(Tables.files_info, new ModelFilesInfo(ff.getAbsolutePath(), ff.getParent(), ff.lastModified(), 
-							Security.getCRC32Checksum(ff.getAbsolutePath()), Security.getMD5Checksum(ff.getAbsolutePath()),
-							Security.getSHA1Checksum(ff.getAbsolutePath()), Long.toString(ff.length())), null);
-					} catch (SQLiteConstraintException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					} catch (NoSuchAlgorithmException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					*/
 				}
-				
 				it.remove();
 				
 			}
@@ -527,24 +582,28 @@ public class FileDuplicationDetectionScanner extends Service{
 				if(dirFinished){
 					if(db.insert(Tables.dirs_info, (ModelDirsInfo) dir, null)){
 						Log.i(TAG, "########################################");
-						Log.i(TAG, "Inserting " + ((ModelDirsInfo) dir).getPath() + " successful!" );
+						Log.i(TAG, "Inserting directory" + ((ModelDirsInfo) dir).getPath() + " successful!" );
 						Log.i(TAG, "########################################");
 					}else{
 						Log.i(TAG, "########################################");
-						Log.i(TAG, "Inserting " + ((ModelDirsInfo) dir).getPath() + " not successful!" );
+						Log.i(TAG, "Inserting directory" + ((ModelDirsInfo) dir).getPath() + " not successful!" );
 						Log.i(TAG, "Trying update . . ." );
 						Log.i(TAG, "########################################");
 						
 						//(new ModelDirsInfo(((ModelDirsInfo)dir).getSd_id(),((ModelDirsInfo)dir).getPath(), ((ModelDirsInfo)dir).getLast_mod())),
-						db.update(Tables.dirs_info, 
+						if(db.update(Tables.dirs_info, 
 								db.selectMulti(Tables.dirs_info, ModelDirsInfo.class,
 										new Object[][] { {"path" , ((ModelDirsInfo)dir).getPath()}, {"sd_id", ((ModelDirsInfo)dir).getSd_id()}}, null)[0],
 								new ModelDirsInfo(((ModelDirsInfo)dir).getSd_id(),((ModelDirsInfo)dir).getPath(), ( new File( ((ModelDirsInfo)dir).getPath()).lastModified())),
-								
-								
-								
-								
-								null);
+								null)){
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "Updating directory" + ((ModelDirsInfo) dir).getPath() + " successful!" );
+							Log.i(TAG, "########################################");
+						}else{
+							Log.e(TAG, "########################################");
+							Log.e(TAG, "Updating directory" + ((ModelDirsInfo) dir).getPath() + " not successful!" );
+							Log.e(TAG, "########################################");
+						}
 					}
 					
 					
