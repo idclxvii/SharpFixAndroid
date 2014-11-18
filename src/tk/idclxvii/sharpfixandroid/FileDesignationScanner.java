@@ -1,22 +1,25 @@
 package tk.idclxvii.sharpfixandroid;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.lang.reflect.InvocationTargetException;
+import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 import tk.idclxvii.sharpfixandroid.utils.FileProperties;
+import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.database.sqlite.SQLiteConstraintException;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -31,6 +34,7 @@ public class FileDesignationScanner extends Service{
 	
 	private SQLiteHelper db;
 	private Context c;
+	private SharpFixApplicationClass SF;
 	
 	private PowerManager powerManager;
 	private WakeLock wakeLock;
@@ -40,11 +44,19 @@ public class FileDesignationScanner extends Service{
 	
 	private String TAG = "FileDesignationScanner";
 	
-	private Object[] tempFilesQueue;
 	//private Object[] tempDirsQueue;
-	private List<Object> filesQueue;
 	//private List<Object> dirsQueue;
 	private ModelPreferences prefs; 
+	
+	private Object[] filesQueueTemp;
+	private Object[] magicNumbersQueueTemp;
+	private Object[] fdRulesTemp;
+	
+	private List<Object> filesQueue;
+	private List<Object> magicNumbersQueue;
+	private List<Object> fdRules;
+	
+	
 	
 	private synchronized SQLiteHelper getDb(Context context){
 		db = new SQLiteHelper(context);
@@ -57,15 +69,103 @@ public class FileDesignationScanner extends Service{
 		@Override
 		protected Void doTask(File... params) throws Exception {
 			// TODO Auto-generated method stub
+			
+			Log.i(TAG, "########################################");
+			Log.i(TAG, "Starting File Designation Scanner");
 			long start = System.currentTimeMillis();
 			publishProgress(new String[] {"File Designation Scan", "Initializing Scan: " + (FileProperties.formatFileLastMod(start))});
 			
-			prefs = (ModelPreferences)db.selectAll(Tables.preferences, ModelPreferences.class, null)[0];
+			// single query all needed information
+			// to avoid redundant database transactions which promotes optimization and speed
+			prefs = (ModelPreferences)db.selectAll(Tables.preferences, ModelPreferences.class , null)[0];
+			filesQueueTemp = db.selectAll(Tables.files_info, ModelFilesInfo.class, null);
+			magicNumbersQueueTemp =  db.selectAll(Tables.magic_number, ModelMagicNumber.class, null);
+			fdRulesTemp = db.selectAll(Tables.file_designation_settings, ModelFdSettings.class, null);
 			
-			for(Object o : filesQueue){
-				checkPreferences(new File(((ModelFilesInfo)o).getPath()));
+			filesQueue = new ArrayList<Object>(Arrays.asList(filesQueueTemp));
+			magicNumbersQueue =  new ArrayList<Object>(Arrays.asList(magicNumbersQueueTemp));
+			fdRules =  new ArrayList<Object>(Arrays.asList(fdRulesTemp));
+			
+			/*
+			 * File Designation Scan Algorithm
+			 * @author IDcLxViI
+			 * 11/17/2014
+			 * 
+			
+			
+			FDDS Algorithm:
+				* check fd switch
+				* check filter switch
+					* filter:
+						check for filtered dirs and sub dirs then remove it from dirsQueue
+						check for files inside filtered dirs and sub dirs then remove it from filesQueue
+						check for files inside filtered files then remove it from filesQueue
+					
+					* fd scan
+						* scan the given file 
+						* update the file information (try insert first, then update if it fails)
+						* remove the file in the filesQueue
+						* for each element in dirsQueue, check if ALL the files in filesQueue containing
+						 	the current element's path has been processed. if it was, then update the element's dir information
+						 	and then remove it from dirsQUeue (try db insert first, then update if it fails)
+						 	
+						 	
+			*/
+			publishProgress(new String[] {"", "Checking FDD Filter Switch" });
+			
+			if(prefs.getFd_switch() == 1){
+				// fdd scan is turned on
+				Log.i(TAG, "########################################");
+				Log.i(TAG, "File Designation is turned on!");
+				
+				
+				Log.i(TAG, "########################################");
+				Log.i(TAG, "Checking if there are rules defined in FD Settings . . .");
+				
+				if(fdRules.size() > 0){
+					Log.i(TAG, "########################################");
+					Log.i(TAG, "There are defined FD Rules!");
+					
+					if(prefs.getFd_Filter_switch() == 1){
+						// fdd filter is turned on, filter the filesQueue
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "FD Filtering is turned on!");
+						publishProgress(new String[] {"", "Filtering scanned files and directories"});
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "Filtering queued Files and Directories");
+						filter();
+						Log.i(TAG, "########################################");
+						
+						Log.i(TAG, "Initializing FD Scan!");
+						publishProgress(new String[] {"", "Starting scan" });
+						scan();
+					}else{
+						// fdd filter is turned off, scan w/o filtering
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "FD Filtering is turned off!");
+						publishProgress(new String[] {"", "Starting scan" });
+						
+						scan();
+					}
+				}else{
+					Log.i(TAG, "########################################");
+					Log.i(TAG, "There are no defined FD Rules!");
+					Log.i(TAG, "FD Scanner will not initiate because no rules has been set");
+					
+				}
+				
+				
+			}else{
+				// do nothing, fdd scan is turned off
+				Log.i(TAG, "########################################");
+				Log.i(TAG, "File Designation is turned off!");
 			}
 			
+			/*
+			for(Object o : filesQueue){
+				checkPreferences( new File( ((ModelFilesInfo)o).getPath() ) );
+			}
+			*/
 			long end = System.currentTimeMillis();
 			long runTime = end - start;
 			
@@ -79,14 +179,19 @@ public class FileDesignationScanner extends Service{
 			
 			
 			
-			
+			Log.i(TAG, "########################################");
+			Log.i(TAG, "File Designation Scanner Finished!");
 			return null;
+			
+			
 		}
 
 		@Override
 		protected void onException(Exception e) {
 			// TODO Auto-generated method stub
-			
+			Log.i(TAG, "########################################");
+			Log.i(TAG, "Exception on File Designation Scanner!!!");
+			Logcat.logCaughtException("FileDesignationScanner", e.getStackTrace());
 		}
 		
 		@Override
@@ -95,7 +200,7 @@ public class FileDesignationScanner extends Service{
 				mBuilder.setProgress(0, 0, true);
 				mBuilder.setContentTitle(params[0]);
 				mBuilder.setContentText(params[1]);
-				mNotifyManager.notify(2, mBuilder.build());
+				mNotifyManager.notify(3, mBuilder.build());
 				//mNotifyManager.cancel(2);
 				//stopForeground(true);
 				stopSelf();
@@ -103,132 +208,214 @@ public class FileDesignationScanner extends Service{
 				
 				if(params[0].length() > 0){
 					// there are changes in notification title
-					mBuilder.setContentTitle(params[0]);
-					mBuilder.setProgress(0, 0, true);
-					mBuilder.setContentText(params[1]);
-					mNotifyManager.notify(2, mBuilder.build());
+					if(SF.getServiceNoti() == 1){
+						mBuilder.setContentTitle(params[0]);
+						mBuilder.setProgress(0, 0, true);
+						mBuilder.setContentText(params[1]);
+						mNotifyManager.notify(3, mBuilder.build());
+					}
 				}else{
 					// there are no changes in notification title
-					mBuilder.setProgress(0, 0, true);
-					mBuilder.setContentText(params[1]);
-					mNotifyManager.notify(21, mBuilder.build());
+					if(SF.getServiceNoti() == 1){
+						mBuilder.setProgress(0, 0, true);
+						mBuilder.setContentText(params[1]);
+						mNotifyManager.notify(3, mBuilder.build());
+					}
+					
 				}
 			}
 			
 		}
 		
-		private void checkPreferences(File f) throws IllegalArgumentException, InstantiationException, IllegalAccessException, 
-		NoSuchMethodException, InvocationTargetException, FileNotFoundException, IOException{
-			publishProgress(new String[] {"", f.getAbsolutePath()});
-			if(prefs.getFdd_switch() == 1){
-				Log.i(TAG, "########################################");
-				Log.i(TAG, "File Designation is turned on!");
-				// File Designation switch is turned on
-				if( f.isDirectory() && f.canRead() && f.canWrite() && !f.isHidden() && f.exists() ){
-					// legal directory
-					if(prefs.getFdd_Filter_switch() == 1){
-						// fdd filter switch is turned on
+		private void filter() throws IllegalArgumentException, InstantiationException,
+		IllegalAccessException, NoSuchMethodException, InvocationTargetException{
+		
+		
+			Object[] mdf = db.selectMulti(Tables.dir_filter, ModelDirFilter.class,
+					new Object[][] { {"filter", "fd"}} ,null);
+			
+			
+			Object[] mff = db.selectMulti(Tables.file_filter, ModelFileFilter.class,
+					new Object[][] { {"filter", "fd"}} ,null);
+			
+			
+					//db.selectAll(Tables.dir_filter, ModelDirFilter.class, null);
+			
+			// dirs filter
+			for(Object filter : mdf){
+				
+				// filter filesQueue (sub dir instances)
+				//for(Object file : filesQueue){
+				for(Iterator<Object> it = filesQueue.iterator(); it.hasNext();){
+					Object file = it.next();
+					if( ((ModelFilesInfo)file).getPath().contains( ((ModelDirFilter)filter).getDir())){
+						it.remove();
+						Log.i(TAG, "File Filter Detection");
+						Log.i(TAG, ((ModelFilesInfo)file).getPath() + " was detected to be a inside the directory of "
+								+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!");
+						Log.i(TAG, "Removing " + ((ModelFilesInfo)file).getPath() + " from filesQueue");
+					}
+				}
+				
+				
+				
+			}
+			
+			// files filter
+			for(Object filter : mff){
+				//for(Object file : filesQueue){
+				for(Iterator<Object> it = filesQueue.iterator(); it.hasNext();){
+					Object file = it.next();
+					if( ((ModelFilesInfo)file).getPath().equals( ((ModelFileFilter)filter).getFile())){
+						it.remove();
+						Log.i(TAG, "File Filter Detection");
+						Log.i(TAG, ((ModelFilesInfo)file).getPath() + " is being filtered!"
+								 + "Filter was: "+ ((ModelFileFilter)filter).getFile());
+						Log.i(TAG, "Removing " + ((ModelFilesInfo)file).getPath() + " from filesQueue");
+					}
+				}
+			}
+			
+		}
+	
+		
+		
+		private void scan() throws IllegalArgumentException, InstantiationException,
+		IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, 
+		IOException, NoSuchAlgorithmException{
+			//android.os.Debug.waitForDebugger();
+			//for(Object queuedFile : filesQueue){
+			for(Iterator<Object> it = filesQueue.iterator(); it.hasNext(); ){
+				Object queuedFile = it.next();
+				
+				File f = new File(((ModelFilesInfo)queuedFile).getPath());
+				publishProgress(new String[] {"", f.getAbsolutePath()});
+				
+				try{
+					//android.os.Debug.waitForDebugger();
+					Object[] result = db.selectConditional(Tables.magic_number, ModelMagicNumber.class, 
+						new Object[][] {
+								{"signature_4_bytes", Security.getMagicNumber(f, 4), " OR "},
+								{"signature_8_bytes", Security.getMagicNumber(f, 8)}
+						}
+					, null);
+					
+					if(result.length > 0){
 						Log.i(TAG, "########################################");
-						Log.i(TAG, "FDD Filtering is turned on!");
-						ModelDirFilter mdf = (ModelDirFilter) db.select(Tables.dir_filter, ModelDirFilter.class,
-								new Object[][] {{"dir", f.getAbsolutePath()}},null);
-						if( mdf.getDir() != null && mdf.getDir().equals(f.getAbsolutePath())){
-							// this dir is being filtered!
+						Log.i(TAG, "File: " +f.getAbsolutePath());
+						Log.i(TAG, "Current Queued File Information: ");
+						Log.i(TAG, "File Type:" + ((ModelMagicNumber)result[0]).getFile_type());
+						Log.i(TAG, "MIME:" + ((ModelMagicNumber)result[0]).getMime());
+						Log.i(TAG, "4-bytes Signature:" + ((ModelMagicNumber)result[0]).getSignature_4_bytes());
+						Log.i(TAG, "8-bytes Signature:" + ((ModelMagicNumber)result[0]).getSignature_8_bytes());
+						
+						Object[] rule = db.selectConditional(Tables.file_designation_settings, ModelFdSettings.class,
+								new Object[][] {{"file_type", ((ModelMagicNumber)result[0]).getFile_type(), " AND NOT "},
+												{"designation_path", f.getParent()}	},
+						null);
+						
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "Rule: " + ((ModelFdSettings)rule[0]).getRule_name());
+						Log.i(TAG, "Designation path: " + ((ModelFdSettings)rule[0]).getDesignation_path());
+						
+						if(AndroidUtils.cutPasteFile(f,
+								new File( ((ModelFdSettings)rule[0]).getDesignation_path() + "/" + f.getName() )    )){
+							// successfully moved the file
 							Log.i(TAG, "########################################");
-							Log.i(TAG, "Directory " + f.getAbsolutePath() + " is being filtered!");
+							Log.i(TAG, "Successfully moved " + f.getAbsolutePath() + " to " +
+									((ModelFdSettings)rule[0]).getDesignation_path());
+							
+							ModelFilesInfo oldParams = ((ModelFilesInfo)queuedFile);
+							// public ModelFilesInfo(String path, String dir, Long lastMod, String crc32, String md5, String sha1, String size){
+							
+							db.update(Tables.files_info, oldParams ,new ModelFilesInfo(
+									((ModelFdSettings)rule[0]).getDesignation_path() + "/" +f.getName(),
+									((ModelFdSettings)rule[0]).getDesignation_path(), oldParams.getLast_mod(),
+									oldParams.getCrc32(), oldParams.getMd5(), oldParams.getSha1(), oldParams.getSize())
+							, null);
 							
 						}else{
-							// this dir is not being filtered!
-							// scan this directory
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "Directory " + f.getAbsolutePath() + " is NOT being filtered!");
-							Log.i(TAG, "Initializing File Duplication Scan");
-							scan(f);
+							// failed to move the file
+								// either unable to copy or unable to delete the original file
+							Log.e(TAG, "########################################");
+							Log.e(TAG, "Failed to move " + f.getAbsolutePath() + " to " +
+									((ModelFdSettings)rule[0]).getDesignation_path());
+								
 						}
-					}else{
-						// fdd filter switch is turned off
-						// scan this directory
-						Log.i(TAG, "########################################");
-						Log.i(TAG, "FDD Filtering is turned off!");
-						Log.i(TAG, "Scanning directory: " + f.getAbsolutePath());
-						scan(f);
-						
-						
 					}
 					
 					
-				}else{
-					if(!f.isDirectory() && f.canRead() && f.canWrite() && !f.isHidden() && f.exists()){
-						// legal file
-						if(prefs.getFdd_Filter_switch() == 1){
-							// fdd filter switch is turned on
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "FDD Filtering is turned on!");
-							ModelFileFilter mff = (ModelFileFilter) db.select(Tables.file_filter, ModelFileFilter.class,
-									new Object[][] {{"file", f.getAbsolutePath()}},null);
-							if( mff.getFile() != null && mff.getFile().equals(f.getAbsolutePath())){
-								// this file is being filtered!
-								Log.i(TAG, "########################################");
-								Log.i(TAG, "File " + f.getAbsolutePath() + " is being filtered!");
-							}else{
-								// this dir is not being filtered!
-								// scan this directory
-								Log.i(TAG, "########################################");
-								Log.i(TAG, "File " + f.getAbsolutePath() + " is NOT being filtered!");
-								Log.i(TAG, "Initializing File Duplication Scan");
-								scan(f);
-							}
-						}else{
-							// fdd filter switch is turned off
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "FDD Filtering is turned off!");
-							Log.i(TAG, "Scanning file: " + f.getAbsolutePath());
-							scan(f);
-						}
-					}
+					
+					
+				}catch(Exception e){
+					/* when this code is run, it means that this record is previously existing in the database
+					 * but the actual file has been deleted due to duplication detection from this instance of 
+					 * fdd, and therefore, crc32 throws an Exception because the file cannot be found.
+					 * 
+					 * Current solution: delete this record in the database since the actual file is not existing
+					 * anymore
+					 * 
+					 */
+					Log.i(TAG, "########################################");
+					Log.i(TAG, "Exception details:");
+					Log.i(TAG, "Detected File: " +f.getAbsolutePath());
+					
+					
 				}
+				it.remove();
 				
-				
-			}else{
-				Log.i(TAG, "########################################");
-				Log.i(TAG, "File Designation is turned off!");
 			}
+			
+			// checkDirsQueue();
 		}
 		
-	
-	
-		private void scan(File f) throws IllegalArgumentException, InstantiationException,
-			IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, IOException{
-			
-			// default implementation is crc32
-			
-			Object[] result = 
-					db.selectMulti(Tables.files_info, ModelFilesInfo.class,
-							new Object[][] { {"crc32", Security.getCRC32Checksum(f.getAbsolutePath())} }
-			, null);
-			
-			if(result.length > 0){
-			
-				if(result.length > 1){
-					// there are 2 or more occurrence duplicate files (3 or more duplicate files)
-					Log.i(TAG, "########################################");
-					Log.i(TAG, "2 or more files detected as duplicates of " + f.getAbsolutePath());
-					Log.i(TAG, "########################################");
-					
-					for(Object o : result){
-						Log.i(TAG, ((ModelFilesInfo)o).getPath() + ((ModelFilesInfo)o).getCrc32()  );
-					}
-				}else{
-					// there's only 1 occurrence of duplicate file (2 duplicate files)
-					Log.i(TAG, "########################################");
-					Log.i(TAG, "1 file is detected as duplicate of " + f.getAbsolutePath());
-					Log.i(TAG, "########################################");
-					for(Object o : result){
-						Log.i(TAG, ((ModelFilesInfo)o).getPath() + ((ModelFilesInfo)o).getCrc32()  );
+		/*
+		private void checkDirsQueue() throws SQLiteConstraintException, IllegalArgumentException, InstantiationException, IllegalAccessException, NoSuchMethodException, InvocationTargetException{
+			//for(Object dir : dirsQueue){
+			for(Iterator<Object> it = SF.dirsQueueFD.iterator(); it.hasNext();){
+				Object dir = it.next();
+				boolean dirFinished = true;
+				for(Object file : SF.filesQueueFD){
+					if(((ModelFilesInfo)file).getPath().contains( ((ModelDirsInfo)dir).getPath())){
+						dirFinished = false;
 					}
 				}
+				if(dirFinished){
+					if(db.insert(Tables.dirs_info, (ModelDirsInfo) dir, null)){
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "Inserting directory" + ((ModelDirsInfo) dir).getPath() + " successful!" );
+						Log.i(TAG, "########################################");
+					}else{
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "Inserting directory" + ((ModelDirsInfo) dir).getPath() + " not successful!" );
+						Log.i(TAG, "Trying update . . ." );
+						Log.i(TAG, "########################################");
+						
+						//(new ModelDirsInfo(((ModelDirsInfo)dir).getSd_id(),((ModelDirsInfo)dir).getPath(), ((ModelDirsInfo)dir).getLast_mod())),
+						if(db.update(Tables.dirs_info, 
+								db.selectMulti(Tables.dirs_info, ModelDirsInfo.class,
+										new Object[][] { {"path" , ((ModelDirsInfo)dir).getPath()}, {"sd_id", ((ModelDirsInfo)dir).getSd_id()}}, null)[0],
+								new ModelDirsInfo(((ModelDirsInfo)dir).getSd_id(),((ModelDirsInfo)dir).getPath(), ( new File( ((ModelDirsInfo)dir).getPath()).lastModified())),
+								null)){
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "Updating directory" + ((ModelDirsInfo) dir).getPath() + " successful!" );
+							Log.i(TAG, "########################################");
+						}else{
+							Log.e(TAG, "########################################");
+							Log.e(TAG, "Updating directory" + ((ModelDirsInfo) dir).getPath() + " not successful!" );
+							Log.e(TAG, "########################################");
+						}
+					}
+					
+					
+					it.remove();
+				}
 			}
+			
+			
 		}
+	
+		*/
 	
 	}
 
@@ -238,6 +425,7 @@ public class FileDesignationScanner extends Service{
 	public void onCreate() {
 		super.onCreate();
 		db = getDb(this);
+		this.SF = ((SharpFixApplicationClass) getApplication() );
 		powerManager = (PowerManager) getSystemService(POWER_SERVICE);
 		wakeLock = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
 		        "MyWakelockTag");
@@ -277,8 +465,8 @@ public class FileDesignationScanner extends Service{
 		mBuilder = new NotificationCompat.Builder(this);
 		mBuilder.setContentTitle("SharpFix File Designation Scanner");
 		mBuilder.setContentIntent(dspendingIntent);
-		mBuilder.setContentText("Scanning For Duplicate Files");
-	    mBuilder.setSmallIcon(R.drawable.ic_launcher);
+		mBuilder.setContentText("Scanning For Designation");
+	    mBuilder.setSmallIcon(R.drawable.fd_icon);
 		
 	   /*
 	    tempFilesQueue = (Object[]) intent.getExtras().getSerializable("files");

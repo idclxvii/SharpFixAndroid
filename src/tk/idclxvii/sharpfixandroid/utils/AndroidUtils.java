@@ -4,6 +4,8 @@ package tk.idclxvii.sharpfixandroid.utils;
 import java.io.*;
 import java.util.*;
 
+import tk.idclxvii.sharpfixandroid.databasemodel.ModelFdSettings;
+
 import android.content.*;
 import android.net.*;
 import android.os.*;
@@ -256,6 +258,37 @@ public abstract class AndroidUtils {
 	public static Class<?> tryCatchLogReturn(){
 		
 		return null;
+	}
+	
+	
+	public static boolean cutPasteFile(File inputFile, File outputFile){
+		try{
+			InputStream is = new FileInputStream(inputFile);
+    	    OutputStream os = new FileOutputStream(outputFile);
+ 
+    	    byte[] buffer = new byte[1024];
+ 
+    	    int length;
+    	    //copy the file content in bytes 
+    	    while ((length = is.read(buffer)) > 0){
+ 
+    	    	os.write(buffer, 0, length);
+ 
+    	    }
+ 
+    	    is.close();
+    	    os.close();
+ 
+    	    //delete the original file
+    	    inputFile.delete();
+    	    return true;
+    	    
+    	}catch(IOException e){
+    	    e.printStackTrace();
+    	    return false;
+    	}
+		
+		
 	}
 	
 	

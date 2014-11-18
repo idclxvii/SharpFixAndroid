@@ -225,6 +225,8 @@ public class DirectoryScanner extends Service{
 				DirectoryScanner.this.wakeLock.release();
 				//NotifyManager.cancel(1);
 				//stopForeground(true);
+				
+				
 				if((SF.filesQueue.size() > 0 || SF.dirsQueue.size() > 0) && prefs.getFdd_switch() == 1){
 					// file duplication detection is turned on
 					Intent i = new Intent(DirectoryScanner.this, FileDuplicationDetectionScanner.class);
@@ -249,9 +251,24 @@ public class DirectoryScanner extends Service{
 					if( prefs.getFdd_switch() != 1){
 						Log.w(TAG, "########################################");
 						Log.w(TAG, "File Duplication Detection is turned off!");
+						// check if fd switch is turned on
+						// this will call fd scanner when fd is turned on even if fdd did not run 
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "Checking for FileDesignation switch since FDD switch is turned off . . .");
+						if(prefs.getFd_switch() == 1){
+							// file designation is turned on
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "File Designation is turned on!");
+							Intent i = new Intent(DirectoryScanner.this, FileDesignationScanner.class);
+							DirectoryScanner.this.startService(i);
+							
+						}else{
+							Log.i(TAG, "########################################");
+							Log.i(TAG, "File Designation is turned off");
+						}
 					}else{
 						Log.w(TAG, "########################################");
-						Log.w(TAG, "File Designation is turned on! Checking for file and directory modifications . . .");
+						Log.w(TAG, "File Duplication Detection is turned on! Checking for file and directory modifications . . .");
 						if(!(SF.dirsQueue.size() > 0)){
 							Log.w(TAG, "########################################");
 							Log.w(TAG, "It seems that no directory under Sharpfix's scope was modified since the last scan");
@@ -265,43 +282,29 @@ public class DirectoryScanner extends Service{
 							}else{
 								Log.i(TAG, "########################################");
 								Log.i(TAG, "There are no conflicts in both directory and file scan reports!");
+								Log.i(TAG, "Suspending File Duplication Detection Scan since no file has been modified since the last scan!");
+								
 							}
 						}
 						
-						
-						if(!(SF.filesQueue.size() > 0)){
-							Log.w(TAG, "########################################");
-							Log.w(TAG, "It seems that no file under Sharpfix's scope was modified since the last scan");
-							Log.w(TAG, "Checking report consistency . . .");
-							
-							if(SF.dirsQueue.size() > 0){
-								Log.e(TAG, "########################################");
-								Log.e(TAG, "WARNING! It looks like the scan report was inconsistent because the system detected "+
-										SF.dirsQueue.size() + (SF.dirsQueue.size() > 1 ? " directories" : " directory") + " has " +
-										"been modified since the last scan!");
-							}else{
-								Log.i(TAG, "########################################");
-								Log.i(TAG, "There are no conflicts in both directory and file scan reports!");
-							}
-						}
 					}
+					
+					
 				}
 				
+				
+				/*
 				if((SF.filesQueue.size() > 0 || SF.dirsQueue.size() > 0) && prefs.getFd_switch() == 1){
 					// file designation is turned on
 					
 					Intent i = new Intent(DirectoryScanner.this, FileDesignationScanner.class);
-					/*
-					i.putExtra("files", filesQueue.toArray(new Object[filesQueue.size()]));
-					i.putExtra("dirs", dirsQueue.toArray(new Object[dirsQueue.size()]));
-					*/
+					
 					DirectoryScanner.this.startService(i);
-					/*	
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "Exception Caught: No Files to Queue!");
 						Log.i(TAG, "########################################");
 						Logcat.logCaughtException("DirectoryScanner", e.getStackTrace());
-					*/
+					
 				}else{
 					if( prefs.getFd_switch() != 1){
 						Log.w(TAG, "########################################");
@@ -343,7 +346,7 @@ public class DirectoryScanner extends Service{
 						}
 					}
 				}
-				
+				*/
 				stopSelf();
 				
 				

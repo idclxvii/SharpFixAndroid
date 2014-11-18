@@ -47,6 +47,7 @@ public class SharpFixApplicationClass extends Application{
 	public List<Object> filesQueue;
 	public List<Object> dirsQueue;
 	
+	
 	public void initScanQueue(){
 		filesQueue = new ArrayList<Object>();
 		dirsQueue = new ArrayList<Object>();

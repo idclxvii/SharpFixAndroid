@@ -170,6 +170,7 @@ public class FileDuplicationDetectionScanner extends Service{
 		
 		@Override
 		protected void onProgressUpdate(String... params){
+			
 			if(params.length > 2){
 				mBuilder.setProgress(0, 0, true);
 				mBuilder.setContentTitle(params[0]);
@@ -177,20 +178,45 @@ public class FileDuplicationDetectionScanner extends Service{
 				mNotifyManager.notify(2, mBuilder.build());
 				//mNotifyManager.cancel(2);
 				//stopForeground(true);
+				
+				if(prefs.getFd_switch() == 1){
+					// file designation is turned on
+					Log.w(TAG, "########################################");
+					Log.w(TAG, "FDD Scan finished, Ready to initiate File Designation!");
+					Intent i = new Intent(FileDuplicationDetectionScanner.this, FileDesignationScanner.class);
+					FileDuplicationDetectionScanner.this.startService(i);
+					/*	
+						Log.i(TAG, "########################################");
+						Log.i(TAG, "Exception Caught: No Files to Queue!");
+						Log.i(TAG, "########################################");
+						Logcat.logCaughtException("DirectoryScanner", e.getStackTrace());
+					*/
+				}else{
+					if( prefs.getFd_switch() != 1){
+						Log.w(TAG, "########################################");
+						Log.w(TAG, "FDD Scan finished. File Designation is turned off. No service are set to run!");
+					}
+				}
+				
 				stopSelf();
 			}else{
 				
 				if(params[0].length() > 0){
 					// there are changes in notification title
-					mBuilder.setContentTitle(params[0]);
-					mBuilder.setProgress(0, 0, true);
-					mBuilder.setContentText(params[1]);
-					mNotifyManager.notify(2, mBuilder.build());
+					if(SF.getServiceNoti() == 1){
+						mBuilder.setContentTitle(params[0]);
+						mBuilder.setProgress(0, 0, true);
+						mBuilder.setContentText(params[1]);
+						mNotifyManager.notify(2, mBuilder.build());
+					}
 				}else{
 					// there are no changes in notification title
-					mBuilder.setProgress(0, 0, true);
-					mBuilder.setContentText(params[1]);
-					mNotifyManager.notify(2, mBuilder.build());
+					if(SF.getServiceNoti() == 1){
+						mBuilder.setProgress(0, 0, true);
+						mBuilder.setContentText(params[1]);
+						mNotifyManager.notify(2, mBuilder.build());
+					}
+					
 				}
 			}
 			
@@ -262,87 +288,6 @@ public class FileDuplicationDetectionScanner extends Service{
 						Log.i(TAG, "Removing " + ((ModelFilesInfo)file).getPath() + " from filesQueue");
 					}
 				}
-			}
-		}
-		
-		
-		
-		
-		private void checkPreferences(File f) throws IllegalArgumentException, InstantiationException, IllegalAccessException, 
-		NoSuchMethodException, InvocationTargetException, FileNotFoundException, IOException{
-			publishProgress(new String[] {"", f.getAbsolutePath()});
-			if(prefs.getFdd_switch() == 1){
-				Log.i(TAG, "########################################");
-				Log.i(TAG, "File Duplication Detection is turned on!");
-				// file duplication detection switch is turned on
-				if( f.isDirectory() && f.canRead() && f.canWrite() && !f.isHidden() && f.exists() ){
-					// legal directory
-					if(prefs.getFdd_Filter_switch() == 1){
-						// fdd filter switch is turned on
-						Log.i(TAG, "########################################");
-						Log.i(TAG, "FDD Filtering is turned on!");
-						ModelDirFilter mdf = (ModelDirFilter) db.select(Tables.dir_filter, ModelDirFilter.class,
-								new Object[][] {{"dir", f.getAbsolutePath()}},null);
-						if( mdf.getDir() != null && mdf.getDir().equals(f.getAbsolutePath())){
-							// this dir is being filtered!
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "Directory " + f.getAbsolutePath() + " is being filtered!");
-							
-						}else{
-							// this dir is not being filtered!
-							// scan this directory
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "Directory " + f.getAbsolutePath() + " is NOT being filtered!");
-							Log.i(TAG, "Initializing File Duplication Scan");
-							scan(f);
-						}
-					}else{
-						// fdd filter switch is turned off
-						// scan this directory
-						Log.i(TAG, "########################################");
-						Log.i(TAG, "FDD Filtering is turned off!");
-						Log.i(TAG, "Scanning directory: " + f.getAbsolutePath());
-						scan(f);
-						
-						
-					}
-					
-					
-				}else{
-					if(!f.isDirectory() && f.canRead() && f.canWrite() && !f.isHidden() && f.exists()){
-						// legal file
-						if(prefs.getFdd_Filter_switch() == 1){
-							// fdd filter switch is turned on
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "FDD Filtering is turned on!");
-							ModelFileFilter mff = (ModelFileFilter) db.select(Tables.file_filter, ModelFileFilter.class,
-									new Object[][] {{"file", f.getAbsolutePath()}},null);
-							if( mff.getFile() != null && mff.getFile().equals(f.getAbsolutePath())){
-								// this file is being filtered!
-								Log.i(TAG, "########################################");
-								Log.i(TAG, "File " + f.getAbsolutePath() + " is being filtered!");
-							}else{
-								// this dir is not being filtered!
-								// scan this directory
-								Log.i(TAG, "########################################");
-								Log.i(TAG, "File " + f.getAbsolutePath() + " is NOT being filtered!");
-								Log.i(TAG, "Initializing File Duplication Scan");
-								scan(f);
-							}
-						}else{
-							// fdd filter switch is turned off
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "FDD Filtering is turned off!");
-							Log.i(TAG, "Scanning file: " + f.getAbsolutePath());
-							scan(f);
-						}
-					}
-				}
-				
-				
-			}else{
-				Log.i(TAG, "########################################");
-				Log.i(TAG, "File Duplication Detection is turned off!");
 			}
 		}
 		
@@ -614,49 +559,7 @@ public class FileDuplicationDetectionScanner extends Service{
 			
 		}
 	
-		private void scan(File f) throws IllegalArgumentException, InstantiationException,
-			IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, IOException{
-			
-			// default implementation is crc32
-			
-			/*
-			Object[] filters =  db.selectMulti(Tables.file_filter, ModelFileFilter.class,
-					new Object[][] { {"filter", "fdd"}} ,null);
-			
-			
-			for(Object filter : filters){
-				sql += "AND NOT path ='" + ((ModelFileFilter)filter).getFile() + "'";
-	    	}
-			*/		
-			
-			//String sql = "crc32 = '"+Security.getCRC32Checksum(f.getAbsolutePath())+"' ";
-				
-			Object[] result = db.selectConditional(Tables.files_info, ModelFilesInfo.class,
-					new Object[][] { {"crc32", Security.getCRC32Checksum(f.getAbsolutePath()) }}
-					, null);
-			
-			if(result.length > 0){
-			
-				if(result.length > 1){
-					// there are 2 or more occurrence duplicate files (3 or more duplicate files)
-					Log.i(TAG, "########################################");
-					Log.i(TAG, "2 or more files detected as duplicates of " + f.getAbsolutePath());
-					Log.i(TAG, "########################################");
-					
-					for(Object o : result){
-						Log.i(TAG, ((ModelFilesInfo)o).getPath() + ((ModelFilesInfo)o).getCrc32()  );
-					}
-				}else{
-					// there's only 1 occurrence of duplicate file (2 duplicate files)
-					Log.i(TAG, "########################################");
-					Log.i(TAG, "1 file is detected as duplicate of " + f.getAbsolutePath());
-					Log.i(TAG, "########################################");
-					for(Object o : result){
-						Log.i(TAG, ((ModelFilesInfo)o).getPath() + ((ModelFilesInfo)o).getCrc32()  );
-					}
-				}
-			}
-		}
+		
 	
 	}
 

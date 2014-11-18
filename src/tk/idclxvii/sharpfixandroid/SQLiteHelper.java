@@ -902,6 +902,25 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 		
     }
 
+    
+    /**
+     * Updates a record that is already existing in the database
+     * If a record is not yet existing, use insert()
+     * 
+     * NOTE:
+     * This method takes the oldParams as its WHERE clause and args
+     * Be sure that you have explicitly provided a newParams and that
+     * its instance is not taken or copied from oldParams' instance.
+     * Doing so may produced several bugs when updating database contents
+     * 
+     * TIP:
+     * You can use the following example to make sure you are not using
+     * the oldParams' instance
+     * 
+     * db.update(Tables.files_info, oldParams, new ModelFilesInfo(arg.getPath(), ...), null);
+     * 
+     * 
+     */
     public boolean update(Tables table, Object oldParams, Object newParams, SQLiteDatabase db)throws InstantiationException, IllegalAccessException,
 	NoSuchMethodException, IllegalArgumentException, InvocationTargetException{
     	
