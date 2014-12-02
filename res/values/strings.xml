@@ -58,6 +58,17 @@
     <string name="subMenuFdFiltersRulesLabel">View, create, update or delete file designation filtering rules.</string> 
     <string name="subMenuFddFiltersRules">File Duplication Detection Filter Rules</string>    
     <string name="subMenuFddFiltersRulesLabel">View, create, update or delete file duplication detection filtering rules.</string>    
+   
+    
+    <!-- LOGS -->
+    <string name="subMenuLogsScanLogs">Scan Logs</string>    
+    <string name="subMenuLogsScanLogsLabel">This is for all users. View SharpFix\'s scan logs which includes information regarding
+        File Duplication Detection scans, File Designation scans, etc.</string>    
+    <string name="subMenuLogsProgressLogs">Progress Logs</string>    
+    <string name="subMenuLogsProgressLogsLabel">This is for advanced users. View SharpFix\'s verbose Progress background activity logs</string>    
+    
+   
+    
     
     <string name="checkBoxServices">Enable SharpFix Scheduled Scan</string>    
     <string name="checkBoxServicesLabel">Automatically scans the SD Card every time at the specific time you have set. </string>    
@@ -77,6 +88,8 @@
     <string name="sssUpdateLabel4">SharpFix gives User Notifications when starting Scheduled Scans</string>    
     <string name="sssUpdateSelection5">Direct Scan Controls</string>    
     <string name="sssUpdateLabel5">Controls the scan behavior directly such as manually stopping or starting a scan</string>    
+    <string name="sssUpdateSelection6">Logs</string>    
+    <string name="sssUpdateLabel6">View logged information regarding SharpFix\'s background activities.</string>    
     
     <!--   -->
     <string name="directScanControlsSelection1">Start Scan Now</string>    
