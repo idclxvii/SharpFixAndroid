@@ -2,8 +2,10 @@ package tk.idclxvii.sharpfixandroid.utils;
 
 
 import java.io.*;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
+import tk.idclxvii.sharpfixandroid.SharpFixApplicationClass;
 import tk.idclxvii.sharpfixandroid.databasemodel.ModelFdSettings;
 
 import android.content.*;
@@ -260,6 +262,64 @@ public abstract class AndroidUtils {
 		return null;
 	}
 	
+	public static String convertMillis(long millis){
+		return new SimpleDateFormat("\n[MM/dd/yyyy hh:mm:ss aaa] ", Locale.getDefault()).format(millis);
+		
+	}
+	
+	public static void logScanReport(Context c, String[] logs){
+		String dir = c.getExternalFilesDir(null).getParent();
+		try{
+			File file = new File(dir + "/last_scan.log");
+			boolean append = true;
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}else{
+				if(file.length() >= 2097152){
+					// set log file max size to 2mb
+					append = false;
+				}
+				
+			}
+			FileOutputStream fos = new FileOutputStream(file, append);
+			
+			for(String log : logs){
+				fos.write(log.getBytes());
+			}
+			fos.close();
+		}catch(IOException ioe){
+			Log.e("AndroidUtils", "An exception has occured in logScanReport!");
+			ioe.printStackTrace();
+		}
+	}
+	
+	public static void logProgressReport(Context c, String[] logs){
+		String dir = c.getExternalFilesDir(null).getParent();
+		try{
+			File file = new File(dir + "/sf_reports.log");
+			boolean append = true;
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}else{
+				if(file.length() >= 2097152){
+					// set log file max size to 2mb
+					append = false;
+				}
+				
+			}
+			FileOutputStream fos = new FileOutputStream(file, append);
+			
+			for(String log : logs){
+				fos.write(log.getBytes());
+			}
+			fos.close();
+		}catch(IOException ioe){
+			Log.e("AndroidUtils", "An exception has occured in logProgressReport!");
+			ioe.printStackTrace();
+		}
+	}
 	
 	public static boolean cutPasteFile(File inputFile, File outputFile){
 		try{

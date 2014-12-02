@@ -167,6 +167,32 @@
             android:layout_height="0.5dp"
             android:layout_below="@+id/services_label4"
             android:background="#c0c0c0"/>
+	  <TextView
+	        android:id="@+id/services_selection5"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/services_hr6"
+	        android:text="@string/sssUpdateSelection6"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+	   <TextView
+	        android:id="@+id/services_label5"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/services_selection5"
+	        android:text="@string/sssUpdateLabel6"
+	        android:textSize="15sp" 
+	        android:textColor="@color/text_selector_labels"
+	        android:textStyle="italic"
+	        android:padding="10dp" />
+	 
 	
 	
 	     

@@ -2,6 +2,7 @@ package tk.idclxvii.sharpfixandroid;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 import java.util.concurrent.ExecutionException;
 
@@ -17,9 +18,12 @@ import android.util.Log;
 
 public class SharpFixApplicationClass extends Application{
 	
+	SQLiteHelper db;
+	
 	/*
 	 * Developer Fields - Fields that are manually edited by the developer based on mood swings.
 	 */
+	
 	private final boolean LOGCAT = true;
 	private final String TAG = this.getClass().getName();
 	private final boolean DEVELOPER_MODE = true;
@@ -43,7 +47,7 @@ public class SharpFixApplicationClass extends Application{
 	/*
 	 * Scan Fields, workaround for !!!FAILED BINDER TRANSACTION !!! 
 	 */
-	
+	public List<String> logsQueue;
 	public List<Object> filesQueue;
 	public List<Object> dirsQueue;
 	
@@ -51,6 +55,7 @@ public class SharpFixApplicationClass extends Application{
 	public void initScanQueue(){
 		filesQueue = new ArrayList<Object>();
 		dirsQueue = new ArrayList<Object>();
+		logsQueue = new ArrayList<String>();
 	}
 	
 	
@@ -226,13 +231,52 @@ public class SharpFixApplicationClass extends Application{
 		Logcat.i(this, AndroidUtils.getMountedVolumes());
 	}
 	
+	private synchronized SQLiteHelper getDb(Context context){
+		db = new SQLiteHelper(context);
+		return this.db;
+	}
+	
 	@Override
 	public void onCreate(){
 		super.onCreate();
+		db = this.getDb(getApplicationContext());
+				
 		extFileDir = this.getExternalFilesDir(null).getParentFile();
 		intFileDir = this.getFilesDir().getParentFile();
 		dbFileDir = this.getDatabasePath("sharpfix_database.db").getParentFile();
 		bootMessage();
+		/*
+		 * DEVELOPER NOTE:
+		 * 
+		 * The codes below will solve the application crash whenever SharpFix enters
+		 * onPause and the ApplicationClass instance has been re-created. This will
+		 * query the database and set the proper values for the dependent modules
+		 * to use. 
+		 * */
+		try {
+			ModelPreferences mp = (ModelPreferences) db.selectAll(Tables.preferences, ModelPreferences.class, null)[0];
+			this.accountId = mp.getAccount();
+			this.fddSwitch = mp.getFdd_switch();
+			this.fdSwitch = mp.getFd_switch();
+			this.fdFilterSwitch = mp.getFd_Filter_switch();
+			this.fddFilterSwitch = mp.getFdd_Filter_switch();
+			this.fddPref = mp.getFdd_pref();
+			this.autoLogin = mp.getAuto_login();
+			this.rootAccess = this.getRootAccess();
+			this.serviceSwitch = mp.getSss_switch(); 
+			this.serviceHour = mp.getSss_hh(); 
+			this.serviceMin = mp.getSss_mm(); 
+			this.serviceAMPM = mp.getSss_ampm();
+			this.serviceUpdateSwitch = mp.getSss_update();  
+			this.serviceRepeat = mp.getSss_repeat();
+			this.serviceNoti = mp.getSss_noti();
+			this.auSwitch = mp.getAu_switch(); 
+			
+			this.root = null;
+		} catch (Exception e){
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		new GlobalAsyncTask<Void,Void,Void>(){
 
 			@Override

@@ -1,28 +1,61 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:gravity="top"
-    android:scrollbars="vertical"
-    >
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    	xmlns:tools="http://schemas.android.com/tools"
+    	android:layout_width="fill_parent"
+    	android:layout_height="fill_parent"
+   	 	android:background="#000000" 
+	    android:gravity="top"
+	    android:orientation="vertical"
+	    android:paddingBottom="25dp"
+	    android:paddingLeft="8dp"
+	    android:paddingRight="8dp"
+	    >
+		<TextView
+		        android:id="@+id/title"
+		        android:layout_width="fill_parent"
+		        android:layout_height="wrap_content"
+		        android:text="@string/sssUpdateSelection6"
+		        android:textSize="30sp" 
+		        android:textStyle="bold"
+		        android:textColor="#FFFFFF"
+		        >
+		</TextView>
+		<SeekBar
+			    android:id="@+id/seekBar1"
+			    android:layout_width="match_parent"
+			    android:layout_height="wrap_content"
+			    android:layout_below="@+id/title" />
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="20dp"
-        android:text="@string/Check"
-        android:textSize="20sp" />
-<TextView
-    	android:id="@+id/logged"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:padding="20dp"
-        android:text=""
-        android:textSize="20sp" 
-        android:scrollbars = "vertical"/>
-    
-    
-</LinearLayout>
+			
+		<ScrollView 
+		    android:id="@+id/scroll"
+    		android:layout_width="fill_parent"
+    		android:layout_height="fill_parent"
+    		android:background="#000000"
+    		 android:layout_below="@+id/seekBar1"
+			 android:layout_centerHorizontal="true"
+			    >
+		
+			   <!-- android:background="@drawable/logo2"  -->  
+		    
+		    	
+				
+		   		<!-- What is it?  -->  
+				
+	
+				
+				<TextView
+			        android:id="@+id/log"
+			        android:layout_width="fill_parent"
+			        android:layout_height="wrap_content"
+			        android:text="@string/blankdummy"
+			        android:textSize="20sp" 
+			        android:textStyle="bold"
+			        android:clickable="true"
+			        android:textColor="@color/text_selector_labels"
+			        android:background="@color/background_selector"
+			        android:padding="5dp"
+			        >
+			    </TextView>
+		</ScrollView>
+	</RelativeLayout>
+

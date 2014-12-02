@@ -1,14 +1,20 @@
 package tk.idclxvii.sharpfixandroid;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
 
 import android.app.*;
 import android.content.*;
 import android.util.Log;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
+import tk.idclxvii.sharpfixandroid.utils.FileProperties;
 
 public class BootReceiver extends BroadcastReceiver {
 
+	private final String TAG = this.getClass().getName();
+	List<String> logs =  new ArrayList<String>();
 	@Override
 	public void onReceive(final Context context, Intent intent) {
 		// TODO Auto-generated method stub
@@ -17,7 +23,8 @@ public class BootReceiver extends BroadcastReceiver {
 		final SQLiteHelper db = new SQLiteHelper(context);
 		
 		if (intent.getAction().equals("android.intent.action.BOOT_COMPLETED")) {
-	    
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis())+ TAG + 
+					": Boot completed at: " + FileProperties.formatFileLastMod(System.currentTimeMillis()));
 			// Set the alarm here.
 	    
 			new GlobalAsyncTask<Void, Void, Void>(){
@@ -34,6 +41,7 @@ public class BootReceiver extends BroadcastReceiver {
 					ModelPreferences mp = (ModelPreferences) db.selectAll(Tables.preferences, ModelPreferences.class, null)[0];
 					c.set(Calendar.HOUR_OF_DAY, mp.getSss_hh());
 					c.set(Calendar.MINUTE, mp.getSss_mm());
+					
 					/*
 					c.set(Calendar.AM_PM, (mp.getSss_ampm()) == 0 ? Calendar.AM : Calendar.PM);
 					switch(mp.getSss_repeat()+1 ){
@@ -90,7 +98,10 @@ public class BootReceiver extends BroadcastReceiver {
 					alarm.setRepeating(AlarmManager.RTC_WAKEUP,  c.getTimeInMillis(),
 							/*((mp.getSss_repeat() != 7) ? AlarmManager.INTERVAL_DAY * 7 :*/ AlarmManager.INTERVAL_DAY
 							, pendingIntent);
+					logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Setting CPU Alarm at " +
+							mp.getSss_hh() + " : " + mp.getSss_mm());
 					
+					AndroidUtils.logProgressReport(context, logs.toArray(new String[logs.size()]));
 					return null;
 				}
 	
