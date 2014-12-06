@@ -25,7 +25,7 @@ public class SharpFixApplicationClass extends Application{
 	 */
 	
 	private final boolean LOGCAT = true;
-	private final String TAG = this.getClass().getName();
+	private final String TAG = this.getClass().getSimpleName();
 	private final boolean DEVELOPER_MODE = true;
 	public boolean getDevMode(){
 		return this.DEVELOPER_MODE;

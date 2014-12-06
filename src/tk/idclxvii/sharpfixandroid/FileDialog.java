@@ -28,8 +28,7 @@ public class FileDialog {
 	private String[] rootFileList;
 	private SharpFixApplicationClass SF;
 	private boolean LOGCAT = true;
-	private final String TAG = getClass().getName();
-    	
+	private final String TAG = this.getClass().getSimpleName();	
 	private SQLiteHelper db;
 	private static final String PARENT_DIR = "..";
     

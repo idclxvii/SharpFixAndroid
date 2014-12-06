@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tk.idclxvii.sharpfixandroid"
     android:versionCode="1"
-    android:versionName="FPB 10.0.0 (FINAL PROTOTYPE BUILD)" >
+    android:versionName="Alpha 1.1.0 (ALPHA RELEASE VERSION)" >
 	
 	<!-- Give users the choice whether to install the application on SD Card or Internal Memory
 	manifest .....
@@ -35,7 +35,8 @@
         android:icon="@drawable/logo2"
         android:label="@string/app_name"
         android:theme="@style/AppTheme"
-        android:name="tk.idclxvii.sharpfixandroid.SharpFixApplicationClass" >
+        android:name="tk.idclxvii.sharpfixandroid.SharpFixApplicationClass"
+        android:manageSpaceActivity=".MainActivity"  >
         
         <receiver android:name=".Alarm"/> 
         <receiver android:name=".BootReceiver">

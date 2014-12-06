@@ -12,11 +12,11 @@ import android.view.View.*;
 import android.widget.*;
 import android.widget.CompoundButton.*;
 
-public class SubMenuFdActivity extends Activity implements OnClickListener{
+public class SubMenuFdActivity extends GlobalExceptionHandlerActivity implements OnClickListener{
 
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 		
 	TextView title;
@@ -35,7 +35,6 @@ public class SubMenuFdActivity extends Activity implements OnClickListener{
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.fd_sub_menu);
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){

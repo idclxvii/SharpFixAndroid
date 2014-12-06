@@ -18,7 +18,7 @@ import android.util.Log;
 
 public class Alarm extends BroadcastReceiver {
 
-	private final String TAG = this.getClass().getName();
+	private final String TAG = this.getClass().getSimpleName();
 	// Service alarm, service is started here
 	List<String> logs =  new ArrayList<String>();
 	

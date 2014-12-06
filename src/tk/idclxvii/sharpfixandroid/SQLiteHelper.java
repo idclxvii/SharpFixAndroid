@@ -90,8 +90,8 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	
 	
 	 // Logcat tag and switch
-    private static final String TAG = "SQLiteHelper";
-    private static boolean LOGCAT = true;
+	private final String TAG = this.getClass().getSimpleName();
+	private static boolean LOGCAT = true;
  
     // Database Version
     private static final int DATABASE_VERSION = 3;
@@ -713,7 +713,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
         	}
     	}
     	if(LOGCAT){
-    		Log.d(TAG,"Select Multi SQL: " +sql);
+    		Log.d(TAG,"Select Conditional SQL: " +sql);
     	}
     	if(db != null){
     		

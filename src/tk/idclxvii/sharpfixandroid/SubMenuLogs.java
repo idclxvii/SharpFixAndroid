@@ -12,11 +12,11 @@ import android.view.View.OnClickListener;
 import android.view.View;
 import android.widget.TextView;
 
-public class SubMenuLogs extends Activity{
+public class SubMenuLogs extends GlobalExceptionHandlerActivity{
 
-	
+	private final String TAG = this.getClass().getSimpleName();
 	private SharpFixApplicationClass SF;
-	TextView title, scanLogs, scanLogsLabel, progressLogs, progressLogsLabel;
+	TextView title, scanLogs, scanLogsLabel, progressLogs, progressLogsLabel, errorLogs, errorLogsLabel;
 	
 	
 	
@@ -25,7 +25,7 @@ public class SubMenuLogs extends Activity{
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
@@ -42,6 +42,7 @@ public class SubMenuLogs extends Activity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				scanLogs.setPressed(true);
 				scanLogs.performClick();
 			}
 			
@@ -67,6 +68,7 @@ public class SubMenuLogs extends Activity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				progressLogs.setPressed(true);
 				progressLogs.performClick();
 			}
 			
@@ -83,6 +85,35 @@ public class SubMenuLogs extends Activity{
 				i.putExtra("logs", 1);
 				startActivity(i);
 				
+			}
+			
+		});
+	
+		
+		errorLogs = (TextView) findViewById(R.id.logs_selection3);
+		errorLogs.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				// call scheduled scan settings Activity
+				Intent i = new Intent(SubMenuLogs.this, CheckLogs.class);
+				// 0  = scan logs, 1 = progress logs
+				i.putExtra("logs", -1);
+				startActivity(i);
+				
+			}
+			
+		});
+		
+		errorLogsLabel = (TextView) findViewById(R.id.logs_label3);
+		errorLogsLabel.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				errorLogs.setPressed(true);
+				errorLogs.performClick();
 			}
 			
 		});

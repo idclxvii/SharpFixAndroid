@@ -15,8 +15,7 @@ import android.util.Log;
 
 public abstract class AndroidUtils {
 	
-	private final static String TAG = AndroidUtils.class.getName();
-	
+	private final String TAG = this.getClass().getSimpleName();
 	
 	public static enum API_CODE_NAME{
 		BASE,
@@ -271,21 +270,22 @@ public abstract class AndroidUtils {
 		String dir = c.getExternalFilesDir(null).getParent();
 		try{
 			File file = new File(dir + "/last_scan.log");
-			boolean append = true;
+			boolean append = false;
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}else{
+				/*
 				if(file.length() >= 2097152){
 					// set log file max size to 2mb
 					append = false;
 				}
-				
+				*/
 			}
 			FileOutputStream fos = new FileOutputStream(file, append);
 			
 			for(String log : logs){
-				fos.write(log.getBytes());
+				fos.write((log+"\n\n").getBytes());
 			}
 			fos.close();
 		}catch(IOException ioe){
@@ -294,25 +294,48 @@ public abstract class AndroidUtils {
 		}
 	}
 	
+	public static void logGlobalException(Context c, String[] logs){
+		String dir = c.getExternalFilesDir(null).getParent();
+		try{
+			File file = new File(dir + "/error_logs.log");
+			// if file doesnt exists, then create it
+			if (!file.exists()) {
+				file.createNewFile();
+			}
+			FileOutputStream fos = new FileOutputStream(file, true);
+			
+			for(String log : logs){
+				fos.write((log+"\n\n").getBytes());
+			}
+			fos.close();
+		}catch(IOException ioe){
+			Log.e("AndroidUtils", "An exception has occured in logGlobalException!");
+			ioe.printStackTrace();
+		}
+	}
+	
+	
 	public static void logProgressReport(Context c, String[] logs){
 		String dir = c.getExternalFilesDir(null).getParent();
 		try{
 			File file = new File(dir + "/sf_reports.log");
-			boolean append = true;
+			boolean append = false;
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}else{
+				/*
 				if(file.length() >= 2097152){
 					// set log file max size to 2mb
 					append = false;
 				}
+				*/
 				
 			}
 			FileOutputStream fos = new FileOutputStream(file, append);
 			
 			for(String log : logs){
-				fos.write(log.getBytes());
+				fos.write((log+"\n\n").getBytes());
 			}
 			fos.close();
 		}catch(IOException ioe){
@@ -322,6 +345,8 @@ public abstract class AndroidUtils {
 	}
 	
 	public static boolean cutPasteFile(File inputFile, File outputFile){
+		
+		
 		try{
 			InputStream is = new FileInputStream(inputFile);
     	    OutputStream os = new FileOutputStream(outputFile);

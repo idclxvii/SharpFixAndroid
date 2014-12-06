@@ -7,6 +7,7 @@ import android.util.Log;
 
 public abstract class ExecuteAsRootBase
 {
+	private final String TAG = this.getClass().getSimpleName();
    public static boolean canRunRootCommands()
    {
       boolean retval = false;

@@ -14,11 +14,11 @@ import android.view.*;
 import android.widget.*;
 import android.widget.CompoundButton.*;
 
-public class SubMenuFddActivity extends Activity implements OnClickListener, OnCheckedChangeListener{
+public class SubMenuFddActivity extends GlobalExceptionHandlerActivity implements OnClickListener, OnCheckedChangeListener{
 
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 	
 	TextView title;
@@ -39,7 +39,6 @@ public class SubMenuFddActivity extends Activity implements OnClickListener, OnC
 	@Override
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){

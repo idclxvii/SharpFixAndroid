@@ -42,6 +42,7 @@ public abstract class Shell {
 
     //for internal access
     //for external access
+	private final String TAG = this.getClass().getSimpleName();
  
     public static String sendShellCommandTest(String[] cmd) {
         System.out.println("\n###executing: " + cmd[0] + "###");

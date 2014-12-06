@@ -20,13 +20,13 @@ import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import java.io.*;
 import java.util.*;
 
-public class SubMenuFdRulesActivity extends Activity implements
+public class SubMenuFdRulesActivity extends GlobalExceptionHandlerActivity implements
 		OnClickListener, OnCheckedChangeListener,
 		/*FolderDialog.ChosenDirectoryListener, */ FileDialog.DirectorySelectedListener {
 
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 	
 	boolean onEditRule = false;
@@ -64,7 +64,6 @@ public class SubMenuFdRulesActivity extends Activity implements
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		this.db = this.getDb(getApplicationContext());
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){

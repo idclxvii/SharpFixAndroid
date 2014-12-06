@@ -5,6 +5,7 @@ import java.security.*;
 import java.util.zip.*;
 
 public class Security {
+	private final String TAG = this.getClass().getSimpleName();
 	
 	public static String md5Hash(String plain){
   		StringBuffer sb = new StringBuffer();

@@ -20,12 +20,12 @@ import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 import tk.idclxvii.sharpfixandroid.utils.Logcat;
 
-public class MainMenuActivity extends Activity implements OnClickListener{
+public class MainMenuActivity extends GlobalExceptionHandlerActivity implements OnClickListener{
 	
 	
 	
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 	
 	private TextView title;
@@ -54,7 +54,6 @@ public class MainMenuActivity extends Activity implements OnClickListener{
 		super.onCreate(savedInstanceState);
 		this.getDb(getApplicationContext());
 		setContentView(R.layout.main_menu);
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){

@@ -33,7 +33,7 @@ import tk.idclxvii.sharpfixandroid.utils.*;
 
 public class DirectoryScanner extends Service{
 
-	private final String TAG =  this.getClass().getName();
+	private final String TAG =  this.getClass().getSimpleName();
 	private SQLiteHelper db;
 	public static List<String> logs =  new ArrayList<String>();
 	private synchronized SQLiteHelper getDb(Context context){
@@ -65,9 +65,13 @@ public class DirectoryScanner extends Service{
 			Log.i(TAG, "########################################")
 			Log.i(TAG, "");
 			*/
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Starting Directory Scanner:");
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nStarting Directory Scanner:");
+		
+			
 			
 			long start = System.currentTimeMillis();
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"Initializing Directory Scanner");
 			publishProgress(new String[] {"Initializing Directory Scanner", "Time start:" + (FileProperties.formatFileLastMod(start)) });
 			
 			
@@ -84,8 +88,11 @@ public class DirectoryScanner extends Service{
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Starting Reverse Scan");
 			*/
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +  ": Starting Reverse Scan");
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +  ":\nStarting Reverse Scan");
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"SharpFix Reverse Directory Scan - Starting Reverse Scan Algorithm to Folders");
 			publishProgress(new String[] {"SharpFix Reverse Directory Scan", "Starting Reverse Scan Algorithm to Folders"});
+			
 			/*
 			 * reverse scan is the scan that looks up on the database and checks if the 
 			 * database values actually exists, if not then it is deleted. If however the 
@@ -93,7 +100,7 @@ public class DirectoryScanner extends Service{
 			 */
 			
 			// directories reverse scan
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Starting Reverse Directory Scan");
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nStarting Reverse Directory Scan");
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Starting Reverse Directory Scan");
@@ -104,19 +111,19 @@ public class DirectoryScanner extends Service{
 				publishProgress(new String[] {"", f.getAbsolutePath()});
 				if( f.isDirectory() && f.canRead() && f.canWrite() && /*!f.isHidden() && */ f.exists()){
 					// the recorded data is a dir, readable, writeable, not hidden and exists
-					logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
-							": Folder " +f.getAbsolutePath() + " still exists in the file system!");
+					
 					//Log.i(TAG, "Folder " +f.getAbsolutePath() + " still exists in the file system!");
 					
 					// check if the current file instance has greater lastMod than the recorded data on the database (recency check)
 					//Log.i(TAG, "Checking if " +f.getAbsolutePath() + " has been modified since the last scan . . .");
-					logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Checking if " +f.getAbsolutePath() + " has been modified since the last scan . . .");
+					
 					
 					if(Long.valueOf(f.lastModified()).compareTo(((ModelDirsInfo) o).getLast_mod()) > 0){
 						// file was modified
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Folder " +f.getAbsolutePath() + " was modified!");
+						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nFolder " +f.getAbsolutePath() + " still exists in the file system!\n" + 
+								"Checking if it has been modified since the last scan . . .\n" + 
+								"\nFolder " +f.getAbsolutePath() + " has been detected to be modified!");
 						//Log.i(TAG, "Folder " +f.getAbsolutePath() + " was modified!");
 							
 						
@@ -134,8 +141,6 @@ public class DirectoryScanner extends Service{
 							}
 						}
 						// add to directories to be scanned later by duplication detection and file designation
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								 ": Adding this directory to directory queue . . .");
 						
 						// Log.i("DirectoryScanner",  "Adding this directory to directory queue . . .");
 						SF.dirsQueue.add(new ModelDirsInfo(sdCard, f.getAbsolutePath(), f.lastModified()));
@@ -144,15 +149,20 @@ public class DirectoryScanner extends Service{
 						// db.update(Tables.dirs_info, ((ModelDirsInfo)o),  new ModelDirsInfo(sdCard, f.getAbsolutePath(), f.lastModified()), null);
 					}else{
 						// file was unmodified
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Folder " +f.getAbsolutePath() + " was NOT modified!");
+						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nFolder " +f.getAbsolutePath() + " still exists in the file system!\n" + 
+								"Checking if it has been modified since the last scan . . .\n" + 
+								"\nFolder " +f.getAbsolutePath() + " has been detected to be unmodified!");
+						
 						// Log.i(TAG, "Folder " +f.getAbsolutePath() + " was NOT modified!");
 					}
 					
 				}else{
 					// invalid file or unreadable, delete this record on the databse
 					logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Folder " +f.getAbsolutePath() + " is unreadable! Deleting from database records . . .");
+							":\nFolder " +f.getAbsolutePath() + 
+							" has been detected to be unreadable!It either means the folder is unreadable or does not exist anymore."+
+							"\nDeleting from database records . . .");
 					
 					// Log.i(TAG, "Folder " +f.getAbsolutePath() + " is unreadable! Deleting from database records . . .");
 					  db.delete(Tables.dirs_info, new ModelDirsInfo(((ModelDirsInfo) o).getSd_id(), ((ModelDirsInfo) o).getPath(),  
@@ -161,11 +171,13 @@ public class DirectoryScanner extends Service{
 				}
 			}
 			
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Starting Reverse File Scan");
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nStarting Reverse File Scan");
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Starting Reverse File Scan");
 			*/
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"SharpFix Reverse File Scan - Starting Reverse Scan Algorithm to Files");
 			publishProgress(new String[] {"SharpFix Reverse File Scan", "Starting Reverse Scan Algorithm to Files"});
 			// files reverse scan
 			for(Object o : files){
@@ -173,28 +185,26 @@ public class DirectoryScanner extends Service{
 				publishProgress(new String[] {"", f.getAbsolutePath()});
 				if( !f.isDirectory() && f.canRead() && f.canWrite() && !f.isHidden() && f.exists()){
 					
-					logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							 ": File " +f.getAbsolutePath() + " still exists in the file system!");
+				
 					//Log.i(TAG, "File " +f.getAbsolutePath() + " still exists in the file system!");
 					
 					// check if the current file instance has greater lastMod than the recorded data on the database (recency check)
-					logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Checking if " +f.getAbsolutePath() + " has been modified since the last scan . . .");
+					
 					//Log.i(TAG, "Checking if " +f.getAbsolutePath() + " has been modified since the last scan . . .");
 					
 					// the recorded data is a dir, readable, writeable, not hidden and exists
 					if(Long.valueOf(f.lastModified()).compareTo(((ModelFilesInfo) o).getLast_mod()) > 0){
 						// file was modified
+						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nFile " +f.getAbsolutePath() + " still exists in the file system!\n" + 
+								"Checking if it has been modified since the last scan . . .\n" + 
+								"\nFile " +f.getAbsolutePath() + " has been detected to be modified!");
 						
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Folder " +f.getAbsolutePath() + " was modified!");
 						// Log.i(TAG, "Folder " +f.getAbsolutePath() + " was modified!");
 						
 		// public ModelFilesInfo(String path, String dir, Long lastMod, String crc32, String md5, String sha1, String size){
 						
 						
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Adding this directory to file queue . . .");
 						//Log.i("DirectoryScanner",  "Adding this directory to file queue . . .");
 						
 						
@@ -210,8 +220,10 @@ public class DirectoryScanner extends Service{
 						*/
 						
 					}else{
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Folder " +f.getAbsolutePath() + " was NOT modified!");
+						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nFile " +f.getAbsolutePath() + " still exists in the file system!\n" + 
+								"Checking if it has been modified since the last scan . . .\n" + 
+								"\nFile " +f.getAbsolutePath() + " has been detected to be unmodified!");
 						//Log.i(TAG, "Folder " +f.getAbsolutePath() + " was NOT modified!");
 						
 					}
@@ -219,7 +231,9 @@ public class DirectoryScanner extends Service{
 				}else{
 					// invalid file or unreadable, delete this record on the databse
 					logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Folder " +f.getAbsolutePath() + " is unreadable! Deleting from database records . . .");
+							":\nFile " +f.getAbsolutePath() + 
+							" has been detected to be unreadable!It either means the folder is unreadable or does not exist anymore."+
+							"\nDeleting from database records . . .");
 					//Log.i(TAG, "Folder " +f.getAbsolutePath() + " is unreadable! Deleting from database records . . .");
 					//public ModelFilesInfo(String path, String dir, Long lastMod, String crc32, String md5, String sha1, String size){
 					db.delete(Tables.files_info, new ModelFilesInfo(((ModelFilesInfo) o).getPath(), ((ModelFilesInfo) o).getDir(),
@@ -230,11 +244,13 @@ public class DirectoryScanner extends Service{
 			
 			// disable recursive scan for a while
 			
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Starting Recursive Scan");
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nStarting Recursive Scan");
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Starting Recursive Scan");
 			*/
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"SharpFix Recursive Scan - Starting Recursive Scan Algorithm to Folders and Files");
 			publishProgress(new String[] {"SharpFix Recursive Scan", "Starting Recursive Scan Algorithm to Folders and Files"});
 			for(Object f : sd){
 				publishProgress(new String[] {"",((ModelSD)f).getPath()});
@@ -245,19 +261,24 @@ public class DirectoryScanner extends Service{
 			long end = System.currentTimeMillis(); 
 			long runTime = end - start;
 			
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"SharpFix Directory Scanner finished scanning!\n\nFiles scanned :" + fileCount + "\nFolders scanned: " + dirCount + 
+					"\nModified files since last scan: " + SF.filesQueue.size() + "\nModofied folders since last scan: " + SF.dirsQueue.size() +
+					"\n\nTime elapsed: " + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
+							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
+							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
+			
 			publishProgress(new String[] {"SD-Card Scan Finished", "Time elapsed:" + 
 					String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
 							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
 							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))),
 							"" });
 			
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Directory Scanner finished successfully!");
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Directory count: " +dirCount);
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": File count: " +fileCount);
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Running Time: " + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
-					TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
-					TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
-			
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nDirectory Scanner finished successfully!\n\n" + 
+					 "Scanned folders: " +dirCount + "\nScanned files: " +fileCount + 
+					 "\nTime elapsed: " + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
+								TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
+								TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Directory Scanner finished successfully!!!");
@@ -268,7 +289,6 @@ public class DirectoryScanner extends Service{
 					TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
 					TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
 			*/
-			
 			return null;
 		}
 
@@ -310,7 +330,8 @@ public class DirectoryScanner extends Service{
 				}else{
 					if( prefs.getFdd_switch() != 1){
 						
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": File Duplication Detection is turned off!");
+						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nFile Duplication Detection is turned off!");
 						/*
 						Log.w(TAG, "########################################");
 						Log.w(TAG, "File Duplication Detection is turned off!");
@@ -318,7 +339,7 @@ public class DirectoryScanner extends Service{
 						// check if fd switch is turned on
 						// this will call fd scanner when fd is turned on even if fdd did not run 
 						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Checking for FileDesignation switch since FDD switch is turned off . . .");
+								":\nChecking for File Designation switch since File Duplication Detection switch is turned off . . .");
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "Checking for FileDesignation switch since FDD switch is turned off . . .");
@@ -327,7 +348,7 @@ public class DirectoryScanner extends Service{
 						
 						if(prefs.getFd_switch() == 1){
 							// file designation is turned on
-							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": File Designation is turned on!");
+							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nFile Designation is turned on!");
 														/*
 							Log.i(TAG, "########################################");
 							Log.i(TAG, "File Designation is turned on!");
@@ -338,19 +359,19 @@ public class DirectoryScanner extends Service{
 							
 						}else{
 							
-							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": File Designation is turned off!");
+							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nFile Designation is turned off!");
 							
 							/*
 							Log.i(TAG, "########################################");
 							Log.i(TAG, "File Designation is turned off");
 							*/
 							AndroidUtils.logProgressReport(DirectoryScanner.this, logs.toArray(new String[logs.size()]));
-							
+							AndroidUtils.logScanReport(DirectoryScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 						}
 					}else{
 						
 						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
-								": File Duplication Detection is turned on! Checking for file and directory modifications . . .");
+								":\nFile Duplication Detection is turned on! Checking for file and directory modifications . . .");
 						
 						/*
 						Log.w(TAG, "########################################");
@@ -358,7 +379,7 @@ public class DirectoryScanner extends Service{
 						*/
 						if(!(SF.dirsQueue.size() > 0)){
 							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": It seems that no directory under Sharpfix's scope was modified since the last scan\n"+
+									":\nIt seems that no directory under Sharpfix's scope was modified since the last scan\n"+
 									"Checking report consistency . . .");
 							
 							/*
@@ -368,7 +389,7 @@ public class DirectoryScanner extends Service{
 							*/
 							if(SF.filesQueue.size() > 0){
 								logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-										": WARNING! It looks like the scan report was inconsistent because the system detected "+
+										":\nWARNING! It looks like the scan report was inconsistent because the system detected "+
 										SF.filesQueue.size() + (SF.filesQueue.size() > 1 ? " files" : " file") + " has " +
 										"been modified since the last scan!");
 								/*
@@ -379,7 +400,7 @@ public class DirectoryScanner extends Service{
 								*/
 							}else{
 								logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-										": There are no conflicts in both directory and file scan reports!");
+										":\nThere are no conflicts in both directory and file scan reports!");
 								/*
 								Log.i(TAG, "########################################");
 								Log.i(TAG, "There are no conflicts in both directory and file scan reports!");
@@ -481,33 +502,38 @@ public class DirectoryScanner extends Service{
 		protected void onPostExecute(Void returnedResult){
 			
 			
-			
 		}
 		
 		@Override
 		protected void onException(Exception e) {
 			// TODO Auto-generated method stub
 			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": Exception on Directory Scanner!!!");
-			
+					":\nException on Directory Scanner!!!");
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"Directory Scanner's execution might become unstable and produce unreliable results due to an uncaught exception!\n\nException details:");
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + 
+			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" + 
 						errors.toString());
-				
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					errors.toString());	
 			
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Exception on Directory Scanner!!!");
 			Logcat.logCaughtException("DirectoryScanner", e.getStackTrace());
 			*/
-			// AndroidUtils.logProgressReport(DirectoryScanner.this, logs.toArray(new String[logs.size()]));
+			AndroidUtils.logProgressReport(DirectoryScanner.this, logs.toArray(new String[logs.size()]));
+			AndroidUtils.logScanReport(DirectoryScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
+			
 		}
 		
 		@Override
 		protected void onCancelled(){
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"Directory Scanner's execution has been manually cancelled!");
 			logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					":Directory Scanner's execution has been cancelled!");
+					":\nDirectory Scanner's execution has been manually cancelled!");
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Directory Scanner's execution has been cancelled!");
@@ -515,7 +541,11 @@ public class DirectoryScanner extends Service{
 			mBuilder.setProgress(0, 0, true);
 			mBuilder.setContentText("Directory Scanner has been cancelled.");
 			mNotifyManager.notify(1, mBuilder.build());
-			mNotifyManager.cancel(1);
+			AndroidUtils.logProgressReport(DirectoryScanner.this, logs.toArray(new String[logs.size()]));
+			AndroidUtils.logScanReport(DirectoryScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
+			
+			
+			//mNotifyManager.cancel(1);
 			
 		}
 		
@@ -535,10 +565,6 @@ public class DirectoryScanner extends Service{
 									{"path", ff.getAbsolutePath()}}, null);
 						if(mdi.getPath() != null){
 							Thread.sleep(100);
-							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": "+ mdi.getPath() + " already exists in the database!");
-							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": Checking if directory has been modified since the last scan . . .");
 							
 							/*
 							Log.i("DirectoryScanner", mdi.getPath() + " already exists in the database!");
@@ -547,7 +573,11 @@ public class DirectoryScanner extends Service{
 							// check if directory last mod was changed
 							if(Long.valueOf(ff.lastModified()).compareTo(mdi.getLast_mod()) > 0){
 								logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-										": "+ mdi.getPath() + " was modified!\nTraversing this directory and adding to directory queue . . .");
+										":\nFolder "+ mdi.getPath() + " already exists in the database!\n" + 
+										"Checking if directory has been modified since the last scan . . .\n" +
+										 mdi.getPath() + " has been detected to be modified!\n"+
+										"Traversing this directory and adding to folders queue . . .");
+								
 								/*
 								Log.i("DirectoryScanner",  mdi.getPath() + " was modified!");
 								Log.i("DirectoryScanner",  "Traversing this directory and adding to directory queue . . .");
@@ -561,7 +591,10 @@ public class DirectoryScanner extends Service{
 								
 							}else{
 								logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-										 ": " +mdi.getPath() + " was NOT modified!");
+										":\nFolder "+ mdi.getPath() + " already exists in the database!\n" + 
+										"Checking if directory has been modified since the last scan . . .\n" +
+										 mdi.getPath() + " has been detected to be unmodified!\n"+
+										"Traversing this folder and checking sub folders . . .");
 								/*
 								Log.i("DirectoryScanner",  mdi.getPath() + " was not modified!");
 								Log.i("DirectoryScanner",  "Skipping . . .");
@@ -605,9 +638,11 @@ public class DirectoryScanner extends Service{
 							
 							
 						}else{
+							
 							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": "+ mdi.getPath() + "Directory " + ff.getPath() + " does not exist in the database!\n"+
-									 "Traversing this directory and adding to directory queue . . .");
+									":\nFolder "+ mdi.getPath() + " does not exist in the database!\n" + 
+									"Traversing this folder, adding to folders queue and checking sub folders . . .");
+							
 							/*
 							Log.i("DirectoryScanner", "Directory " + ff.getPath() + " does not exist in the database!");
 							Log.i("DirectoryScanner",  "Traversing this directory and adding to directory queue . . .");
@@ -638,11 +673,9 @@ public class DirectoryScanner extends Service{
 									}
 								, null);
 						
-						Thread.sleep(100);
+						// Thread.sleep(100);
 						if(mfi.getPath() != null){
-							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": File " + mfi.getPath() + " already exists in the database!\n"+
-									"Checking if file has been modified since the last scan . . .");
+							
 							/*
 							Log.i("DirectoryScanner",  "File " + mfi.getPath() + " already exists in the database!");
 							Log.i("DirectoryScanner", "Checking if file has been modified since the last scan . . .");
@@ -652,8 +685,11 @@ public class DirectoryScanner extends Service{
 							if(Long.valueOf(ff.lastModified()).compareTo(mfi.getLast_mod()) > 0){
 								// file was modified
 								logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-										": File " + mfi.getPath() + " was modified!\n"+
-										"Adding this file to file queue . . .");
+										":\nFile " + mfi.getPath() + " already exists in the database!\n"+
+										"Checking if file has been modified since the last scan . . .\n"+ 
+										"File " + mfi.getPath() + " has been detected to be modified!\n"+
+										"Adding to files queue . . .");
+								
 								/*
 								Log.i("DirectoryScanner", "File " + mfi.getPath() + " was modified!");
 								Log.i("DirectoryScanner",  "Adding this file to file queue . . .");
@@ -663,6 +699,11 @@ public class DirectoryScanner extends Service{
 								// update dirs_info
 								//db.update(Tables.dirs_info, mdi,  new ModelDirsInfo(sdCard, ff.getAbsolutePath(), ff.lastModified()), null);
 								
+							}else{
+								logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+										":\nFile " + mfi.getPath() + " already exists in the database!\n"+
+										"Checking if file has been modified since the last scan . . .\n"+ 
+										"File " + mfi.getPath() + " has been detected to be unmodified!\n");
 							}
 							
 							// check if file's last mod was changed
@@ -673,7 +714,9 @@ public class DirectoryScanner extends Service{
 							
 						}else{
 							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									 ": File " + ff.getPath() + " does not exist in the database, adding to files queue . . .");
+									":\nFile " + ff.getPath() + " does not exist in the database!\n"+
+									"Adding to files queue . . .");
+							
 							
 							//Log.i("DirectoryScanner",  "File " + ff.getPath() + " does not exist in the database, adding to files queue . . .");
 							
@@ -713,14 +756,18 @@ public class DirectoryScanner extends Service{
 							, null);
 					Thread.sleep(10);
 					if(mfi.getPath() != null){
-						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File " + mfi.getPath() + " already exists in the database!\nChecking if file has been modified since last scan . . .");
+						
+						
+						
 						//Log.i("DirectoryScanner", "File " + mfi.getPath() + " already exists in the database, skipping . . .");
 						
 						if(Long.valueOf(f.lastModified()).compareTo(mfi.getLast_mod()) > 0){
 							// file was modified
 							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": File " + mfi.getPath() + "was modified! Adding to file queue");
+									":\nFile " + mfi.getPath() + " already exists in the database!\n"+
+									"Checking if file has been modified since the last scan . . .\n"+ 
+									"File " + mfi.getPath() + " has been detected to be modified!\n"+
+									"Adding to files queue . . .");
 							SF.	filesQueue.add(mfi);
 							
 							// update dirs_info
@@ -731,7 +778,9 @@ public class DirectoryScanner extends Service{
 					}else{
 						
 						logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File " +  f.getPath() + " does not exist in the database, adding to files queue . . .");
+								":\nFile " + f.getPath() + " does not exist in the database!\n"+
+								"Adding to files queue . . .");
+						
 						//Log.i("DirectoryScanner", "File " +  f.getPath() + " does not exist in the database, adding to files queue . . .");
 						
 						
@@ -798,13 +847,14 @@ public class DirectoryScanner extends Service{
 	@Override
 	public void onDestroy() {
 		super.onDestroy();
+		TASKHANDLER.cancel(true);
 		logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
-				": Destroying Directory Scanner");
+				":\nDestroying Directory Scanner");
 		/*
 		Log.i(TAG, "########################################");
 		Log.i(TAG, "Destroying Directory Scanner");
 		*/
-		TASKHANDLER.cancel(true);
+		
 		
 	}
 	
@@ -817,7 +867,7 @@ public class DirectoryScanner extends Service{
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-				": Creating Directory Scanner");
+				":\nCreating Directory Scanner");
 		/*
 		Log.i(TAG, "########################################");
 		Log.i(TAG, "Creating Directory Scanner");

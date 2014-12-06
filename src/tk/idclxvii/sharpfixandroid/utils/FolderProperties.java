@@ -9,6 +9,7 @@ public class FolderProperties {
     int totalFolder = 0;
     int totalFile = 0;
     long size = 0;
+    private final String TAG = this.getClass().getSimpleName();
     
     public FolderProperties(File folder){
         

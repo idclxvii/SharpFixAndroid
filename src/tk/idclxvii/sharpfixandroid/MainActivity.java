@@ -22,11 +22,11 @@ import android.widget.*;
 import android.widget.TextView.OnEditorActionListener;
 import android.widget.CompoundButton.*;
 
-public class MainActivity extends Activity implements OnClickListener, TextWatcher, OnCheckedChangeListener{
+public class MainActivity extends GlobalExceptionHandlerActivity implements OnClickListener, TextWatcher, OnCheckedChangeListener{
 
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 		
 	
@@ -57,7 +57,6 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){
@@ -528,8 +527,16 @@ public class MainActivity extends Activity implements OnClickListener, TextWatch
 					protected void onException(Exception e) {
 						// TODO Auto-generated method stub
 						if(MainActivity.this.LOGCAT){
-							Log.d(MainActivity.this.TAG, "Exception cause: " +e.getCause().toString());
+							// e.printStackTrace();
 							Log.d(MainActivity.this.TAG, "Username does not exist! Login failure!");
+							/*
+							 * The code below produces a NullPointerException, from e.getCause()
+							 * However, it is not yet removed for purposes of demonstrating how
+							 * the GlobalExceptionHandlerActivity functions by using a non existing
+							 * username as an input in Login screen.
+							 */
+							Log.d(MainActivity.this.TAG, "Exception cause: " +e.getCause().toString());
+							
 							
 						}
 			    		//Toast.makeText(this, "Username does not exist!", Toast.LENGTH_LONG).show();

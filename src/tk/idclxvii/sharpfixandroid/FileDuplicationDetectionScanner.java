@@ -47,10 +47,12 @@ public class FileDuplicationDetectionScanner extends Service{
 	private NotificationManager mNotifyManager;
 	private NotificationCompat.Builder mBuilder;
 	
-	private final String TAG = this.getClass().getName();
+	private final String TAG = this.getClass().getSimpleName();
 	private SharpFixApplicationClass SF;
 	
-	private long deletedFileSize;
+	private long deletedFileSize = 0;
+	private int deletedFiles = 0;
+	private int scannedFiles = 0;
 	/*
 	private Object[] tempFilesQueue;
 	private Object[] tempDirsQueue;
@@ -73,12 +75,16 @@ public class FileDuplicationDetectionScanner extends Service{
 		@Override
 		protected Void doTask(File... params) throws Exception {
 			// TODO Auto-generated method stub
-			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ": Starting File Duplication Detection Scanner");
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nInitializing File Duplication Detection Scanner");
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Starting File Duplication Detection Scanner");
 			*/
 			long start = System.currentTimeMillis();
+			scannedFiles = SF.filesQueue.size();
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"Initializing File Duplication Detection Scanner" );
 			publishProgress(new String[] {"File Duplication Detection Scan", "Initializing Scan: " + (FileProperties.formatFileLastMod(start))});
 			
 			try{
@@ -112,12 +118,14 @@ public class FileDuplicationDetectionScanner extends Service{
 						 	
 						 	
 			*/
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nChecking File Duplication Detection Settings" );
 			publishProgress(new String[] {"", "Checking FDD Filter Switch" });
 			
 			if(prefs.getFdd_switch() == 1){
 				// fdd scan is turned on
 				DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-						": File Duplication Detection is turned on!");
+						":\nFile Duplication Detection is turned on!");
 				/*
 				Log.i(TAG, "########################################");
 				Log.i(TAG, "File Duplication Detection is turned on!");
@@ -125,48 +133,46 @@ public class FileDuplicationDetectionScanner extends Service{
 				if(prefs.getFdd_Filter_switch() == 1){
 					// fdd filter is turned on, filter the filesQueue
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": FDD Filtering is turned on!");
+							":\nFile Duplication Detection Filtering is turned on!");
 					/*
 					Log.i(TAG, "########################################");
 					Log.i(TAG, "FDD Filtering is turned on!");
 					*/
-					publishProgress(new String[] {"", "Filtering scanned files and directories"});
+					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+							":\nFiltering queued files and directories" );
+					publishProgress(new String[] {"", "Filtering queued files and directories"});
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Filtering queued Files and Directories");
+							":\nFiltering queued Files and Directories");
 					/*
 					Log.i(TAG, "########################################");
 					Log.i(TAG, "Filtering queued Files and Directories");
 					*/
 					filter();
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Initializing FDD Scan!");
+							":\nStarting File Duplication Detection Scan!");
 					/*
 					Log.i(TAG, "########################################");
 					Log.i(TAG, "Initializing FDD Scan!");
 					*/
+					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+							":\nStarting File Duplication Detection Scan" );
 					publishProgress(new String[] {"", "Starting scan" });
 					scan();
 				}else{
 					// fdd filter is turned off, scan w/o filtering
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": FDD Filtering is turned off!");
+							":\nFile Duplication Detection Filtering is turned off!");
 					/*
 					Log.i(TAG, "########################################");
 					Log.i(TAG, "FDD Filtering is turned off!");
 					*/
+					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+							":\nStarting File Duplication Detection Scan" );
 					publishProgress(new String[] {"", "Starting scan" });
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Initializing FDD Scan!");
+							":\nStarting File Duplication Detection Scan!");
 					scan();
 				}
-			}else{
-				// do nothing, fdd scan is turned off
-				DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-						": File Duplication Detection is turned off!");
-				/*
-				Log.i(TAG, "########################################");
-				Log.i(TAG, "File Duplication Detection is turned off!");
-				*/
 			}
 			
 			/*
@@ -176,23 +182,30 @@ public class FileDuplicationDetectionScanner extends Service{
 			*/
 			long end = System.currentTimeMillis();
 			long runTime = end - start;
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nSharpFix File Duplication Detection Scanner finished scanning!\n\nFiles scanned: " + scannedFiles +
+					"\nDeleted files: " + deletedFiles + "\nTotal file size deleted: " + FileProperties.formatFileSize(deletedFileSize) +
+					"\n\nTime elapsed: " + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
+							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
+							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
+			
+			
+			//checkPreferences(params[0]);
+			
+			
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nSharpFix File Duplication Detection Scanner finished scanning!\n\nFiles scanned :" + scannedFiles  +
+					"\nDeleted files: " + deletedFiles + "\nTotal file size deleted: " + FileProperties.formatFileSize(deletedFileSize) +
+					"\n\nTime elapsed: " + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
+							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
+							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
 			
 			publishProgress(new String[] {"File Duplication Detection Scan Finished", "Time elapsed: " + 
 					String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
 							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
 							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))),
 							"" });
-			//checkPreferences(params[0]);
 			
-			
-			
-			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": File Duplication Detection Scanner Finished!");
-			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": Time elapsed: " + 
-					String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
-							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
-							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "File Duplication Detection Scanner Finished!");
@@ -206,18 +219,43 @@ public class FileDuplicationDetectionScanner extends Service{
 			// TODO Auto-generated method stub
 			
 			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": Exception on File Duplication Detection Scanner!!!");
+					":\nException on File Duplication Detection Scanner!!!");
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"File Duplication Detection Scanner's execution might become unstable and "+
+					"produce unreliable results due to an uncaught exception!\n\nException details:");
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + 
-						errors.toString());
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" + 
+					errors.toString());
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					errors.toString());	
 			AndroidUtils.logProgressReport(FileDuplicationDetectionScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
+			AndroidUtils.logScanReport(FileDuplicationDetectionScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Exception on File Duplication Detection Scanner!!!");
 			
 			Logcat.logCaughtException("FileDuplicationDetectionScanner", e.getStackTrace());
 			*/
+		}
+		
+		
+		@Override
+		protected void onCancelled(){
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"File Duplication Detection Scanner's execution has been manually cancelled!");
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nFile Duplication Detection Scanner's execution has been manually cancelled!");
+			/*
+			Log.i(TAG, "########################################");
+			Log.i(TAG, "Directory Scanner's execution has been cancelled!");
+			*/
+			mBuilder.setProgress(0, 0, true);
+			mBuilder.setContentText("FDD Scanner has been cancelled.");
+			mNotifyManager.notify(2, mBuilder.build());
+			AndroidUtils.logProgressReport(FileDuplicationDetectionScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
+			AndroidUtils.logScanReport(FileDuplicationDetectionScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
+			
 		}
 		
 		@Override
@@ -233,8 +271,10 @@ public class FileDuplicationDetectionScanner extends Service{
 				
 				if(prefs.getFd_switch() == 1){
 					// file designation is turned on
+					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+							"File Duplication Detection Scan finished!\nReady to initiate File Designation!");
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": FDD Scan finished, Ready to initiate File Designation!");
+							":\nFile Duplication Detection Scan finished!\nReady to initiate File Designation!");
 					/*
 					Log.w(TAG, "########################################");
 					Log.w(TAG, "FDD Scan finished, Ready to initiate File Designation!");
@@ -249,13 +289,16 @@ public class FileDuplicationDetectionScanner extends Service{
 					*/
 				}else{
 					if( prefs.getFd_switch() != 1){
+						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nFile Duplication Detection Scan finished!\nFile Designation is turned off. No service are set to run anymore!");
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": FDD Scan finished. File Designation is turned off. No service are set to run anymore!");
+								":\nFile Duplication Detection Scan finished!\nFile Designation is turned off. No service are set to run anymore!");
 						/*
 						Log.w(TAG, "########################################");
 						Log.w(TAG, "FDD Scan finished. File Designation is turned off. No service are set to run!");
 						*/
 						AndroidUtils.logProgressReport(FileDuplicationDetectionScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
+						AndroidUtils.logScanReport(FileDuplicationDetectionScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 						
 					}
 				}
@@ -314,10 +357,10 @@ public class FileDuplicationDetectionScanner extends Service{
 					if( ((ModelDirsInfo)dir).getPath().contains( ((ModelDirFilter)filter).getDir())){
 						it.remove();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Directory and Subdirectory Filter Detection\n" + 
+								":\nFolder " + 
 								((ModelDirsInfo)dir).getPath() + " was detected to be a sub directory or the directory itself of "
 								+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!\n" +
-								 "Removing " + ((ModelDirsInfo)dir).getPath() + " from dirsQueue");
+								 "Removing " + ((ModelDirsInfo)dir).getPath() + " from folders queue");
 						/*
 						Log.i(TAG, "Directory and Subdirectory Filter Detection");
 						Log.i(TAG, ((ModelDirsInfo)dir).getPath() + " was detected to be a sub directory or the directory itself of "
@@ -334,10 +377,10 @@ public class FileDuplicationDetectionScanner extends Service{
 					if( ((ModelFilesInfo)file).getPath().contains( ((ModelDirFilter)filter).getDir())){
 						it.remove();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File Filter Detection\n" + 
+								":\nFile " + 
 								((ModelFilesInfo)file).getPath() + " was detected to be a inside the directory of "
 								+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!\n" +
-								 "Removing " +  ((ModelFilesInfo)file).getPath() + " from filesQueue");
+								 "Removing " +  ((ModelFilesInfo)file).getPath() + " from files queue");
 						/*
 						Log.i(TAG, "File Filter Detection");
 						Log.i(TAG, ((ModelFilesInfo)file).getPath() + " was detected to be a inside the directory of "
@@ -359,10 +402,10 @@ public class FileDuplicationDetectionScanner extends Service{
 					if( ((ModelFilesInfo)file).getPath().equals( ((ModelFileFilter)filter).getFile())){
 						it.remove();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File Filter Detection\n" + 
-								((ModelFilesInfo)file).getPath() + " was detected to be a inside the directory of "
-								+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!\n" +
-								 "Removing " +  ((ModelFilesInfo)file).getPath() + " from filesQueue");
+								":\nFile " +
+								((ModelFilesInfo)file).getPath() + " is being directly filtered!"
+								 + "\nFilter rule: "+ ((ModelFileFilter)filter).getFile() +
+								"\nRemoving " + ((ModelFilesInfo)file).getPath() + " from files queue.");
 						/*
 						Log.i(TAG, "File Filter Detection");
 						Log.i(TAG, ((ModelFilesInfo)file).getPath() + " is being filtered!"
@@ -378,6 +421,12 @@ public class FileDuplicationDetectionScanner extends Service{
 		private void scan() throws IllegalArgumentException, InstantiationException,
 		IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, 
 		IOException, NoSuchAlgorithmException{
+			
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nActive Checksum Algorithm(s): {CRC32, MD5, SHA-1}");
+			
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nActive Checksum Algorithm(s): {CRC32, MD5, SHA-1}");
 			//android.os.Debug.waitForDebugger();
 			//for(Object queuedFile : filesQueue){
 			for(Iterator<Object> it = SF.filesQueue.iterator(); it.hasNext(); ){
@@ -389,6 +438,8 @@ public class FileDuplicationDetectionScanner extends Service{
 					
 					Object[] result = db.selectConditional(Tables.files_info, ModelFilesInfo.class, 
 						new Object[][] {
+								{"sha1", Security.getSHA1Checksum(((ModelFilesInfo)queuedFile).getPath()),  "AND "},
+								{"md5", Security.getMD5Checksum(((ModelFilesInfo)queuedFile).getPath()), "AND "},
 								{"crc32", Security.getCRC32Checksum(((ModelFilesInfo)queuedFile).getPath()), "AND NOT "},
 								{"path",  ((ModelFilesInfo)queuedFile).getPath() }
 							
@@ -403,9 +454,64 @@ public class FileDuplicationDetectionScanner extends Service{
 					if(result.length > 0){
 						// the current file in queue has duplicate!
 						if(result.length > 1){
+							String queuedcrc = Security.getCRC32Checksum(((ModelFilesInfo)queuedFile).getPath());
+							String queuedmd5 = Security.getMD5Checksum(((ModelFilesInfo)queuedFile).getPath());
+							String queuedsha1 = Security.getSHA1Checksum(((ModelFilesInfo)queuedFile).getPath());
+							String queuedSize = (FileProperties.formatFileSize(
+									new File(((ModelFilesInfo)queuedFile).getPath()).length()));
+							String queuedLastMod = (FileProperties.formatFileLastMod(
+									new File(((ModelFilesInfo)queuedFile).getPath()).lastModified()));
+							
 							// there are 2 or more occurrence duplicate files (3 or more duplicate files)
-							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": 2 or more files detected as duplicates of " + ((ModelFilesInfo)queuedFile).getPath());
+							SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+									":\n2 or more files has been detected as duplicates of the current queued file!" + 
+									"\nQueued file " +  ((ModelFilesInfo)queuedFile).getPath() + " properties: " + 
+									"\nCRC32 Checksum: " +  queuedcrc +
+									"\nMD5 Checksum: " + queuedmd5  +
+									"\nSHA1 Checksum: " + queuedsha1 +
+									"\nFile Size: " + queuedSize +
+									"\nFile Last Modified: " + queuedLastMod + 
+									"\nEnumerating detected duplicate files together with its corresponding information:\n");
+							
+							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+									":\n2 or more files has been detected as duplicates of the current queued file!" + 
+									"\nQueued file " +  ((ModelFilesInfo)queuedFile).getPath() + " properties: " + 
+									"\nCRC32 Checksum: " +  queuedcrc +
+									"\nMD5 Checksum: " + queuedmd5  +
+									"\nSHA1 Checksum: " + queuedsha1 +
+									"\nFile Size: " + queuedSize +
+									"\nFile Last Modified: " + queuedLastMod + 
+									"\n\nEnumerating detected duplicate files together with its corresponding information:");
+							
+							
+							
+							for(Object r : result){
+								
+								String duplicatecrc = Security.getCRC32Checksum(((ModelFilesInfo)r).getPath());
+								String duplicatemd5 = Security.getMD5Checksum(((ModelFilesInfo)r).getPath());
+								String duplicatesha1 = Security.getSHA1Checksum(((ModelFilesInfo)r).getPath());
+								String duplicateSize = (FileProperties.formatFileSize(
+										new File(((ModelFilesInfo)r).getPath()).length()));
+								String duplicateLastMod = (FileProperties.formatFileLastMod(
+										new File(((ModelFilesInfo)r).getPath()).lastModified()));
+								
+								
+								SF.logsQueue.add("\nDuplicate file " +  ((ModelFilesInfo)r).getPath() + " properties: " + 
+										"\nCRC32 Checksum: " +  duplicatecrc +
+										"\nMD5 Checksum: " + duplicatemd5 +
+										"\nSHA1 Checksum: " +  duplicatesha1 +
+										"\nFile Size: " + duplicateSize +
+										"\nFile Last Modified: " +duplicateLastMod );
+								DirectoryScanner.logs.add("\nDuplicate file " +  ((ModelFilesInfo)r).getPath() + " properties: " + 
+										"\nCRC32 Checksum: " +  duplicatecrc +
+										"\nMD5 Checksum: " + duplicatemd5 +
+										"\nSHA1 Checksum: " +  duplicatesha1 +
+										"\nFile Size: " + duplicateSize +
+										"\nFile Last Modified: " +duplicateLastMod );
+								
+							}
+							
+							
 							/*
 							Log.i(TAG, "########################################");
 							Log.i(TAG, "2 or more files detected as duplicates of " + ((ModelFilesInfo)queuedFile).getPath());
@@ -415,10 +521,59 @@ public class FileDuplicationDetectionScanner extends Service{
 							
 							
 						}else{
-							// there's only 1 occurrence of duplicate file (2 duplicate files)
+							String queuedcrc = Security.getCRC32Checksum(((ModelFilesInfo)queuedFile).getPath());
+							String queuedmd5 = Security.getMD5Checksum(((ModelFilesInfo)queuedFile).getPath());
+							String queuedsha1 = Security.getSHA1Checksum(((ModelFilesInfo)queuedFile).getPath());
+							String queuedSize = (FileProperties.formatFileSize(
+									new File(((ModelFilesInfo)queuedFile).getPath()).length()));
+							String queuedLastMod = (FileProperties.formatFileLastMod(
+									new File(((ModelFilesInfo)queuedFile).getPath()).lastModified()));
 							
-							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": 1 file is detected as duplicate of " + ((ModelFilesInfo)queuedFile).getPath());
+							// there's only 1 occurrence of duplicate file (2 duplicate files)
+							SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+									":\n1 file has been detected as duplicate of the current queued file!" + 
+									"\nQueued file " +  ((ModelFilesInfo)queuedFile).getPath() + " properties: " + 
+									"\nCRC32 Checksum: " +  queuedcrc +
+									"\nMD5 Checksum: " + queuedmd5  +
+									"\nSHA1 Checksum: " + queuedsha1 +
+									"\nFile Size: " + queuedSize +
+									"\nFile Last Modified: " + queuedLastMod + 
+									"\n\nDetected duplicate file information:");
+							
+							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+									":\n1 file has been detected as duplicates of the current queued file!" + 
+									"\nQueued file " +  ((ModelFilesInfo)queuedFile).getPath() + " properties: " + 
+									"\nCRC32 Checksum: " +  queuedcrc +
+									"\nMD5 Checksum: " + queuedmd5  +
+									"\nSHA1 Checksum: " + queuedsha1 +
+									"\nFile Size: " + queuedSize +
+									"\nFile Last Modified: " + queuedLastMod + 
+									"\n\nDetected duplicate file information:");
+							
+							
+							
+							String duplicatecrc = Security.getCRC32Checksum(((ModelFilesInfo)result[0]).getPath());
+							String duplicatemd5 = Security.getMD5Checksum(((ModelFilesInfo)result[0]).getPath());
+							String duplicatesha1 = Security.getSHA1Checksum(((ModelFilesInfo)result[0]).getPath());
+							String duplicateSize = (FileProperties.formatFileSize(
+									new File(((ModelFilesInfo)result[0]).getPath()).length()));
+							String duplicateLastMod = (FileProperties.formatFileLastMod(
+									new File(((ModelFilesInfo)result[0]).getPath()).lastModified()));
+							
+							SF.logsQueue.add("\nDuplicate file " +  ((ModelFilesInfo)result[0]).getPath() + " properties: " + 
+									"\nCRC32 Checksum: " +  duplicatecrc +
+									"\nMD5 Checksum: " + duplicatemd5 +
+									"\nSHA1 Checksum: " +  duplicatesha1 +
+									"\nFile Size: " + duplicateSize +
+									"\nFile Last Modified: " +duplicateLastMod );
+							DirectoryScanner.logs.add("\nDuplicate file " +  ((ModelFilesInfo)result[0]).getPath() + " properties: " + 
+									"\nCRC32 Checksum: " +  duplicatecrc +
+									"\nMD5 Checksum: " + duplicatemd5 +
+									"\nSHA1 Checksum: " +  duplicatesha1 +
+									"\nFile Size: " + duplicateSize +
+									"\nFile Last Modified: " +duplicateLastMod );
+							
+							
 							/*
 							Log.i(TAG, "########################################");
 							Log.i(TAG, "1 file is detected as duplicate of " + ((ModelFilesInfo)queuedFile).getPath());
@@ -431,15 +586,32 @@ public class FileDuplicationDetectionScanner extends Service{
 							*/
 						}
 						for(Object storedFile : result){
-							Log.i(TAG, ((ModelFilesInfo)storedFile).getPath() + " " + ((ModelFilesInfo)storedFile).getCrc32()  );
 							if(prefs.getFdd_pref() == 0){
+								
+								
 								// user prefers to delete the older file
 								if( Long.valueOf((new File(((ModelFilesInfo)queuedFile).getPath())).lastModified()).compareTo(
 										((ModelFilesInfo)storedFile).getLast_mod()) > 0 ){
+									SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+											":\nFetching user's preference on deleting duplicate files . . ." +
+											"\nUser prefers to delete the older file!" +
+											"\nDeleting " +  ((ModelFilesInfo)storedFile).getPath() + " . . .");
+									DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+											":\nFetching user's preference on deleting duplicate files . . ." +
+											"\nUser prefers to delete the older file!" +
+											"\nDeleting " +  ((ModelFilesInfo)storedFile).getPath() + " . . .");
+									
+									long tempSize = (new File(((ModelFilesInfo)storedFile).getPath())).length();
+									
 									if((new File(((ModelFilesInfo)storedFile).getPath())).delete()){
 										// file successfully deleted
+										deletedFileSize += tempSize;
+										deletedFiles += 1;
+										
+										SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+												":\nDeleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!");
 										DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-												": Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!");
+												":\nDeleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!");
 										/*
 										Log.i(TAG, "########################################");
 										Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!" );
@@ -447,8 +619,11 @@ public class FileDuplicationDetectionScanner extends Service{
 										*/
 									}else{
 										// file was not successfully deleted
+										SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+												":\nDeleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " failed!");
 										DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-												": Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + "  was not successful!");
+												":\nDeleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " failed!");
+										
 										/*
 										Log.e(TAG, "########################################");
 										Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " was not successful!" );
@@ -465,8 +640,9 @@ public class FileDuplicationDetectionScanner extends Service{
 													Security.getSHA1Checksum(ff.getAbsolutePath()),
 													Long.toString(ff.length())),
 										null)){
+										
 										DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-												": Inserting file" + ff.getAbsolutePath() + " to database recrods successful!");
+												":\nInserting file" + ff.getAbsolutePath() + " information to database records successful!");
 										/*
 										Log.i(TAG, "########################################");
 										Log.i(TAG, "Inserting file" + ff.getAbsolutePath() + " successful!" );
@@ -486,8 +662,9 @@ public class FileDuplicationDetectionScanner extends Service{
 											, null)){
 											
 											DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-													": Inserting file" + ff.getAbsolutePath() + " to database recrods was not successful! "+
-													"Trying udpate . . .");
+													":\nInserting file" + ff.getAbsolutePath() + " information to database records failed!"+
+													"\nTrying udpate . . ."+
+													"\nUpdating file"  + ff.getAbsolutePath() + " information to database records successful!");
 											/*
 											Log.i(TAG, "########################################");
 											Log.i(TAG, "Inserting file" + ff.getAbsolutePath()  + " not successful!" );
@@ -496,7 +673,9 @@ public class FileDuplicationDetectionScanner extends Service{
 											*/
 										}else{
 											DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-													": Updating file" + ff.getAbsolutePath()  + " to database records was not successful!");
+													":\nInserting file" + ff.getAbsolutePath() + " information to database records failed!"+
+													"\nTrying udpate . . ."+
+													"\nUpdating file"  + ff.getAbsolutePath() + " information to database records failed!");
 											/*
 											Log.e(TAG, "########################################");
 											Log.e(TAG, "Updating file" + ff.getAbsolutePath()  + " not successful!" );
@@ -505,10 +684,26 @@ public class FileDuplicationDetectionScanner extends Service{
 										}
 									}
 								}else{
+									SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+											":\nFetching user's preference on deleting duplicate files . . ." +
+											"\nUser prefers to delete the older file!" +
+											"\nDeleting " +  ((ModelFilesInfo)queuedFile).getPath() + " . . .");
+									DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+											":\nFetching user's preference on deleting duplicate files . . ." +
+											"\nUser prefers to delete the older file!" +
+											"\nDeleting " +  ((ModelFilesInfo)queuedFile).getPath() + " . . .");
+									
+									long tempSize = (new File(((ModelFilesInfo)queuedFile).getPath())).length();
+									
 									if((new File(((ModelFilesInfo)queuedFile).getPath())).delete()){
 										// file successfully deleted
+										deletedFileSize += tempSize;
+										deletedFiles += 1;
+										
+										SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+												":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!");
 										DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-												": Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!");
+												":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!");
 										/*
 										Log.i(TAG, "########################################");
 										Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!" );
@@ -516,8 +711,10 @@ public class FileDuplicationDetectionScanner extends Service{
 										*/
 									}else{
 										// file was not successfully deleted
+										SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+												":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " failed!");
 										DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-												": Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " was not successful!");
+												":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " failed!");
 										/*
 										Log.e(TAG, "########################################");
 										Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " was not successful!" );
@@ -535,11 +732,27 @@ public class FileDuplicationDetectionScanner extends Service{
 								
 								
 							}else{
+								SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+										":\nFetching user's preference on deleting duplicate files . . ." +
+										"\nUser prefers to delete the newer file!" +
+										"\nDeleting " +  ((ModelFilesInfo)queuedFile).getPath() + " . . .");
+								DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+										":\nFetching user's preference on deleting duplicate files . . ." +
+										"\nUser prefers to delete the newer file!" +
+										"\nDeleting " +  ((ModelFilesInfo)queuedFile).getPath() + " . . .");
 								// user prefers to delete the new file
+								
+								long tempSize = (new File(((ModelFilesInfo)queuedFile).getPath())).length();
+								
 								if((new File(((ModelFilesInfo)queuedFile).getPath())).delete()){
 									// file successfully deleted
+									deletedFileSize += tempSize;
+									deletedFiles += 1;
+								
+									SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+											":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!");
 									DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-											": Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!");
+											":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " successful!");
 									/*
 									Log.i(TAG, "########################################");
 									Log.i(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " successful!" );
@@ -547,8 +760,10 @@ public class FileDuplicationDetectionScanner extends Service{
 									*/
 								}else{
 									// file was not successfully deleted
+									SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+											":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " failed!");
 									DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-											": Deleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " was not successful!");
+											":\nDeleting actual file " + ((ModelFilesInfo)queuedFile).getPath() + " failed!");
 									/*
 									Log.e(TAG, "########################################");
 									Log.e(TAG, "Deleting actual file " + ((ModelFilesInfo)storedFile).getPath() + " was not successful!" );
@@ -575,7 +790,7 @@ public class FileDuplicationDetectionScanner extends Service{
 								Security.getSHA1Checksum(ff.getAbsolutePath()), Long.toString(ff.length())), null)){
 							
 							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": Inserting file" + ff.getAbsolutePath() + " to database records successful!");
+									":\nInserting file" + ff.getAbsolutePath() + " information to database records successful!");
 							/*
 							Log.i(TAG, "########################################");
 							Log.i(TAG, "Inserting file" + ff.getAbsolutePath() + " successful!" );
@@ -583,9 +798,7 @@ public class FileDuplicationDetectionScanner extends Service{
 							*/
 						}else{
 							// update
-							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": Inserting file" + ff.getAbsolutePath()  + " to database records was not successful! " +
-									"Trying update . . .");
+							
 							/*
 							Log.i(TAG, "########################################");
 							Log.i(TAG, "Inserting file" + ff.getAbsolutePath()  + " not successful!" );
@@ -603,7 +816,10 @@ public class FileDuplicationDetectionScanner extends Service{
 											Long.toString(ff.length()))
 								, null)){
 								DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-										": Updating file" + ff.getAbsolutePath()  + " to database records was successful!");
+										":\nInserting file" + ff.getAbsolutePath() + " information to database records failed!"+
+										"\nTrying udpate . . ."+
+										"\nUpdating file"  + ff.getAbsolutePath() + " information to database records successful!");
+								
 								/*
 								Log.i(TAG, "########################################");
 								Log.i(TAG, "Updating file" + ff.getAbsolutePath() + " successful!" );
@@ -611,7 +827,9 @@ public class FileDuplicationDetectionScanner extends Service{
 								*/
 							}else{
 								DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-										": Updating file" + ff.getAbsolutePath()  + " to database records was not successful!");
+										":\nInserting file" + ff.getAbsolutePath() + " information to database records failed!"+
+										"\nTrying udpate . . ."+
+										"\nUpdating file"  + ff.getAbsolutePath() + " information to database records failed!");
 								/*
 								Log.e(TAG, "########################################");
 								Log.e(TAG, "Updating file" + ff.getAbsolutePath()  + " not successful!" );
@@ -645,7 +863,7 @@ public class FileDuplicationDetectionScanner extends Service{
 					 */
 					
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": An exception has been caught! Please check the file information:\n" + 
+							":\nAn exception has been caught! Please check the file information:\n" + 
 							"Bug trigger:" + ((ModelFilesInfo)queuedFile).getPath());
 					/*
 					Log.e(TAG,"CRC32 BUG EXCEPTION OCCURED! PLEASE CHECK IMMEDIATE DATABASE DELETION RESULT:");
@@ -658,12 +876,12 @@ public class FileDuplicationDetectionScanner extends Service{
 							((ModelFilesInfo) queuedFile).getSha1(), ((ModelFilesInfo) queuedFile).getSize()), null) ){
 						
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File" + ((ModelFilesInfo)queuedFile).getPath() + " was successfully deleted from database records!");
+								":\nFile" + ((ModelFilesInfo)queuedFile).getPath() + " was successfully deleted from database records!");
 						
 						//Log.e(TAG,"File" + ((ModelFilesInfo)queuedFile).getPath() + " was successfully deleted from database records!");
 					}else{
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File" + ((ModelFilesInfo)queuedFile).getPath() + " was not successfully deleted from database records!");
+								":\nFile" + ((ModelFilesInfo)queuedFile).getPath() + " was not successfully deleted from database records!");
 						// Log.e(TAG,"File" + ((ModelFilesInfo)queuedFile).getPath() + " WAS NOT SUCCESSFULLY DELETED FROM DATABASE RECORDS!");
 					}
 					
@@ -689,7 +907,7 @@ public class FileDuplicationDetectionScanner extends Service{
 					if(db.insert(Tables.dirs_info, (ModelDirsInfo) dir, null)){
 						
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Inserting directory" + ((ModelDirsInfo) dir).getPath() + " to database records successful!");
+								": Inserting folder " + ((ModelDirsInfo) dir).getPath() + " information to database records successful!");
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "Inserting directory" + ((ModelDirsInfo) dir).getPath() + " successful!" );
@@ -698,9 +916,7 @@ public class FileDuplicationDetectionScanner extends Service{
 						
 					}else{
 						
-						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Inserting directory" + ((ModelDirsInfo) dir).getPath() + " to database records was not successful! " + 
-								"Trying update . . ." );
+						
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "Inserting directory" + ((ModelDirsInfo) dir).getPath() + " not successful!" );
@@ -714,7 +930,9 @@ public class FileDuplicationDetectionScanner extends Service{
 								new ModelDirsInfo(((ModelDirsInfo)dir).getSd_id(),((ModelDirsInfo)dir).getPath(), ( new File( ((ModelDirsInfo)dir).getPath()).lastModified())),
 								null)){
 							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": Updating directory" + ((ModelDirsInfo) dir).getPath() + " to database records successful!");
+									":\nInserting file" + ((ModelDirsInfo) dir).getPath() + " information to database records failed!"+
+									"\nTrying udpate . . ."+
+									"\nUpdating file"  +((ModelDirsInfo) dir).getPath() + " information to database records successful!");
 							/*
 							Log.i(TAG, "########################################");
 							Log.i(TAG, "Updating directory" + ((ModelDirsInfo) dir).getPath() + " successful!" );
@@ -722,7 +940,10 @@ public class FileDuplicationDetectionScanner extends Service{
 							*/
 						}else{
 							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": Updating directory" + ((ModelDirsInfo) dir).getPath() + " to database records was not successful!");
+									":\nInserting file" + ((ModelDirsInfo) dir).getPath() + " information to database records failed!"+
+									"\nTrying udpate . . ."+
+									"\nUpdating file"  +((ModelDirsInfo) dir).getPath() + " information to database records failed!");
+							
 							/*
 							Log.e(TAG, "########################################");
 							Log.e(TAG, "Updating directory" + ((ModelDirsInfo) dir).getPath() + " not successful!" );
@@ -763,7 +984,7 @@ public class FileDuplicationDetectionScanner extends Service{
 	public void onDestroy() {
 		super.onDestroy();
 		DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-				": Destroying File Duplication Detection Scanner");
+				":\nDestroying File Duplication Detection Scanner");
 		/*
 		Log.i(TAG, "########################################");
 		Log.i(TAG, "Destroying File Duplication Detection Scanner");
@@ -783,7 +1004,7 @@ public class FileDuplicationDetectionScanner extends Service{
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-				": Creating File Duplication Detection Scanner");
+				":\nCreating File Duplication Detection Scanner");
 		/*
 		Log.i(TAG, "########################################");
 		Log.i(TAG, "Creating File Duplication Detection Scanner");

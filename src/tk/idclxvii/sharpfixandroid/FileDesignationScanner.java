@@ -42,7 +42,7 @@ public class FileDesignationScanner extends Service{
 	private NotificationManager mNotifyManager;
 	private NotificationCompat.Builder mBuilder;
 	
-	private final String TAG = this.getClass().getName();
+	private final String TAG = this.getClass().getSimpleName();
 	
 	//private Object[] tempDirsQueue;
 	//private List<Object> dirsQueue;
@@ -56,6 +56,9 @@ public class FileDesignationScanner extends Service{
 	private List<Object> magicNumbersQueue;
 	private List<Object> fdRules;
 	
+	private int scannedFiles = 0;
+	private long movedFileSize = 0;
+	private int movedFiles = 0;
 	
 	
 	private synchronized SQLiteHelper getDb(Context context){
@@ -69,13 +72,19 @@ public class FileDesignationScanner extends Service{
 		@Override
 		protected Void doTask(File... params) throws Exception {
 			// TODO Auto-generated method stub
+			scannedFiles = SF.filesQueue.size();
+			
+			
+			
 			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": Starting File Designation Scanner");
+					":\nInitializing File Designation Scanner");
 			/*
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "Starting File Designation Scanner");
 			*/
 			long start = System.currentTimeMillis();
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"Initializing File Designation Scanner" );
 			publishProgress(new String[] {"File Designation Scan", "Initializing Scan: " + (FileProperties.formatFileLastMod(start))});
 			
 			// single query all needed information
@@ -114,12 +123,14 @@ public class FileDesignationScanner extends Service{
 						 	
 						 	
 			*/
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nChecking File Designation Settings" );
 			publishProgress(new String[] {"", "Checking FDD Filter Switch" });
 			
 			if(prefs.getFd_switch() == 1){
 				// fdd scan is turned on
 				DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-						": File Designation is turned on!\nChecking if there are rules defined in FD Settings . . .");
+						":\nFile Designation is turned on!\nChecking if there are rules defined in FD Settings . . .");
 				/*
 				Log.i(TAG, "########################################");
 				Log.i(TAG, "File Designation is turned on!");
@@ -130,7 +141,7 @@ public class FileDesignationScanner extends Service{
 				
 				if(fdRules.size() > 0){
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": There are defined FD Rules!");
+							":\nThere are defined File Designation Rules!");
 					/*
 					Log.i(TAG, "########################################");
 					Log.i(TAG, "There are defined FD Rules!");
@@ -138,43 +149,53 @@ public class FileDesignationScanner extends Service{
 					if(prefs.getFd_Filter_switch() == 1){
 						// fdd filter is turned on, filter the filesQueue
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": FD Filtering is turned on!");
+								":\nFile Designation Filtering is turned on!");
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "FD Filtering is turned on!");
 						*/
-						publishProgress(new String[] {"", "Filtering scanned files and directories"});
+						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nFiltering queued files" );
+						publishProgress(new String[] {"", "Filtering scanned files"});
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Filtering queued Files and Directories");
+								":\nFiltering queued files");
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "Filtering queued Files and Directories");
 						*/
 						filter();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Initializing FD Scan!");
+								":\nStarting File Designation Scan!");
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "Initializing FD Scan!");
 						*/
+						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nStarting File Designation Scan" );
 						publishProgress(new String[] {"", "Starting scan" });
 						scan();
 					}else{
 						// fdd filter is turned off, scan w/o filtering
 						
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": FD Filtering is turned off!\nInitializing FD Scan!");
+								":\nFile Designation Filtering is turned off!\nStarting File Designation Scan!");
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "FD Filtering is turned off!");
 						*/
+						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nStarting File Designation Scan" );
 						publishProgress(new String[] {"", "Starting scan" });
 						
 						scan();
 					}
 				}else{
+					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+							":\nThere are no defined File Designation Rules!\n" +
+							"File Designation Scanner will not now halt service executione because no rules has been set" );
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": There are no defined FD Rules!\nFD Scanner will not initiate because no rules has been set");
+							":\nThere are no defined File Designation Rules!\n" +
+							"File Designation Scanner will not now halt service executione because no rules has been set");
 					/*
 					Log.i(TAG, "########################################");
 					Log.i(TAG, "There are no defined FD Rules!");
@@ -186,7 +207,7 @@ public class FileDesignationScanner extends Service{
 			}else{
 				// do nothing, fdd scan is turned off
 				DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-						": File Designation is turned off!");
+						":\nFile Designation is turned off!");
 				/*
 				Log.i(TAG, "########################################");
 				Log.i(TAG, "File Designation is turned off!");
@@ -200,6 +221,12 @@ public class FileDesignationScanner extends Service{
 			*/
 			long end = System.currentTimeMillis();
 			long runTime = end - start;
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nSharpFix File Designation Scanner finished scanning!\n\nFiles scanned: " + scannedFiles +
+					"\nMoved files: " + movedFiles + "\nTotal file size moved: " + FileProperties.formatFileSize(movedFileSize) +
+					"\n\nTime elapsed: " + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
+							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
+							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
 			
 			publishProgress(new String[] {"File Designation Scan Finished", "Time elapsed:" + 
 					String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
@@ -209,11 +236,10 @@ public class FileDesignationScanner extends Service{
 			//checkPreferences(params[0]);
 			
 			
-			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": File Designation Scanner Finished!");
-			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": Time elapsed: " + 
-					String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nSharpFix File Designation Scanner finished scanning!\n\nFiles scanned: " + scannedFiles +
+					"\nMoved files: " + movedFiles + "\nTotal file size moved: " + FileProperties.formatFileSize(movedFileSize) +
+					"\n\nTime elapsed: " + String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(runTime),
 							TimeUnit.MILLISECONDS.toMinutes(runTime) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(runTime)),
 							TimeUnit.MILLISECONDS.toSeconds(runTime) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(runTime))));
 			/*
@@ -221,22 +247,46 @@ public class FileDesignationScanner extends Service{
 			Log.i(TAG, "File Designation Scanner Finished!");
 			*/
 			AndroidUtils.logProgressReport(FileDesignationScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
-			
+			AndroidUtils.logScanReport(FileDesignationScanner.this, SF.logsQueue.toArray(new String[SF.logsQueue.size()]));
 			return null;
 			
 			
 		}
 
 		@Override
+		protected void onCancelled(){
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"File Designationn Scanner's execution has been manually cancelled!");
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nFile Designation Scanner's execution has been manually cancelled!");
+			/*
+			Log.i(TAG, "########################################");
+			Log.i(TAG, "Directory Scanner's execution has been cancelled!");
+			*/
+			mBuilder.setProgress(0, 0, true);
+			mBuilder.setContentText("FD Scanner has been cancelled.");
+			mNotifyManager.notify(3, mBuilder.build());
+			AndroidUtils.logProgressReport(FileDesignationScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
+			AndroidUtils.logScanReport(FileDesignationScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
+			
+		}
+		
+		@Override
 		protected void onException(Exception e) {
 			// TODO Auto-generated method stub
 			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-					": Exception on File Designation Scanner!!!");
+					":\nException on File Designation Scanner!!!");
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					"File Designation Scanner's execution might become unstable and produce unreliable "
+					+ "results due to an uncaught exception!\n\nException details:");
 			StringWriter errors = new StringWriter();
 			e.printStackTrace(new PrintWriter(errors));
-			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + 
-						errors.toString());
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" + 
+					errors.toString());
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
+					errors.toString());	
 			AndroidUtils.logProgressReport(FileDesignationScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
+			AndroidUtils.logScanReport(FileDesignationScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 			
 			/*
 			Log.i(TAG, "########################################");
@@ -303,10 +353,10 @@ public class FileDesignationScanner extends Service{
 						it.remove();
 						
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File Filter Detection\n" +
+								":\nFile " +
 								((ModelFilesInfo)file).getPath() + " was detected to be a inside the directory of "
 								+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!\n" +
-								"Removing " + ((ModelFilesInfo)file).getPath() + " from filesQueue");
+								"Removing " + ((ModelFilesInfo)file).getPath() + " from files queue.");
 						
 						/*
 						Log.i(TAG, "File Filter Detection");
@@ -329,10 +379,10 @@ public class FileDesignationScanner extends Service{
 					if( ((ModelFilesInfo)file).getPath().equals( ((ModelFileFilter)filter).getFile())){
 						it.remove();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File Filter Detection\n" +
-								((ModelFilesInfo)file).getPath() + " is being filtered!"
-								 + "Filter was: "+ ((ModelFileFilter)filter).getFile() +
-								"Removing " + ((ModelFilesInfo)file).getPath() + " from filesQueue");
+								":\nFile " +
+								((ModelFilesInfo)file).getPath() + " is being directly filtered!"
+								 + "\nFilter rule: "+ ((ModelFileFilter)filter).getFile() +
+								"\nRemoving " + ((ModelFilesInfo)file).getPath() + " from files queue.");
 						/*
 						Log.i(TAG, "File Filter Detection");
 						Log.i(TAG, ((ModelFilesInfo)file).getPath() + " is being filtered!"
@@ -350,11 +400,15 @@ public class FileDesignationScanner extends Service{
 		private void scan() throws IllegalArgumentException, InstantiationException,
 		IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, 
 		IOException, NoSuchAlgorithmException{
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nSharpFix File Signature Definitions: " + SQLiteHelper.getDatabaseVersion());
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nSharpFix File Signature Definitions: " + SQLiteHelper.getDatabaseVersion());
 			//android.os.Debug.waitForDebugger();
 			//for(Object queuedFile : filesQueue){
 			for(Iterator<Object> it = filesQueue.iterator(); it.hasNext(); ){
 				Object queuedFile = it.next();
-				
+				scannedFiles++;
 				File f = new File(((ModelFilesInfo)queuedFile).getPath());
 				publishProgress(new String[] {"", f.getAbsolutePath()});
 				
@@ -369,7 +423,7 @@ public class FileDesignationScanner extends Service{
 					
 					if(result.length > 0){
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": File: " +f.getAbsolutePath() + "\n" +
+								":\nFile: " +f.getAbsolutePath() + "\n" +
 								"Current Queued File Information: \n" +
 								"File Type:" + ((ModelMagicNumber)result[0]).getFile_type() + "\n" +
 								"MIME:" + ((ModelMagicNumber)result[0]).getMime() + "\n" + 
@@ -388,46 +442,102 @@ public class FileDesignationScanner extends Service{
 								new Object[][] {{"file_type", ((ModelMagicNumber)result[0]).getFile_type(), " AND NOT "},
 												{"designation_path", f.getParent()}	},
 						null);
-						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-								": Rule: " + ((ModelFdSettings)rule[0]).getRule_name() + "\n" + 
-								"Designation path: " + ((ModelFdSettings)rule[0]).getDesignation_path());
+						if(rule.length > 0){
+							// there are defined rules on the current file
+							if(AndroidUtils.cutPasteFile(f,
+									new File( ((ModelFdSettings)rule[0]).getDesignation_path() + "/" + f.getName() )    )){
+								// successfully moved the file
+								movedFiles += 1;
+								movedFileSize += new File( ((ModelFdSettings)rule[0]).getDesignation_path() + "/" + f.getName() ).length();
+								SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+										"\nFile " + f.getAbsolutePath() + " is being designated!" +
+										":\nRule to be applied: " + ((ModelFdSettings)rule[0]).getRule_name() + 
+										"\nDesignation path: " + ((ModelFdSettings)rule[0]).getDesignation_path() +
+										"\nAwaiting designation result . . ." + 
+										"\nSuccessfully moved " + f.getAbsolutePath() + " to " + 
+										((ModelFdSettings)rule[0]).getDesignation_path());
+								
+								DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+										"\nFile " + f.getAbsolutePath() + " is being designated!" +
+										":\nRule to be applied: " + ((ModelFdSettings)rule[0]).getRule_name() + 
+										"\nDesignation path: " + ((ModelFdSettings)rule[0]).getDesignation_path() +
+										"\nAwaiting designation result . . ." + 
+										"\nSuccessfully moved " + f.getAbsolutePath() + " to " + 
+										((ModelFdSettings)rule[0]).getDesignation_path());
+								
+								/*
+								Log.i(TAG, "########################################");
+								Log.i(TAG, "Successfully moved " + f.getAbsolutePath() + " to " +
+										((ModelFdSettings)rule[0]).getDesignation_path());
+								*/
+								ModelFilesInfo oldParams = ((ModelFilesInfo)queuedFile);
+								// public ModelFilesInfo(String path, String dir, Long lastMod, String crc32, String md5, String sha1, String size){
+								
+								db.update(Tables.files_info, oldParams ,new ModelFilesInfo(
+										((ModelFdSettings)rule[0]).getDesignation_path() + "/" +f.getName(),
+										((ModelFdSettings)rule[0]).getDesignation_path(), oldParams.getLast_mod(),
+										oldParams.getCrc32(), oldParams.getMd5(), oldParams.getSha1(), oldParams.getSize())
+								, null);
+								
+							}else{
+								// failed to move the file
+									// either unable to copy or unable to delete the original file
+								SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+										"\nFile " + f.getAbsolutePath() + " is being designated!" +
+										":\nRule to be applied: " + ((ModelFdSettings)rule[0]).getRule_name() + 
+										"\nDesignation path: " + ((ModelFdSettings)rule[0]).getDesignation_path() +
+										"\nAwaiting designation result . . ." + 
+										"\nFailed to  move the file " + f.getAbsolutePath() + " to " + 
+										((ModelFdSettings)rule[0]).getDesignation_path());
+								
+								DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+										"\nFile " + f.getAbsolutePath() + " is being designated!" +
+										":\nRule to be applied: " + ((ModelFdSettings)rule[0]).getRule_name() + 
+										"\nDesignation path: " + ((ModelFdSettings)rule[0]).getDesignation_path() +
+										"\nAwaiting designation result . . ." + 
+										"\nFailed to move the file " + f.getAbsolutePath() + " to " + 
+										((ModelFdSettings)rule[0]).getDesignation_path());
+								
+								
+								DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+										": Failed to move " + f.getAbsolutePath() + " to " +
+										((ModelFdSettings)rule[0]).getDesignation_path());
+								/*
+								Log.e(TAG, "########################################");
+								Log.e(TAG, "Failed to move " + f.getAbsolutePath() + " to " +
+										((ModelFdSettings)rule[0]).getDesignation_path());
+								*/
+							}
+						}else{
+							// there are no defined rules on the current file
+							
+							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+									"\nFile " + f.getAbsolutePath() + " is NOT being designated!");
+							
+						}
 						/*
 						Log.i(TAG, "########################################");
 						Log.i(TAG, "Rule: " + ((ModelFdSettings)rule[0]).getRule_name());
 						Log.i(TAG, "Designation path: " + ((ModelFdSettings)rule[0]).getDesignation_path());
 						*/
-						if(AndroidUtils.cutPasteFile(f,
-								new File( ((ModelFdSettings)rule[0]).getDesignation_path() + "/" + f.getName() )    )){
-							// successfully moved the file
-							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": Successfully moved " + f.getAbsolutePath() + " to " + 
-									((ModelFdSettings)rule[0]).getDesignation_path());
-							/*
-							Log.i(TAG, "########################################");
-							Log.i(TAG, "Successfully moved " + f.getAbsolutePath() + " to " +
-									((ModelFdSettings)rule[0]).getDesignation_path());
-							*/
-							ModelFilesInfo oldParams = ((ModelFilesInfo)queuedFile);
-							// public ModelFilesInfo(String path, String dir, Long lastMod, String crc32, String md5, String sha1, String size){
-							
-							db.update(Tables.files_info, oldParams ,new ModelFilesInfo(
-									((ModelFdSettings)rule[0]).getDesignation_path() + "/" +f.getName(),
-									((ModelFdSettings)rule[0]).getDesignation_path(), oldParams.getLast_mod(),
-									oldParams.getCrc32(), oldParams.getMd5(), oldParams.getSha1(), oldParams.getSize())
-							, null);
-							
-						}else{
-							// failed to move the file
-								// either unable to copy or unable to delete the original file
-							DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-									": Failed to move " + f.getAbsolutePath() + " to " +
-									((ModelFdSettings)rule[0]).getDesignation_path());
-							/*
-							Log.e(TAG, "########################################");
-							Log.e(TAG, "Failed to move " + f.getAbsolutePath() + " to " +
-									((ModelFdSettings)rule[0]).getDesignation_path());
-							*/
-						}
+					
+					}else{
+						// undefined file type
+
+						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nFile: " +f.getAbsolutePath() + " has been detected to be unidentified!" + 
+								"\nIt seems that the file's signature is not known yet. See the information below."+
+								"\nCurrent Queued File Information:" +
+								"\n4-bytes Signature:" +  Security.getMagicNumber(f, 4) + 
+								"\n8-bytes Signature:" +  Security.getMagicNumber(f, 8));
+						
+						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nFile: " +f.getAbsolutePath() + " has been detected to be unidentified!" + 
+								"\nIt seems that the file's signature is not known yet. See the information below."+
+								"\nCurrent Queued File Information:" +
+								"\n4-bytes Signature:" + Security.getMagicNumber(f, 4) + 
+								"\n8-bytes Signature:" +  Security.getMagicNumber(f, 8));
+						
 					}
 					
 					
@@ -442,10 +552,15 @@ public class FileDesignationScanner extends Service{
 					 * 3. The current queued file is already inside its designated folder
 					 * 
 					 */
+
+					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+							":\nDetected File: " +f.getAbsolutePath() + "\nException details:\n");
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-							": Detected File: " +f.getAbsolutePath() + "\nException details:\n");
+							":\nDetected File: " +f.getAbsolutePath() + "\nException details:\n");
 					StringWriter errors = new StringWriter();
 					e.printStackTrace(new PrintWriter(errors));
+					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + 
+							errors.toString());
 					DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + 
 								errors.toString());
 					
@@ -533,7 +648,7 @@ public class FileDesignationScanner extends Service{
 	public void onDestroy() {
 		super.onDestroy();
 		DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-				": Destroying File Designation Scanner");
+				":\nDestroying File Designation Scanner");
 		/*
 		Log.i(TAG, "########################################");
 		Log.i(TAG, "Destroying File Designation Scanner");
@@ -557,7 +672,7 @@ public class FileDesignationScanner extends Service{
 		Log.i(TAG, "Creating File Designation Scanner");
 		*/
 		DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
-				": Creating File Designation Scanner");
+				":\nCreating File Designation Scanner");
 		Intent notificationIntent = new Intent(this, SubMenuDirectScanControls.class);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 	            | Intent.FLAG_ACTIVITY_SINGLE_TOP);

@@ -6,7 +6,7 @@ import java.util.Locale;
 
 public class FileProperties {
 
-		
+	private final String TAG = this.getClass().getSimpleName();
 	public static String formatFileSize(long size){
 		
 		if(size <= 0) return "0";

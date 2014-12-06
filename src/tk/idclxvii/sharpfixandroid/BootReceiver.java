@@ -13,7 +13,7 @@ import tk.idclxvii.sharpfixandroid.utils.FileProperties;
 
 public class BootReceiver extends BroadcastReceiver {
 
-	private final String TAG = this.getClass().getName();
+	private final String TAG = this.getClass().getSimpleName();
 	List<String> logs =  new ArrayList<String>();
 	@Override
 	public void onReceive(final Context context, Intent intent) {

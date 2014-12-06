@@ -34,7 +34,7 @@ public abstract class GlobalAsyncTask<Params, Progress, Result> extends
 	private String dialogTitle = "Loading";
 	private String dialogMsg = "Please wait . . .";
 	private Exception exception = null;
-	
+	private final String TAG = this.getClass().getSimpleName();
 	
 	// AsyncTask < Params, Progress, Result >
 

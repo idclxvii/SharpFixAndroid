@@ -11,6 +11,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.PowerManager;
+import android.os.PowerManager.WakeLock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -25,12 +27,12 @@ import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
-public class SubMenuDirectScanControls extends Activity {
+public class SubMenuDirectScanControls extends GlobalExceptionHandlerActivity {
 
 	
 	
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 	SQLiteHelper db;
 		
@@ -51,10 +53,9 @@ public class SubMenuDirectScanControls extends Activity {
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 		@Override
-		protected void onCreate(Bundle savedInstanceState) {
+		public void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
-			this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 			this.SF = ((SharpFixApplicationClass) getApplication() );
 			this.LOGCAT = this.SF.getLogCatSwitch();
 			if(this.LOGCAT){
@@ -89,7 +90,13 @@ public class SubMenuDirectScanControls extends Activity {
 				@Override
 				public void onClick(View v) {
 					// TODO Auto-generated method stub
-					SubMenuDirectScanControls.this.stopService(dsIntent);
+					//SubMenuDirectScanControls.this.stopService(dsIntent);
+
+					SubMenuDirectScanControls.this.stopService(new Intent(SubMenuDirectScanControls.this, DirectoryScanner.class));
+					SubMenuDirectScanControls.this.stopService(new Intent(SubMenuDirectScanControls.this, FileDuplicationDetectionScanner.class));
+					SubMenuDirectScanControls.this.stopService(new Intent(SubMenuDirectScanControls.this, FileDesignationScanner.class));
+					
+					
 				}
 			
 			});

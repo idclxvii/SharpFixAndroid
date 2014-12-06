@@ -12,8 +12,9 @@ import android.widget.*;
 
 
 
-public class SubMenuAboutActivity extends Activity implements OnClickListener{
-
+public class SubMenuAboutActivity extends GlobalExceptionHandlerActivity implements OnClickListener{
+	
+	private final String TAG = this.getClass().getSimpleName();
 	TextView currentVersionMain, currentVersionLabel1, currentVersionLabel2,
 		currentVersionLabel3,
 		whatIsItMain, whatIsItLabel1, whatIsItLabel2,whatIsItLabel3,

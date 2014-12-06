@@ -13,7 +13,7 @@ import android.widget.*;
 
 public class AndroidLayoutUtils {
 
-	
+	private final String TAG = this.getClass().getSimpleName();
 	
 	public static CheckBox fixCheckBoxPaddingLeft(Context a, CheckBox cb, float dp){
 		final float scale = a.getResources().getDisplayMetrics().density;

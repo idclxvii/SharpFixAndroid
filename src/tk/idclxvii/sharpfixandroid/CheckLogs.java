@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import android.text.method.ScrollingMovementMethod;
 import android.util.Log;
 import android.view.*;
+import android.view.View.OnClickListener;
 import android.view.View.OnDragListener;
 import android.view.WindowManager.LayoutParams;
 import android.widget.*;
@@ -16,24 +17,68 @@ import android.widget.SeekBar.OnSeekBarChangeListener;
 
 import java.io.*;
 import java.util.List;
-public class CheckLogs extends Activity{
+public class CheckLogs extends GlobalExceptionHandlerActivity{
 
-	private static final String TAG = "ServicesDemo";
-	 TextView title, log;
-	 SeekBar seek;
-	 ScrollView scroll;
-	 List<ImageView> appImages;
-	 private int logMode = 0;
-	 private String wholeLog = "";
-	 @Override
-	  public void onCreate(Bundle savedInstanceState) {
-	    super.onCreate(savedInstanceState);
+	private final String TAG = this.getClass().getSimpleName();
+	
+	TextView title, log;
+	SeekBar seek;
+	Button clearLogs; 
+	ScrollView scroll;
+	List<ImageView> appImages;
+	private int logMode = 0;
+	private String wholeLog = "";
+	
+	private class TASK extends GlobalAsyncTask<Void,Void,Void>{
+		
+		public TASK(){
+			 super(CheckLogs.this, "Loading","Reading log file, please wait . . .");
+		}
+		
+		@Override
+		protected Void doTask(Void... params) throws Exception {
+			// TODO Auto-generated method stub
+			
+			wholeLog = readFileNew(/*log*/);
+			publishProgress();
+			return null;
+		}
+
+		@Override
+		protected void onException(Exception e) {
+			Log.e(TAG,"EXCEPTION CAUGHT: CheckLogs.java");
+			e.printStackTrace();
+			// TODO Auto-generated method stub
+			
+		}
+		
+		@Override
+		protected void onProgressUpdate(Void... params){
+			log.setText(wholeLog);
+			seek.setMax(log.getLineCount());
+			
+			
+			// log.setMaxLines(maxLines);
+			// log.setMovementMethod(new ScrollingMovementMethod());
+			
+		}
+		
+	}
+	
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+		super.onCreate(savedInstanceState);
 	    setContentView(R.layout.check_logs);
+	    
+	    
+	    
+	    
 	    
 	    logMode = getIntent().getExtras().getInt("logs");
 	    
 	    title = (TextView)findViewById(R.id.title);
-		title.setText((logMode == 0 ? "Scan " : "Progress ").toUpperCase() + title.getText().toString().toUpperCase());
+		title.setText((logMode < 0 ? "Error " :  (logMode == 0 ? "Scan " :"Progress ")).toUpperCase() + title.getText().toString().toUpperCase());
 		
 		
 		
@@ -42,6 +87,23 @@ public class CheckLogs extends Activity{
 		scroll = (ScrollView) findViewById(R.id.scroll);
 
 		seek = (SeekBar) findViewById(R.id.seekBar1);
+		
+		clearLogs = (Button)findViewById(R.id.btnClearLogs);
+		
+		clearLogs.setOnClickListener(new OnClickListener(){
+
+			@Override
+			public void onClick(View v) {
+				// TODO Auto-generated method stub
+				File file = new File(CheckLogs.this.getExternalFilesDir(null).getParent(),
+						(logMode < 0 ? "error_logs.log" : (logMode == 0) ? "last_scan.log" : "sf_reports.log"));
+				if(file.delete()){
+					new TASK().executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
+				}
+				
+			}
+			
+		});
 		/*
 		scroll.setOnTouchListener(new View.OnTouchListener(){
 
@@ -102,38 +164,8 @@ public class CheckLogs extends Activity{
 			
 		});
 		
-		new GlobalAsyncTask<Void,Void,Void> (this, "Loading","Reading log file, please wait . . ."){
-
-			@Override
-			protected Void doTask(Void... params) throws Exception {
-				// TODO Auto-generated method stub
-				
-				wholeLog = readFileNew(/*log*/);
-				publishProgress();
-				return null;
-			}
-
-			@Override
-			protected void onException(Exception e) {
-				Log.e(TAG,"EXCEPTION CAUGHT: CheckLogs.java");
-				e.printStackTrace();
-				// TODO Auto-generated method stub
-				
-			}
-			
-			@Override
-			protected void onProgressUpdate(Void... params){
-				log.setText(wholeLog);
-				seek.setMax(log.getLineCount());
-				
-				
-				// log.setMaxLines(maxLines);
-				// log.setMovementMethod(new ScrollingMovementMethod());
-				
-			}
-			
-		}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
 		
+		new TASK().executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);;
 	  }
 
 	 
@@ -144,8 +176,8 @@ public class CheckLogs extends Activity{
 
 		//Get the text file
 		
-		File file = new File(this.getExternalFilesDir(null).getParent(), (logMode == 0) ? "last_scan.log" : 
-			"sf_reports.log");
+		  File file = new File(CheckLogs.this.getExternalFilesDir(null).getParent(),
+					(logMode < 0 ? "error_logs.log" : (logMode == 0) ? "last_scan.log" : "sf_reports.log"));
 
 		//Read text from file
 		StringBuilder text = new StringBuilder();

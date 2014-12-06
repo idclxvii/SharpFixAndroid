@@ -15,9 +15,11 @@ import android.app.PendingIntent;
 import android.app.TimePickerDialog;
 import android.content.Context;
 import android.content.DialogInterface;
+import android.content.DialogInterface.OnKeyListener;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.CheckBox;
@@ -25,11 +27,11 @@ import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
-public class SubMenuSchedScanSettingsActivity extends Activity {
+public class SubMenuSchedScanSettingsActivity extends GlobalExceptionHandlerActivity {
 
 	
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 	SQLiteHelper db;
 	
@@ -44,15 +46,15 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 	  }
 	  
 	
+	
 	/* (non-Javadoc)
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){
@@ -75,117 +77,147 @@ public class SubMenuSchedScanSettingsActivity extends Activity {
 		timeSelection = (TextView) findViewById(R.id.sssUpdateSelection1);
 		timeSelection.setOnClickListener(new OnClickListener(){
 
+			private boolean backPressed = false;
+			
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
-				new TimePickerDialog(SubMenuSchedScanSettingsActivity.this,
+				backPressed = false;
+				TimePickerDialog tpd = new TimePickerDialog(SubMenuSchedScanSettingsActivity.this,
 						new TimePickerDialog.OnTimeSetListener(){
+					
 							@Override
 							public void onTimeSet(TimePicker view, int selectedHour,int selectedMinute) {
-								// throws 24 hours counting
-								hour = selectedHour;
-								//ampm = 0; // am = 0, pm = 1
-								
-								if(selectedHour == 0){
-									// 12:00 AM
-									//hour = 12;
-									ampm = 0;
+								if(backPressed){
+									
 								}else{
-									ampm = ((selectedHour > 11) ?  1 : 0);
-									//hour = ((selectedHour > 12) ?  selectedHour - 12 : selectedHour);
+									// throws 24 hours counting
+									hour = selectedHour;
+									//ampm = 0; // am = 0, pm = 1
 									
-								}
-								minute = selectedMinute;
-					 
-								// set current time into textview
-								
-								// set current time into timepicker
-								
-								
-								ModelPreferences newParams = new ModelPreferences(SF.getAccountId(),
-										SF.getFddSwitch(),
-										SF.getFdSwitch(),
-										SF.getFddPref(),
-										SF.getAutoLogin(),
-										SF.getFddFilterSwitch(),
-										SF.getFdFilterSwitch(),
+									if(selectedHour == 0){
+										// 12:00 AM
+										//hour = 12;
+										ampm = 0;
+									}else{
+										ampm = ((selectedHour > 11) ?  1 : 0);
+										//hour = ((selectedHour > 12) ?  selectedHour - 12 : selectedHour);
 										
-										// new fields
-										// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
-										SF.getServiceSwitch(),
-										SF.getServiceHour(),
-										SF.getServiceMin(),
-										SF.getServiceAMPM(),
-										SF.getServiceUpdateSwitch(),
-										SF.getServiceRepeat(),
-										SF.getServiceNoti(),
-										SF.getAuSwitch());
-								
-								ModelPreferences oldParams = new ModelPreferences(SF.getAccountId(),
-										SF.getFddSwitch(),
-										SF.getFdSwitch(),
-										SF.getFddPref(),
-										SF.getAutoLogin(),
-										SF.getFddFilterSwitch(),
-										SF.getFdFilterSwitch(),
+									}
+									minute = selectedMinute;
+						 
+									// set current time into textview
+									
+									// set current time into timepicker
+									
+									
+									ModelPreferences newParams = new ModelPreferences(SF.getAccountId(),
+											SF.getFddSwitch(),
+											SF.getFdSwitch(),
+											SF.getFddPref(),
+											SF.getAutoLogin(),
+											SF.getFddFilterSwitch(),
+											SF.getFdFilterSwitch(),
+											
+											// new fields
+											// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+											SF.getServiceSwitch(),
+											SF.getServiceHour(),
+											SF.getServiceMin(),
+											SF.getServiceAMPM(),
+											SF.getServiceUpdateSwitch(),
+											SF.getServiceRepeat(),
+											SF.getServiceNoti(),
+											SF.getAuSwitch());
+									
+									ModelPreferences oldParams = new ModelPreferences(SF.getAccountId(),
+											SF.getFddSwitch(),
+											SF.getFdSwitch(),
+											SF.getFddPref(),
+											SF.getAutoLogin(),
+											SF.getFddFilterSwitch(),
+											SF.getFdFilterSwitch(),
+											
+											// new fields
+											// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
+											SF.getServiceSwitch(),
+											SF.getServiceHour(),
+											SF.getServiceMin(),
+											SF.getServiceAMPM(),
+											SF.getServiceUpdateSwitch(),
+											SF.getServiceRepeat(),
+											SF.getServiceNoti(),
+											SF.getAuSwitch());
+									newParams.setSss_hh(hour);
+									newParams.setSss_mm(minute);
+									newParams.setSss_ampm(ampm);
+									
+									// ##################################################################################
+									// temporary everyday alarm
+									//newParams.setSss_repeat(7);
+									// ##################################################################################
+									
+									
+									try {
+										db.update(Tables.preferences,oldParams, newParams,null);
+										SF.updatePreferences(db);
+										Calendar c = Calendar.getInstance();
+										c.setTimeInMillis(System.currentTimeMillis());
+										c.set(Calendar.HOUR_OF_DAY, hour);
+										c.set(Calendar.MINUTE,minute);
+										//c.set(Calendar.AM_PM, (ampm == 0 ? Calendar.AM : Calendar.PM));
 										
-										// new fields
-										// ServiceSwitch, ServiceHour, ServiceMin, ServiceAMPM, ServiceUpdateSwitch, ServiceRepeat, AuSwitch
-										SF.getServiceSwitch(),
-										SF.getServiceHour(),
-										SF.getServiceMin(),
-										SF.getServiceAMPM(),
-										SF.getServiceUpdateSwitch(),
-										SF.getServiceRepeat(),
-										SF.getServiceNoti(),
-										SF.getAuSwitch());
-								newParams.setSss_hh(hour);
-								newParams.setSss_mm(minute);
-								newParams.setSss_ampm(ampm);
+										AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+										Intent intent = new Intent(SubMenuSchedScanSettingsActivity.this, Alarm.class);
+										PendingIntent pendingIntent = PendingIntent.getBroadcast(SubMenuSchedScanSettingsActivity.this, 0, intent, 0);
+										alarm.setRepeating(AlarmManager.RTC_WAKEUP,  c.getTimeInMillis(),
+												
+												//{"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ,"Everyday"};
+												
+												/*((newParams.getSss_repeat() != 7) ? AlarmManager.INTERVAL_DAY * 7 : */AlarmManager.INTERVAL_DAY
+												, pendingIntent);
+										
+										
+									} catch(Exception e){
+										
+									}
+									
+									
+									
+									timeLabel.setText((hour == 0 ? "12" : (hour > 12 ? hour - 12: hour)) + " : " + minute + (ampm == 0 ? " AM": " PM"));
+									
+									Toast.makeText(SubMenuSchedScanSettingsActivity.this, "Time was set to " + hour + " : " + minute
+											, Toast.LENGTH_LONG).show();
+									
 								
-								// ##################################################################################
-								// temporary everyday alarm
-								//newParams.setSss_repeat(7);
-								// ##################################################################################
-								
-								
-								try {
-									db.update(Tables.preferences,oldParams, newParams,null);
-									SF.updatePreferences(db);
-									Calendar c = Calendar.getInstance();
-									c.setTimeInMillis(System.currentTimeMillis());
-									c.set(Calendar.HOUR_OF_DAY, hour);
-									c.set(Calendar.MINUTE,minute);
-									//c.set(Calendar.AM_PM, (ampm == 0 ? Calendar.AM : Calendar.PM));
-									
-									AlarmManager alarm = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
-									Intent intent = new Intent(SubMenuSchedScanSettingsActivity.this, Alarm.class);
-									PendingIntent pendingIntent = PendingIntent.getBroadcast(SubMenuSchedScanSettingsActivity.this, 0, intent, 0);
-									alarm.setRepeating(AlarmManager.RTC_WAKEUP,  c.getTimeInMillis(),
-											
-											//{"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ,"Everyday"};
-											
-											/*((newParams.getSss_repeat() != 7) ? AlarmManager.INTERVAL_DAY * 7 : */AlarmManager.INTERVAL_DAY
-											, pendingIntent);
-									
-									
-								} catch(Exception e){
-									
 								}
-								
-								
-								
-								timeLabel.setText((hour == 0 ? "12" : (hour > 12 ? hour - 12: hour)) + " : " + minute + (ampm == 0 ? " AM": " PM"));
-								
-								Toast.makeText(SubMenuSchedScanSettingsActivity.this, "Time was set to " + hour + " : " + minute
-										, Toast.LENGTH_LONG).show();
-								
+								 
 							}}
+					, hour, minute,false);
 				
-				
-					, hour, minute,false).show();
+				tpd.setOnKeyListener(new OnKeyListener(){
+					@Override
+					public boolean onKey(DialogInterface dialog, int keyCode,
+							KeyEvent event) {
+						// TODO Auto-generated method stub
+						 if (keyCode == KeyEvent.KEYCODE_BACK && event.getAction() == KeyEvent.ACTION_UP && 
+					       !event.isCanceled()) {
+							 backPressed = true;
+							 dialog.cancel();
+							 return true;
+						 }else{
+							 backPressed = false;
+							 return false;
+					     }
+						
+					}
+					
+				});
+				tpd.show();
 				 
 			}
+			
+			
 			
 			
 			

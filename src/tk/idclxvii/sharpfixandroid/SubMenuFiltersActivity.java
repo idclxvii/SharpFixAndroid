@@ -19,11 +19,11 @@ import android.widget.Toast;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.AndroidLayoutUtils;
 
-public class SubMenuFiltersActivity extends Activity implements OnClickListener, OnCheckedChangeListener{
+public class SubMenuFiltersActivity extends GlobalExceptionHandlerActivity implements OnClickListener, OnCheckedChangeListener{
 	
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 			
 	CheckBox fddCh, fdCh;
@@ -41,7 +41,6 @@ public class SubMenuFiltersActivity extends Activity implements OnClickListener,
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.filters_sub_menu);
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){

@@ -7,11 +7,11 @@ import android.widget.*;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 
-public class ViewRuleActivity extends Activity {
+public class ViewRuleActivity extends GlobalExceptionHandlerActivity {
 
 	// LogCat switch and tag
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 	TextView ruleName, fileType, fileTypeLabel, designationDir, designationDirLabel;
 	
@@ -20,7 +20,6 @@ public class ViewRuleActivity extends Activity {
 	public void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.view_rule);
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){

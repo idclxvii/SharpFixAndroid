@@ -3,8 +3,8 @@ package tk.idclxvii.sharpfixandroid.utils;
 import android.content.Context;
 import android.util.Log;
 public abstract class Logcat {
-
-	public static final String TAG = Logcat.class.getName();
+	
+	private static final String TAG = Logcat.class.getSimpleName();
 		
 	public static void d(Context c, String[] array){
 		try{

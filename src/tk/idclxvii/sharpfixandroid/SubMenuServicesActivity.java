@@ -24,10 +24,10 @@ import android.widget.TextView;
 import android.widget.CompoundButton.OnCheckedChangeListener;
 import android.widget.Toast;
 
-public class SubMenuServicesActivity extends Activity implements OnClickListener, OnCheckedChangeListener{
+public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity implements OnCheckedChangeListener{
 
 	private SharpFixApplicationClass SF;
-	private String TAG;
+	private final String TAG = this.getClass().getSimpleName();
 	private boolean LOGCAT;
 	SQLiteHelper db;
 	
@@ -49,10 +49,9 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 	 * @see android.app.Activity#onCreate(android.os.Bundle)
 	 */
 	@Override
-	protected void onCreate(Bundle savedInstanceState) {
+	public void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
-		this.TAG = this.getClass().getName().replace(this.getPackageName(), "");
 		this.SF = ((SharpFixApplicationClass) getApplication() );
 		this.LOGCAT = this.SF.getLogCatSwitch();
 		if(this.LOGCAT){
@@ -113,6 +112,7 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				chAutoUpd.performClick();
+				
 			}
 			
 		});
@@ -126,6 +126,7 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				directScanSettings.setPressed(true);
 				directScanSettings.performClick();
 			}
 			
@@ -149,6 +150,7 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				logs.setPressed(true);
 				logs.performClick();
 			}
 			
@@ -523,13 +525,10 @@ public class SubMenuServicesActivity extends Activity implements OnClickListener
 	public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
 		// TODO Auto-generated method stub
 		
-	}
-
-
-	@Override
-	public void onClick(View v) {
-		// TODO Auto-generated method stub
 		
 	}
+
+
+	
 	
 }
