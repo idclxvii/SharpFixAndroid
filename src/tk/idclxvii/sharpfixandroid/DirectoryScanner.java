@@ -873,6 +873,8 @@ public class DirectoryScanner extends Service{
 		Log.i(TAG, "Creating Directory Scanner");
 		*/
 		Intent notificationIntent = new Intent(this, SubMenuDirectScanControls.class);
+		notificationIntent.putExtra("notification", true);
+		
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 	            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent dspendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);

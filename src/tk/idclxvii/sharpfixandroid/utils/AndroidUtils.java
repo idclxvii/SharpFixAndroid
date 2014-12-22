@@ -344,37 +344,85 @@ public abstract class AndroidUtils {
 		}
 	}
 	
-	public static boolean cutPasteFile(File inputFile, File outputFile){
+	public static boolean cutPasteFile(File inputFile, File outputFile, int currentCount){
 		
+		// ######################## ALPHA RELEASE 1.1.2 ########################
 		
-		try{
-			InputStream is = new FileInputStream(inputFile);
-    	    OutputStream os = new FileOutputStream(outputFile);
- 
-    	    byte[] buffer = new byte[1024];
- 
-    	    int length;
-    	    //copy the file content in bytes 
-    	    while ((length = is.read(buffer)) > 0){
- 
-    	    	os.write(buffer, 0, length);
- 
-    	    }
- 
-    	    is.close();
-    	    os.close();
- 
-    	    //delete the original file
-    	    inputFile.delete();
-    	    return true;
-    	    
-    	}catch(IOException e){
-    	    e.printStackTrace();
-    	    return false;
-    	}
+					/* ALPHA RELEASE 1.1.2 BUG FIX
+					 * 
+					 * BUG DESCRIPTION:
+					 * 
+					 * This patch fixes the bug  that is encountered when a file has been 
+					 * detected to be designated and its file name already exists in the 
+					 * designation folder, the File Designation Scan overwrites the file 
+					 * inside the designation folder, creating a bug which deletes the file,
+					 * losing the said file permanently.
+					 * 
+					 * GITHUB Issue Link:  https://github.com/idclxvii/SharpFixAndroid/issues/1
+					 * 
+					 * Solution:
+					 * 
+					 * 		Renames the file name and checks if the renamed file already exists.
+					 * 		If it does, call this method recursively until there's no occurrences 
+					 * 		of the current file name chosen. If the file doesn't exist yet, then 
+					 * 		proceed the cut and paste procedures
+					 * 
+					 * */
 		
-		
+		if(outputFile.exists()){
+			File renamedFile = new File("");
+			if(currentCount > 0){
+				// this is the 2nd time occurrence, in short Test (x).jpg, where x is any integer greater than 1
+				
+				currentCount++;
+				renamedFile = new File(outputFile.getParent(),  
+						outputFile.getName().substring(0,outputFile.getName().lastIndexOf("(")) // "test (0).jpg" returns "test ("
+						+ " ("+currentCount + ")" 
+								+ outputFile.getName().substring(outputFile.getName().lastIndexOf(".")) // test.xml returns .xml
+				);
+				
+			}else{
+				// Test case: File.txt -> File (1).txt
+				currentCount++;
+				renamedFile = new File(outputFile.getParent(),   
+						outputFile.getName().substring(0,outputFile.getName().lastIndexOf(".")) // test.xml returns test
+						+ " (" +currentCount + ")" 
+								+ outputFile.getName().substring(outputFile.getName().lastIndexOf(".")) // test.xml returns .xml
+				);
+			}
+			// rename output file
+			
+			return cutPasteFile(inputFile,renamedFile, currentCount);
+			// recursively call 
+		}else{
+			try{
+				InputStream is = new FileInputStream(inputFile);
+	    	    OutputStream os = new FileOutputStream(outputFile);
+	    	    byte[] buffer = new byte[1024];
+	    	    int length;
+	    	    //copy the file content in bytes 
+	    	    while ((length = is.read(buffer)) > 0){
+	    	    	os.write(buffer, 0, length);
+	    	    }
+	    	    is.close();
+	    	    os.close();
+	    	    //delete the original file
+	    	    inputFile.delete();
+	    	    return true;
+	    	}catch(IOException e){
+	    	    e.printStackTrace();
+	    	    return false;
+	    	}
+			
+			
+		}
+
 	}
+		
+		
+		// ######################## ALPHA RELEASE 1.1.2 ########################
+		
+		
 	
 	
 }

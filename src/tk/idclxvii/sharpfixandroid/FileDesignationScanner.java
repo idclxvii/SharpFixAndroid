@@ -445,7 +445,7 @@ public class FileDesignationScanner extends Service{
 						if(rule.length > 0){
 							// there are defined rules on the current file
 							if(AndroidUtils.cutPasteFile(f,
-									new File( ((ModelFdSettings)rule[0]).getDesignation_path() + "/" + f.getName() )    )){
+									new File( ((ModelFdSettings)rule[0]).getDesignation_path() + "/" + f.getName() ), 0    )){
 								// successfully moved the file
 								movedFiles += 1;
 								movedFileSize += new File( ((ModelFdSettings)rule[0]).getDesignation_path() + "/" + f.getName() ).length();
@@ -674,6 +674,7 @@ public class FileDesignationScanner extends Service{
 		DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
 				":\nCreating File Designation Scanner");
 		Intent notificationIntent = new Intent(this, SubMenuDirectScanControls.class);
+		notificationIntent.putExtra("notification", true);
 		notificationIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP
 	            | Intent.FLAG_ACTIVITY_SINGLE_TOP);
 		PendingIntent dspendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);

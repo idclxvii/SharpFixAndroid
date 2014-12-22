@@ -2,7 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="tk.idclxvii.sharpfixandroid"
     android:versionCode="1"
-    android:versionName="Alpha 1.1.0 (ALPHA RELEASE VERSION)" >
+    android:versionName="Alpha 1.1.2 (ALPHA RELEASE VERSION)" >
 	
 	<!-- Give users the choice whether to install the application on SD Card or Internal Memory
 	manifest .....

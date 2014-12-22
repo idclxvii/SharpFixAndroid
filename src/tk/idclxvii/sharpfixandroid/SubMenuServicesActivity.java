@@ -138,7 +138,9 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
 				// call scheduled scan settings Activity
-				startActivity(new Intent(SubMenuServicesActivity.this, SubMenuDirectScanControls.class));
+				Intent i = new Intent(SubMenuServicesActivity.this, SubMenuDirectScanControls.class);
+				i.putExtra("notification", false);
+				startActivity(i);
 				
 			}
 			
