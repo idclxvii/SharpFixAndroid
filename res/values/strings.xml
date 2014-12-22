@@ -60,13 +60,16 @@
     <string name="subMenuFddFiltersRulesLabel">View, create, update or delete file duplication detection filtering rules.</string>    
    
     
-    <!-- LOGS -->
+       <!-- LOGS -->
     <string name="subMenuLogsScanLogs">Scan Logs</string>    
     <string name="subMenuLogsScanLogsLabel">This is for all users. View SharpFix\'s scan logs which includes information regarding
         File Duplication Detection scans, File Designation scans, etc.</string>    
     <string name="subMenuLogsProgressLogs">Progress Logs</string>    
     <string name="subMenuLogsProgressLogsLabel">This is for advanced users. View SharpFix\'s verbose Progress background activity logs</string>    
+    <string name="subMenuLogsErrorLogs">Error Logs</string>    
+    <string name="subMenuLogsErrorLogsLabel">This is for advanced users. View SharpFix\'s Errors which includes uncaught exceptions on global context.</string>    
     
+   
    
     
     
