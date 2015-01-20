@@ -1,3 +1,29 @@
+/*
+ * FileDesignationScanner.java
+ * 1.1.2 Alpha Release Version
+ * 
+ * Magarzo, Randolf Josef V.
+
+ * Copyright (c) 2013 Magarzo, Randolf Josef V.
+ * Project SharpFix Android
+ * 
+ * SHARPFIX ANDROID FILE MANAGEMENT UTILITY 2014 - 2015 
+ * Area of Computer Science College of Accountancy, 
+ * Business Administration and Computer Studies
+ * San Sebastian College - Recoletos, Manila, Philippines
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of 
+ * the GNU General Public License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. 
+ * If not, see http://www.gnu.org/licenses
+ * 
+ */
+
 package tk.idclxvii.sharpfixandroid;
 
 import java.io.*;
@@ -8,44 +34,117 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 import tk.idclxvii.sharpfixandroid.utils.FileProperties;
-import tk.idclxvii.sharpfixandroid.utils.Logcat;
-
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.database.sqlite.SQLiteConstraintException;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageManager;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+/**
+ * This class is a sub class of {@link Service} responsible for 
+ * moving files to its designated directory according to 
+ * its file type, which has been set by the user.
+ * <br />
+ * <br />
+ * Basically, this service uses the Magic Number detection algorithm
+ * in order to accurately define what file type a certain file is. 
+ * This means that file extensions does not matter or does not contribute
+ * on how this module detects a file type. After file type detection,
+ * the service checks the database if a certain rule exists with regards
+ * to the detected file type. If there is, then the said file is moved to
+ * its designation folder, else, the file is left as is proceeding to the
+ * next one.
+ * <br />
+ * <br />
+ * For example, the user set a new File Designation rule regarding {@code *.jpg} files,
+ * which is designated to be moved inside {@code /mnt/sdcard/Pictures/JPG/}. This class
+ * reads all the files in the file system, reads their file types and handles
+ * the {@code *.jpg} files, moving all {@code *.jpg} files outside {@code /mnt/sdcard/Pictures/JPG/}
+ * to the said directory. If {@code /mnt/sdcard/SC001.jpg} exists, it is copied inside
+ * the designation directory and deletes the original file, thus moving it
+ * to {@code /mnt/sdcard/Pictures/JPG/SC001.jpg}
+ * <br />
+ * <br />
+ * 
+ * @version 1.1.2 Alpha Release Version
+ * @author Magarzo, Randolf Josef V.
+ *
+ */
 public class FileDesignationScanner extends Service{
-
-	public FileDesignationScanner(){
-		
-	}
 	
-	private SQLiteHelper db;
-	private Context c;
-	private SharpFixApplicationClass SF;
-	
-	private PowerManager powerManager;
-	private WakeLock wakeLock;
-	private Task TASKHANDLER = new Task();
-	private NotificationManager mNotifyManager;
-	private NotificationCompat.Builder mBuilder;
-	
+	/**
+	 * The TAG to be used by {@link android.util.Log}
+	 * when performing {@code Logcat} operations.
+	 */
 	private final String TAG = this.getClass().getSimpleName();
 	
-	//private Object[] tempDirsQueue;
-	//private List<Object> dirsQueue;
+	/**
+	 * The {@code SQLiteHelper} instance to be used by this context
+	 * when performing {@link SQLiteHelper} operations.
+	 */
+	private SQLiteHelper db;
+	
+	/**
+	 * The Application Context, containing the recently
+	 * loaded user preferences and application settings
+	 * on global context.
+	 * @see {@link Context#getApplicationContext()}
+	 */
+	private SharpFixApplicationClass SF;
+	
+	/**
+	 * An Asynchronous Thread that contains all the
+	 * tasks to be executed by this service when
+	 * the service starts.
+	 */
+	private Task TASKHANDLER = new Task();
+	
+	/**
+	 * A {@link NotificationManager} that will be used
+	 * by this service. This manages the Notifications
+	 * that the service is going to use while the service
+	 * is running.
+	 */
+	private NotificationManager mNotifyManager;
+	
+	/**
+	 * A {@link NotificationCompat.Builder} that will be used
+	 * by this service. This builds the Notification before 
+	 * it is finally shown, while the service is running
+	 */
+	private NotificationCompat.Builder mBuilder;
+	
+	
+	/**
+	 * A {@link PowerManager} that will be used
+	 * by this service. This manages the power and
+	 * wake lock whenever the phone is locked when
+	 * the service initiates.
+	 * 
+	 */
+	private PowerManager powerManager;
+	
+	/**
+	 * A {@link WakeLock} that will be used
+	 * by this service. This will be the reference
+	 * for acquiring wake locks and other wake locks
+	 * activities
+	 */
+	private WakeLock wakeLock;
+	
+	
+	
+	
 	private ModelPreferences prefs; 
 	
 	private Object[] filesQueueTemp;
@@ -60,7 +159,10 @@ public class FileDesignationScanner extends Service{
 	private long movedFileSize = 0;
 	private int movedFiles = 0;
 	
-	
+	public FileDesignationScanner(){
+		
+	}
+
 	private synchronized SQLiteHelper getDb(Context context){
 		db = new SQLiteHelper(context);
 		return this.db;
@@ -298,13 +400,25 @@ public class FileDesignationScanner extends Service{
 		@Override
 		protected void onProgressUpdate(String... params){
 			if(params.length > 2){
-				mBuilder.setProgress(0, 0, true);
-				mBuilder.setContentTitle(params[0]);
-				mBuilder.setContentText(params[1]);
-				mNotifyManager.notify(3, mBuilder.build());
-				//mNotifyManager.cancel(2);
-				//stopForeground(true);
+				// ######################## ALPHA RELEASE 1.1.3 ########################
+				/*
+				 * Fully activated Notifications control on all services
+				 * Also, notifications automatically closes once the scan has been finished
+				 */
+				if(SF.getServiceNoti() == 1){
+				// ######################## ALPHA RELEASE 1.1.3 ########################
+					
+					mBuilder.setProgress(0, 0, true);
+					mBuilder.setContentTitle(params[0]);
+					mBuilder.setContentText(params[1]);
+					mNotifyManager.notify(3, mBuilder.build());
+					// ######################## ALPHA RELEASE 1.1.3 ########################
+					mNotifyManager.cancel(3);
+					// ######################## ALPHA RELEASE 1.1.3 ########################
+					//stopForeground(true);
+				}
 				stopSelf();
+				
 			}else{
 				
 				if(params[0].length() > 0){
@@ -396,16 +510,99 @@ public class FileDesignationScanner extends Service{
 		}
 	
 		
+		private void smartFilter(){
+			// ######################## ALPHA RELEASE 1.1.3 ########################
+			/*
+			 * Added a smart filtering that automatically gets the list of all android
+			 * applications installed on the phone, and ignore all externalDir and internalDir
+			 * owned by the installed applications(Internal Memory, not root dir)
+			 * Also, add a default filter rule that that filters all files under Android
+			 * folder (both sd0 and sd1 if device has two volumes).
+			 * The default filter rule is created upon installation or initial set up of
+			 * SharpFix and disabling it and deleting it is allowed, but is discouraged.
+			 * 
+			 * GITHUB Issues Link: https://github.com/idclxvii/SharpFixAndroid/issues/2
+			 * 
+			 * */
+
+			PackageManager pm = getPackageManager();
+			//get a list of installed apps.
+			List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+						
+			// smart filter dirsQueue
+						
+			for (ApplicationInfo packageInfo : packages) {
+				for(Iterator<Object> it = filesQueue.iterator(); it.hasNext();){
+					Object file = it.next();
+					if( !(packageInfo.packageName.contains("com.android") || packageInfo.packageName.equals("android")) &&
+							((ModelFilesInfo)file).getPath().contains( packageInfo.packageName ) &&
+							! ((ModelFilesInfo)file).getPath().contains(".apk")){
+						Log.i(TAG, "Current Application Package: " + packageInfo.packageName );
+						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nFile " + 
+								((ModelFilesInfo)file).getPath() + " was detected to be an application-owned directory of "
+								+ packageInfo.packageName + ", which is being SMARTLY filtered!\n" +
+								"Removing " + ((ModelFilesInfo)file).getPath() + " from folders queue");
+						Log.i(TAG, ":\nFolder " + 
+								((ModelFilesInfo)file).getPath() + " was detected to be an application-owned directory of "
+								+ packageInfo.packageName + ", which is being SMARTLY filtered!\n" +
+								"Removing " + ((ModelFilesInfo)file).getPath() + " from folders queue");
+						it.remove();
+					}
+					
+				}
+			}
+						
+			
+				
+			// ######################## ALPHA RELEASE 1.1.3 ########################
+						
+						
+		}
 		
 		private void scan() throws IllegalArgumentException, InstantiationException,
 		IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, 
 		IOException, NoSuchAlgorithmException{
+			
+			// ######################## ALPHA RELEASE 1.1.3 ########################
+						/*
+						 * Added a smart filtering that automatically gets the list of all android
+						 * applications installed on the phone, and ignore all externalDir and internalDir
+						 * owned by the installed applications(Internal Memory, not root dir)
+						 * Also, add a default filter rule that that filters all files under Android
+						 * folder (both sd0 and sd1 if device has two volumes).
+						 * The default filter rule is created upon installation or initial set up of
+						 * SharpFix and disabling it and deleting it is allowed, but is discouraged.
+						 * 
+						 * GITHUB Issues Link: https://github.com/idclxvii/SharpFixAndroid/issues/2
+						 * 
+						 * */
+						
+						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nHalting File Designation Scan to make way for SharpFix Smart Filtering ™ Feature"+
+								"\nInitializing Smart Filtering . . .");
+						
+						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nHalting File Designation Scan to make way for SharpFix Smart Filtering ™ Feature"+
+								"\nInitializing Smart Filtering . . .");
+						smartFilter();
+						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+								":\nSharpFix Smart Filtering ™ Completed.\nReinitializing File Designation Scan");
+						
+						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nSharpFix Smart Filtering ™ Completed.\nReinitializing File Designation Scan");
+						
+						// ######################## ALPHA RELEASE 1.1.3 ########################
+						
+			
 			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
 					":\nSharpFix File Signature Definitions: " + SQLiteHelper.getDatabaseVersion());
 			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
 					":\nSharpFix File Signature Definitions: " + SQLiteHelper.getDatabaseVersion());
 			//android.os.Debug.waitForDebugger();
 			//for(Object queuedFile : filesQueue){
+			
 			for(Iterator<Object> it = filesQueue.iterator(); it.hasNext(); ){
 				Object queuedFile = it.next();
 				scannedFiles++;
@@ -524,6 +721,10 @@ public class FileDesignationScanner extends Service{
 					}else{
 						// undefined file type
 
+						// ######################## ALPHA RELEASE 1.1.3 ########################
+						/*
+						 * Removed the verbose logging of Unidentified file types in Scan Logs
+						
 						SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
 								":\nFile: " +f.getAbsolutePath() + " has been detected to be unidentified!" + 
 								"\nIt seems that the file's signature is not known yet. See the information below."+
@@ -531,6 +732,9 @@ public class FileDesignationScanner extends Service{
 								"\n4-bytes Signature:" +  Security.getMagicNumber(f, 4) + 
 								"\n8-bytes Signature:" +  Security.getMagicNumber(f, 8));
 						
+						 */
+						// ######################## ALPHA RELEASE 1.1.3 ########################
+						 
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
 								":\nFile: " +f.getAbsolutePath() + " has been detected to be unidentified!" + 
 								"\nIt seems that the file's signature is not known yet. See the information below."+
@@ -695,7 +899,6 @@ public class FileDesignationScanner extends Service{
 	    
 	    */
 		TASKHANDLER.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
-		
 		
 		// Start a lengthy operation in a background thread
 		

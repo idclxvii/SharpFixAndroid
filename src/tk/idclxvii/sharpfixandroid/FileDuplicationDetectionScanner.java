@@ -23,7 +23,11 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.database.sqlite.SQLiteConstraintException;
+import android.os.Environment;
 import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
@@ -262,13 +266,22 @@ public class FileDuplicationDetectionScanner extends Service{
 		protected void onProgressUpdate(String... params){
 			
 			if(params.length > 2){
-				mBuilder.setProgress(0, 0, true);
-				mBuilder.setContentTitle(params[0]);
-				mBuilder.setContentText(params[1]);
-				mNotifyManager.notify(2, mBuilder.build());
-				//mNotifyManager.cancel(2);
-				//stopForeground(true);
-				
+				// ######################## ALPHA RELEASE 1.1.3 ########################
+				/*
+				 * Fully activated Notifications control on all services
+				 * Also, notifications automatically closes once the scan has been finished
+				 */
+				if(SF.getServiceNoti() == 1){
+				// ######################## ALPHA RELEASE 1.1.3 ########################
+					mBuilder.setProgress(0, 0, true);
+					mBuilder.setContentTitle(params[0]);
+					mBuilder.setContentText(params[1]);
+					mNotifyManager.notify(2, mBuilder.build());
+					// ######################## ALPHA RELEASE 1.1.3 ########################
+					mNotifyManager.cancel(2);
+					// ######################## ALPHA RELEASE 1.1.3 ########################
+					//stopForeground(true);
+				}
 				if(prefs.getFd_switch() == 1){
 					// file designation is turned on
 					SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
@@ -355,12 +368,12 @@ public class FileDuplicationDetectionScanner extends Service{
 				for(Iterator<Object> it = SF.dirsQueue.iterator(); it.hasNext();){
 					Object dir = it.next();
 					if( ((ModelDirsInfo)dir).getPath().contains( ((ModelDirFilter)filter).getDir())){
-						it.remove();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
 								":\nFolder " + 
 								((ModelDirsInfo)dir).getPath() + " was detected to be a sub directory or the directory itself of "
 								+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!\n" +
 								 "Removing " + ((ModelDirsInfo)dir).getPath() + " from folders queue");
+						it.remove();
 						/*
 						Log.i(TAG, "Directory and Subdirectory Filter Detection");
 						Log.i(TAG, ((ModelDirsInfo)dir).getPath() + " was detected to be a sub directory or the directory itself of "
@@ -375,12 +388,12 @@ public class FileDuplicationDetectionScanner extends Service{
 				for(Iterator<Object> it = SF.filesQueue.iterator(); it.hasNext();){
 					Object file = it.next();
 					if( ((ModelFilesInfo)file).getPath().contains( ((ModelDirFilter)filter).getDir())){
-						it.remove();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
 								":\nFile " + 
 								((ModelFilesInfo)file).getPath() + " was detected to be a inside the directory of "
 								+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!\n" +
 								 "Removing " +  ((ModelFilesInfo)file).getPath() + " from files queue");
+						it.remove();
 						/*
 						Log.i(TAG, "File Filter Detection");
 						Log.i(TAG, ((ModelFilesInfo)file).getPath() + " was detected to be a inside the directory of "
@@ -400,12 +413,12 @@ public class FileDuplicationDetectionScanner extends Service{
 				for(Iterator<Object> it = SF.filesQueue.iterator(); it.hasNext();){
 					Object file = it.next();
 					if( ((ModelFilesInfo)file).getPath().equals( ((ModelFileFilter)filter).getFile())){
-						it.remove();
 						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
 								":\nFile " +
 								((ModelFilesInfo)file).getPath() + " is being directly filtered!"
 								 + "\nFilter rule: "+ ((ModelFileFilter)filter).getFile() +
 								"\nRemoving " + ((ModelFilesInfo)file).getPath() + " from files queue.");
+						it.remove();
 						/*
 						Log.i(TAG, "File Filter Detection");
 						Log.i(TAG, ((ModelFilesInfo)file).getPath() + " is being filtered!"
@@ -417,10 +430,154 @@ public class FileDuplicationDetectionScanner extends Service{
 			}
 		}
 		
-	
+		private void smartFilter(){
+			// ######################## ALPHA RELEASE 1.1.3 ########################
+			/*
+			 * Added a smart filtering that automatically gets the list of all android
+			 * applications installed on the phone, and ignore all externalDir and internalDir
+			 * owned by the installed applications(Internal Memory, not root dir)
+			 * Also, add a default filter rule that that filters all files under Android
+			 * folder (both sd0 and sd1 if device has two volumes).
+			 * The default filter rule is created upon installation or initial set up of
+			 * SharpFix and disabling it and deleting it is allowed, but is discouraged.
+			 * 
+			 * GITHUB Issues Link: https://github.com/idclxvii/SharpFixAndroid/issues/2
+			 * 
+			 * */
+
+			PackageManager pm = getPackageManager();
+			//get a list of installed apps.
+			List<ApplicationInfo> packages = pm.getInstalledApplications(PackageManager.GET_META_DATA);
+
+			
+			// smart filter dirsQueue
+			
+			for (ApplicationInfo packageInfo : packages) {
+				for(Iterator<Object> it = SF.dirsQueue.iterator(); it.hasNext();){
+					Object dir = it.next();
+					
+					/*
+				    Log.d(TAG, "Installed package :" + packageInfo.packageName);
+				    Log.d(TAG, "Source directory : " + packageInfo.sourceDir);
+				    Log.d(TAG, "Public Folder : " + packageInfo.publicSourceDir);
+				    Log.d(TAG, "Data directory : " + packageInfo.dataDir);
+				    Log.d(TAG, "Launch Activity :" + pm.getLaunchIntentForPackage(packageInfo.packageName)); 
+				    Log.d(TAG, "Application Cache Dir : " + 
+				    		(new File(Environment.getExternalStorageDirectory().toString() + "/" +  packageInfo.packageName ).exists() ? 
+				    				Environment.getExternalStorageDirectory().toString() + "/" +  packageInfo.packageName + " EXISTS!"	
+				    				:Environment.getExternalStorageDirectory().toString() + "/" +  packageInfo.packageName +  " UNAVAILABLE")
+				    );
+				    
+				    */
+					if( !(packageInfo.packageName.contains("com.android") || packageInfo.packageName.equals("android")) &&
+							((ModelDirsInfo)dir).getPath().contains( packageInfo.packageName ) &&
+							! ((ModelDirsInfo)dir).getPath().contains(".apk")){
+						Log.i(TAG, "Current Application Package: " + packageInfo.packageName );
+						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nFolder " + 
+								((ModelDirsInfo)dir).getPath() + " was detected to be an application-owned directory of "
+								+ packageInfo.packageName + ", which is being SMARTLY filtered!\n" +
+								"Removing " + ((ModelDirsInfo)dir).getPath() + " from folders queue");
+						Log.i(TAG, ":\nFolder " + 
+									((ModelDirsInfo)dir).getPath() + " was detected to be an application-owned directory of "
+									+ packageInfo.packageName + ", which is being SMARTLY filtered!\n" +
+									 "Removing " + ((ModelDirsInfo)dir).getPath() + " from folders queue");
+						it.remove();
+							
+							/*
+							Log.i(TAG, "Directory and Subdirectory Filter Detection");
+							Log.i(TAG, ((ModelDirsInfo)dir).getPath() + " was detected to be a sub directory or the directory itself of "
+									+ ((ModelDirFilter)filter).getDir() + ", which is being filtered!");
+							Log.i(TAG, "Removing " + ((ModelDirsInfo)dir).getPath() + " from dirsQueue");
+							*/
+						}
+				
+				}
+			}
+			
+			// smart filter filesQueue 
+				
+			for (ApplicationInfo packageInfo : packages) {
+			
+				for(Iterator<Object> it = SF.filesQueue.iterator(); it.hasNext();){
+					Object file = it.next();
+					if( !(packageInfo.packageName.contains("com.android") || packageInfo.packageName.equals("android")) &&
+							((ModelFilesInfo)file).getPath().contains( packageInfo.packageName ) &&
+							! ((ModelFilesInfo)file).getPath().contains(".apk")){
+						Log.i(TAG, "Current Application Package: " + packageInfo.packageName );
+						DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+								":\nFile " + 
+								((ModelFilesInfo)file).getPath() + " was detected to be inside an application-owned directory of "
+								+ packageInfo.packageName + ", which is being SMARTLY filtered!\n" +
+									 "Removing " + ((ModelFilesInfo)file).getPath() + " from folders queue");
+						Log.i(TAG, ":\nFile " + 
+								((ModelFilesInfo)file).getPath() + " was detected to be an application-owned directory of "
+								+ packageInfo.packageName + ", which is being SMARTLY filtered!\n" +
+								"Removing " + ((ModelFilesInfo)file).getPath() + " from folders queue");
+						it.remove();
+							
+						
+					}
+					
+					
+					   
+				}
+				
+			}
+			/*
+			List<PackageInfo> installedApps = getPackageManager().getInstalledPackages(0);
+			for(int i=0; i<installedApps.size(); i++){
+				PackageInfo pkg = installedApps.get(i);
+				String pkgFolder = pkg.applicationInfo.publicSourceDir();
+
+				
+				 * = p.applicationInfo.loadLabel(getPackageManager()).toString();
+			     * = p.packageName;
+			     * = p.versionName;
+			     * = p.versionCode;
+			     * = p.applicationInfo.loadIcon(getPackageManager());
+				 
+			}
+			*/
+			// ######################## ALPHA RELEASE 1.1.3 ########################
+			
+			
+		}
+		
+		
 		private void scan() throws IllegalArgumentException, InstantiationException,
 		IllegalAccessException, NoSuchMethodException, InvocationTargetException, FileNotFoundException, 
 		IOException, NoSuchAlgorithmException{
+			
+			// ######################## ALPHA RELEASE 1.1.3 ########################
+			/*
+			 * Added a smart filtering that automatically gets the list of all android
+			 * applications installed on the phone, and ignore all externalDir and internalDir
+			 * owned by the installed applications(Internal Memory, not root dir)
+			 * Also, add a default filter rule that that filters all files under Android
+			 * folder (both sd0 and sd1 if device has two volumes).
+			 * The default filter rule is created upon installation or initial set up of
+			 * SharpFix and disabling it and deleting it is allowed, but is discouraged.
+			 * 
+			 * GITHUB Issues Link: https://github.com/idclxvii/SharpFixAndroid/issues/2
+			 * 
+			 * */
+			
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nHalting File Duplication Detection Scan to make way for SharpFix Smart Filtering ™ Feature"+
+					"\nInitializing Smart Filtering . . .");
+			
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nHalting File Duplication Detection Scan to make way for SharpFix Smart Filtering ™ Feature"+
+					"\nInitializing Smart Filtering . . .");
+			smartFilter();
+			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
+					":\nSharpFix Smart Filtering ™ Completed.\nReinitializing File Duplication Detection Scan");
+			
+			DirectoryScanner.logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG +
+					":\nSharpFix Smart Filtering ™ Completed.\nReinitializing File Duplication Detection Scan");
+			
+			// ######################## ALPHA RELEASE 1.1.3 ########################
 			
 			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + 
 					":\nActive Checksum Algorithm(s): {CRC32, MD5, SHA-1}");

@@ -1,34 +1,94 @@
+/*
+ * CheckLogs.java
+ * 1.1.2 Alpha Release Version
+ * 
+ * Magarzo, Randolf Josef V.
+
+ * Copyright (c) 2013 Magarzo, Randolf Josef V.
+ * Project SharpFix Android
+ * 
+ * SHARPFIX ANDROID FILE MANAGEMENT UTILITY 2014 - 2015 
+ * Area of Computer Science College of Accountancy, 
+ * Business Administration and Computer Studies
+ * San Sebastian College - Recoletos, Manila, Philippines
+ * 
+ * This program is free software: you can redistribute it and/or modify it under the terms of 
+ * the GNU General Public License as published by the Free Software Foundation, either version 3
+ * of the License, or (at your option) any later version.
+ * 
+ * This program is distributed in the hope it will be useful, but WITHOUT ANY WARRANTY;
+ * without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+ * See the GNU General Public License for more details.
+ * You should have received a copy of the GNU General Public License along with this program. 
+ * If not, see http://www.gnu.org/licenses
+ * 
+ */
+
+
 package tk.idclxvii.sharpfixandroid;
 
 import android.os.Bundle;
-import android.os.Environment;
-import android.app.Activity;
-import android.app.ActivityManager;
-import android.content.pm.PackageManager;
-import android.graphics.drawable.Drawable;
-import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.*;
 import android.view.View.OnClickListener;
-import android.view.View.OnDragListener;
-import android.view.WindowManager.LayoutParams;
 import android.widget.*;
 import android.widget.SeekBar.OnSeekBarChangeListener;
-
 import java.io.*;
-import java.util.List;
+import java.util.Locale;
+
+/**
+ * This class is a sub class of {@link GlobalExceptionHandlerActivity} responsible for 
+ * showing the Check Logs function on the Main Menu (.
+ * 
+ * @version 1.1.2 Alpha Release Version
+ * @author Magarzo, Randolf Josef V.
+ *
+ */
 public class CheckLogs extends GlobalExceptionHandlerActivity{
 
-	private final String TAG = this.getClass().getSimpleName();
 	
-	TextView title, log;
-	SeekBar seek;
-	Button clearLogs; 
-	ScrollView scroll;
-	List<ImageView> appImages;
+	/**
+	 * The text views used in this menu layout
+	 */
+	private TextView title, log;
+	
+	/**
+	 * The seek bar view used in this menu layout
+	 */
+	private SeekBar seek;
+	
+	/**
+	 * The button used in this menu layout
+	 */
+	private Button clearLogs; 
+	
+	/**
+	 * The scroll views used in this menu layout
+	 */
+	private ScrollView scroll;
+	
+	/**
+	 * The intent extra which define if this layout was called
+	 * to show Scan Logs or Progress Logs. 
+	 * <br />
+	 * <br />
+	 * 0 = Scan Logs
+	 * <br />
+	 * 1 = Progress Logs
+	 */
 	private int logMode = 0;
+	
+	/**
+	 * The string that will contain the full logs read in the 
+	 * log file
+	 */
 	private String wholeLog = "";
 	
+	/**
+	 * An Asynchronous private class that reads the log file
+	 * and updates the UI when all logs has been read. This 
+	 * Asynchronous task uses a dialog that cannot be closed
+	 * while it's still running its background tasks.
+	 */
 	private class TASK extends GlobalAsyncTask<Void,Void,Void>{
 		
 		public TASK(){
@@ -37,30 +97,21 @@ public class CheckLogs extends GlobalExceptionHandlerActivity{
 		
 		@Override
 		protected Void doTask(Void... params) throws Exception {
-			// TODO Auto-generated method stub
 			
-			wholeLog = readFileNew(/*log*/);
+			wholeLog = readFileNew();
 			publishProgress();
 			return null;
 		}
 
 		@Override
 		protected void onException(Exception e) {
-			Log.e(TAG,"EXCEPTION CAUGHT: CheckLogs.java");
 			e.printStackTrace();
-			// TODO Auto-generated method stub
-			
 		}
 		
 		@Override
 		protected void onProgressUpdate(Void... params){
 			log.setText(wholeLog);
 			seek.setMax(log.getLineCount());
-			
-			
-			// log.setMaxLines(maxLines);
-			// log.setMovementMethod(new ScrollingMovementMethod());
-			
 		}
 		
 	}
@@ -68,28 +119,17 @@ public class CheckLogs extends GlobalExceptionHandlerActivity{
 	
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+	
 		super.onCreate(savedInstanceState);
 	    setContentView(R.layout.check_logs);
-	    
-	    
-	    
-	    
-	    
 	    logMode = getIntent().getExtras().getInt("logs");
-	    
 	    title = (TextView)findViewById(R.id.title);
-		title.setText((logMode < 0 ? "Error " :  (logMode == 0 ? "Scan " :"Progress ")).toUpperCase() + title.getText().toString().toUpperCase());
-		
-		
-		
+		title.setText((logMode < 0 ? "Error " :  (logMode == 0 ? "Scan " :"Progress ")).toUpperCase(Locale.US) + title.getText().toString().toUpperCase());
 		log = (TextView)findViewById(R.id.log);
-		
 		scroll = (ScrollView) findViewById(R.id.scroll);
-
 		seek = (SeekBar) findViewById(R.id.seekBar1);
-		
 		clearLogs = (Button)findViewById(R.id.btnClearLogs);
-		
+
 		clearLogs.setOnClickListener(new OnClickListener(){
 
 			@Override
@@ -104,50 +144,19 @@ public class CheckLogs extends GlobalExceptionHandlerActivity{
 			}
 			
 		});
-		/*
-		scroll.setOnTouchListener(new View.OnTouchListener(){
-
-			final ViewTreeObserver.OnScrollChangedListener onScrollChangedListener = new
-                    ViewTreeObserver.OnScrollChangedListener() {
-
-				@Override
-				public void onScrollChanged() {
-				 //do stuff here 
-					//seek.setProgress(log.getScrollY());
-					
-					Log.i(TAG,"Log's Y scroll: " + log.getLayout());
-				}
-			};
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				// TODO Auto-generated method stub
-				ViewTreeObserver observer = scroll.getViewTreeObserver();
-		        observer.addOnScrollChangedListener(onScrollChangedListener);
-
-		        return false;
-			}
-			
-		});
-		*/
-		
+	
 		seek.setOnSeekBarChangeListener(new OnSeekBarChangeListener(){
 
 			@Override
 			public void onProgressChanged(SeekBar seekBar, final int progress,
 					boolean fromUser) {
-				// TODO Auto-generated method stub
-				Log.i(TAG, "Seekbar value: " + progress);
-				//log.scrollTo(0, progress);
 				scroll.post(new Runnable() {
 				    @Override
 				    public void run() {
 				        int y = log.getLayout().getLineTop(progress); // e.g. I want to scroll to line defined by progress
 				        scroll.scrollTo(0, y);
-				        
 				    }
 				});
-				
-				
 			}
 
 			@Override
@@ -169,48 +178,42 @@ public class CheckLogs extends GlobalExceptionHandlerActivity{
 	  }
 
 	 
-	  
-	  private String readFileNew(/*TextView textview*/) {
+	  /**
+	   * Returns the full log contents currently being requested by the intent {@link #logMode}
+	   * 
+	   * @return All the log contents as a single  {@link java.lang.String} instance
+	   */
+	  private String readFileNew() {
 		 
-		//  File sdcard = Environment.getExternalStorageDirectory();
-
-		//Get the text file
+		  //Get the text file
 		
 		  File file = new File(CheckLogs.this.getExternalFilesDir(null).getParent(),
 					(logMode < 0 ? "error_logs.log" : (logMode == 0) ? "last_scan.log" : "sf_reports.log"));
 
-		//Read text from file
-		StringBuilder text = new StringBuilder();
-		try {
-		    BufferedReader br = new BufferedReader(new FileReader(file));
-		    String line;
+		  //Read text from file
+		  StringBuilder text = new StringBuilder();
+		  try {
+			  BufferedReader br = new BufferedReader(new FileReader(file));
+			  String line;
 
-		    while ((line = br.readLine()) != null) {
-		    	try{
-			    	/*
-		    		byte[] yourKey =  Security.generateKey("password");
-	                byte[] decodedData = Security.decodeFile(yourKey, line.getBytes());
-	                */
-	                text.append(/*decodedData.toString()*/line + "\n");
+			  while ((line = br.readLine()) != null) {
+				  try{
+					  text.append(line + "\n");
 			       
-			   	}catch(Exception ee){
-		    				   ee.printStackTrace(); 		
-		    	}
+				  }catch(Exception ee){
+					  ee.printStackTrace(); 
+					  br.close();
+				  }
 		       
-		    }
-		}
-		catch (IOException e) {
-		    //You'll need to add proper error handling here
-			e.printStackTrace();
-		}
-		/*
-		textview.setMaxLines(maxLines);
-		textview.setMovementMethod(new ScrollingMovementMethod());
-		*/
-		
-		return text.toString();
-		  
-	  }
+			  }
+			  br.close();
+		  }catch (IOException e) {
+			  //You'll need to add proper error handling here
+			  e.printStackTrace();
+		  }
+	
+		  return text.toString();
+	}
 	    
  }
 
