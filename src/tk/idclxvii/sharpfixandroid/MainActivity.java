@@ -7,6 +7,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.serverutils.MailSender;
+import tk.idclxvii.sharpfixandroid.serverutils.ServerCommunication;
 import tk.idclxvii.sharpfixandroid.utils.*;
 
 import android.app.*;
@@ -62,6 +64,9 @@ public class MainActivity extends GlobalExceptionHandlerActivity implements OnCl
 		if(this.LOGCAT){
 			Log.d(this.TAG, this.TAG +  " onCreate()");
 		}
+		
+		
+    	
 		// initialize database connection
 		db = this.getDb(getApplicationContext());//new SQLiteHelper(getApplicationContext());
 			try{
@@ -115,6 +120,8 @@ public class MainActivity extends GlobalExceptionHandlerActivity implements OnCl
 						((SharpFixApplicationClass) getApplication()).setServiceRepeat(result.getSss_repeat());
 						((SharpFixApplicationClass) getApplication()).setServiceNoti(result.getSss_noti());
 						((SharpFixApplicationClass) getApplication()).setAuSwitch(result.getAu_switch());
+						((SharpFixApplicationClass) getApplication()).setEmail(result.getEmail());
+						
 
 
 
@@ -125,6 +132,9 @@ public class MainActivity extends GlobalExceptionHandlerActivity implements OnCl
 							Log.d(this.TAG, "Autologin feature inactive! Authentication is required to continue.");
 						}
 			    	}
+			    	
+			    	
+			    	
 			    }else{
 			    	if(this.LOGCAT){
 						Log.d(this.TAG, "No account has been detected in this instance of SharpFix");
@@ -189,6 +199,7 @@ public class MainActivity extends GlobalExceptionHandlerActivity implements OnCl
 							SF.setServiceRepeat(7);
 							SF.setServiceNoti(1);
 							SF.setAuSwitch(1);
+							//SF.setEmail();
 							//SF.updatePreferences(db);
 							
 							MainActivity.this.startService(new Intent(MainActivity.this, DirectoryScanner.class));

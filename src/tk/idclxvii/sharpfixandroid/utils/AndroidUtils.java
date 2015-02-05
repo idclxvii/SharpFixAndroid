@@ -5,8 +5,12 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import tk.idclxvii.sharpfixandroid.GlobalAsyncTask;
+import tk.idclxvii.sharpfixandroid.MainMenuActivity;
 import tk.idclxvii.sharpfixandroid.SharpFixApplicationClass;
 import tk.idclxvii.sharpfixandroid.databasemodel.ModelFdSettings;
+import tk.idclxvii.sharpfixandroid.serverutils.MailSender;
+import tk.idclxvii.sharpfixandroid.serverutils.ServerCommunication;
 
 import android.content.*;
 import android.net.*;
@@ -266,15 +270,102 @@ public abstract class AndroidUtils {
 		
 	}
 	
+	public static void zipLogs(Context c){
+		String dir = c.getExternalFilesDir(null).getParent() + "/logs";
+		String logsDir = c.getExternalFilesDir(null).getParent();
+		
+		if(!new File(dir).exists()){
+			new File(dir).mkdir();
+		}
+		
+		 File lastScanLogs = new File(logsDir + "/quick_logs.log");
+         File reportLogs = new File(logsDir + "/full_logs.log");
+         File errorLogs = new File(logsDir + "/error_logs.log");
+         List<String> filesToZip = new ArrayList<String>();
+            
+         if(lastScanLogs.exists()){
+        	 filesToZip.add(new File(logsDir + "/quick_logs.log").getAbsolutePath());
+         }
+         
+         if(reportLogs.exists()){
+        	 filesToZip.add(new File(logsDir + "/full_logs.log").getAbsolutePath());
+         }
+    	
+         if(errorLogs.exists()){
+        	 filesToZip.add(new File(logsDir + "/error_logs.log").getAbsolutePath());
+    	 }
+    		
+         Zip zip = new Zip(filesToZip.toArray(new String[filesToZip.size()]), 
+          		new File(dir + "/" + FileProperties.formatLongToDate(System.currentTimeMillis()) + ".zip").getAbsolutePath());
+         zip.zip();
+		
+	}
+	
+	public static void emailLogs(final Context c, final String email) throws Exception{
+		
+		new  GlobalAsyncTask<Void, Void, Void>(){
+
+			@Override
+			protected Void doTask(Void... params) throws Exception {
+				// TODO Auto-generated method stub
+				
+
+				MailSender sender = new MailSender("developers.sharpfixandroid@gmail.com", 
+						new String( new ServerCommunication().getEmail()));
+				
+					
+			        
+				for(File zip :  new File(c.getExternalFilesDir(null).getParent() + "/logs").listFiles()){
+					try{
+						Log.e("AndroidUtils","Adding " + zip.getAbsolutePath() + " to Attachment");
+						sender.addAttachment(zip.getAbsolutePath(),
+					        		zip.getName());
+					        //Thread.sleep(1000);
+					} catch (Exception e) {   
+						Log.e("AndroidUtils", "AN ERROR HAS BEEN ENCOUNTERED WHILE SENDING MAIL");
+					 	Log.e("AndroidUtils", e.getMessage(), e);   
+					} 
+				}
+				sender.sendMail("SharpFix Android Automatic Logs Report",   
+			            "",   
+			            "developers.sharpfixandroid@gmail.com",   
+			            email);   
+				Log.e("AndroidUtils", "SUCCESSFULLY SENT MAIL");
+				Thread.sleep(1000);
+				File dir = new File(c.getExternalFilesDir(null).getParent() + "/logs"); 
+				if (dir.isDirectory()) {
+				        String[] children = dir.list();
+				        for (int i = 0; i < children.length; i++) {
+				            new File(dir, children[i]).delete();
+				        }
+				    }
+				return null;
+				
+			}
+
+			@Override
+			protected void onException(Exception e) {
+				// TODO Auto-generated method stub
+				Log.e("AndroidUtils", "AN ERROR HAS BEEN ENCOUNTERED WHILE SENDING MAIL");
+				 e.getStackTrace();
+                Log.e("AndroidUtils", e.getMessage(), e); 
+               
+			}
+			
+		}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
+    	
+	}
+	
 	public static void logScanReport(Context c, String[] logs){
 		String dir = c.getExternalFilesDir(null).getParent();
 		try{
-			File file = new File(dir + "/last_scan.log");
+			File file = new File(dir + "/quick_logs.log");
 			boolean append = false;
 			// if file doesnt exists, then create it
 			if (!file.exists()) {
 				file.createNewFile();
 			}else{
+				
 				/*
 				if(file.length() >= 2097152){
 					// set log file max size to 2mb
@@ -318,7 +409,7 @@ public abstract class AndroidUtils {
 	public static void logProgressReport(Context c, String[] logs){
 		String dir = c.getExternalFilesDir(null).getParent();
 		try{
-			File file = new File(dir + "/sf_reports.log");
+			File file = new File(dir + "/full_logs.log");
 			boolean append = false;
 			// if file doesnt exists, then create it
 			if (!file.exists()) {

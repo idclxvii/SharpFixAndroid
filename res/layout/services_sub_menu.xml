@@ -98,7 +98,8 @@
             android:layout_height="0.5dp"
             android:layout_below="@+id/services_label2"
             android:background="#c0c0c0"/>
-	
+	<!-- 
+	############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 	 <CheckBox
 	        android:id="@+id/services_selection3"
 	        android:layout_width="fill_parent"
@@ -135,12 +136,17 @@
 	        android:layout_height="0.5dp"
 	        android:layout_below="@+id/services_label3"
 	        android:background="#c0c0c0" />
-
+	        
+	        ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+ 		-->
+ 		<!--   ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+ 		android:layout_below="@+id/services_hr5" 
+ 		-->
 	      <TextView
 	        android:id="@+id/services_selection4"
 	        android:layout_width="fill_parent"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@+id/services_hr5"
+	        android:layout_below="@+id/services_hr4"
 	        android:text="@string/sssUpdateSelection5"
 	        android:textSize="20sp" 
 	        android:textStyle="bold"

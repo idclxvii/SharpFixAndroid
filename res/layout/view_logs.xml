@@ -125,7 +125,37 @@
             android:layout_height="0.5dp"
             android:layout_below="@+id/logs_label3"
             android:background="#c0c0c0"/>   
-	     
+	 <TextView
+	        android:id="@+id/logs_selection4"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@+id/logs_hr5"
+	        android:text="@string/subMenuLogsEmail"
+	        android:textSize="20sp" 
+	        android:textStyle="bold"
+	        android:clickable="true"
+	        android:textColor="@color/text_selector"
+	        android:background="@color/background_selector"
+	        android:padding="5dp"
+	        >
+	    </TextView>
+	   <TextView
+	        android:id="@+id/logs_label4"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        android:layout_alignParentLeft="true"
+	        android:layout_below="@+id/logs_selection4"
+	        android:text="@string/subMenuLogsEmailLabel"
+	        android:textSize="15sp" 
+	        android:textColor="@color/text_selector_labels"
+	        android:textStyle="italic"
+	        android:padding="10dp" />
+	   <View
+	     	android:id="@+id/logs_hr6"
+            android:layout_width="fill_parent"
+            android:layout_height="0.5dp"
+            android:layout_below="@+id/logs_label3"
+            android:background="#c0c0c0"/>   
 	    
 	</RelativeLayout>
 </ScrollView>

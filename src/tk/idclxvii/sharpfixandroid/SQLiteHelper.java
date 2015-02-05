@@ -94,7 +94,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
 	private static boolean LOGCAT = true;
  
     // Database Version
-    private static final int DATABASE_VERSION = 3;
+    private static final int DATABASE_VERSION = 4;
     private static final double DATABASE_VERSION_REVISION = 0.1;
  
     
@@ -151,7 +151,7 @@ public class SQLiteHelper extends SQLiteOpenHelper {
             
             "sss_switch INTEGER NOT NULL, sss_hh INTEGER NOT NULL, sss_mm INTEGER NOT NULL, sss_ampm INTEGER NOT NULL, sss_update INTEGER NOT NULL, "+
             "sss_repeat INTEGER NOT NULL, sss_noti INTEGER NOT NULL,  au_switch INTEGER NOT NULL,	" +
-            
+            "email TEXT, " + 
             "FOREIGN KEY  (account) REFERENCES accounts_info(id) )";
     
     private static final String CREATE_DIR_FILTER = "CREATE TABLE"

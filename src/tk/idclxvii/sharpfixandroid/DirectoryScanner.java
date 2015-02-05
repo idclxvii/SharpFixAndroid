@@ -42,6 +42,7 @@ import android.os.IBinder;
 import android.os.PowerManager;
 import android.os.PowerManager.WakeLock;
 import android.support.v4.app.NotificationCompat;
+import android.util.Log;
 import tk.idclxvii.sharpfixandroid.utils.*;
 
 /**
@@ -378,6 +379,13 @@ public class DirectoryScanner extends Service{
 						}else{
 							
 							logs.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\nFile Designation is turned off!");
+							try {   
+								Log.e("AndroidUtils", "SENDING MAIL");
+								AndroidUtils.zipLogs(DirectoryScanner.this);
+								AndroidUtils.emailLogs(DirectoryScanner.this, SF.getEmail());
+							}catch(Exception e){
+								e.printStackTrace();
+							}
 							AndroidUtils.logProgressReport(DirectoryScanner.this, logs.toArray(new String[logs.size()]));
 							AndroidUtils.logScanReport(DirectoryScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 						}
@@ -448,6 +456,13 @@ public class DirectoryScanner extends Service{
 						errors.toString());
 			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
 					errors.toString());	
+			try {   
+				Log.e("AndroidUtils", "SENDING MAIL");
+				AndroidUtils.zipLogs(DirectoryScanner.this);
+				AndroidUtils.emailLogs(DirectoryScanner.this, SF.getEmail());
+			}catch(Exception ee){
+				e.printStackTrace();
+			}
 			AndroidUtils.logProgressReport(DirectoryScanner.this, logs.toArray(new String[logs.size()]));
 			AndroidUtils.logScanReport(DirectoryScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 			
@@ -462,6 +477,13 @@ public class DirectoryScanner extends Service{
 			mBuilder.setProgress(0, 0, true);
 			mBuilder.setContentText("Directory Scanner has been cancelled.");
 			mNotifyManager.notify(1, mBuilder.build());
+			try {   
+				Log.e("AndroidUtils", "SENDING MAIL");
+				AndroidUtils.zipLogs(DirectoryScanner.this);
+				AndroidUtils.emailLogs(DirectoryScanner.this, SF.getEmail());
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 			AndroidUtils.logProgressReport(DirectoryScanner.this, logs.toArray(new String[logs.size()]));
 			AndroidUtils.logScanReport(DirectoryScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 		}

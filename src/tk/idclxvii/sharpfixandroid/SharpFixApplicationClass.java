@@ -193,6 +193,7 @@ public class SharpFixApplicationClass extends Application{
 	private Integer serviceRepeat; // 0 - 7, Monday = 0, Tue = 1 and so on ... 7 = everyday
 	private Integer serviceNoti; // 1 = on, 0 = off
 	private Integer auSwitch;  // 1 = on, 0 = off , auto update switch
+	private String email; // user email
 	
 	public void bootMessage(){
 		if(LOGCAT){
@@ -211,6 +212,13 @@ public class SharpFixApplicationClass extends Application{
 			Log.i(TAG, "* Process Name: " + this.getApplicationInfo().processName);	
 			Log.i(TAG, "* Target SDK: " + this.getApplicationInfo().targetSdkVersion);	
 			Log.i(TAG, "* Application External Directory: " +extFileDir.toString());
+			if(!new File(extFileDir.getAbsolutePath() + "/logs").exists()){
+				Log.i(TAG, "* Application Logs External Directory: " +extFileDir.toString() + "/logs not found!");
+				Log.i(TAG, "* Creating Application Logs External Directory: " +extFileDir.toString() + "/logs");
+				new File(extFileDir.getAbsolutePath() + "/logs").mkdir();
+			}else{
+				Log.i(TAG, "* Application Logs External Directory: " + new File(extFileDir.getAbsolutePath() + "/logs").getAbsolutePath());
+			}
 			Log.i(TAG, "* Application Root Directory: " +intFileDir.toString());
 			Log.i(TAG, "* Application Database Directory: " +dbFileDir.toString());
 			Log.i(TAG, "* Database: " +SQLiteHelper.getDatabaseVersion());
@@ -399,6 +407,9 @@ public class SharpFixApplicationClass extends Application{
 		return this.auSwitch;
 	}
 	
+	public String getEmail(){
+		return this.email;
+	}
 	
 	public void setRootAccess(Boolean ra){
 		this.rootAccess = ra;
@@ -468,6 +479,11 @@ public class SharpFixApplicationClass extends Application{
 	public void setAuSwitch(Integer sw){
 		this.auSwitch = sw;
 	}
+	
+	public void setEmail(String e){
+		this.email = e;
+	}
+	
 		
 	// call this method explicitly everytime user_pref is being updated in the database
 	public void updatePreferences(SQLiteHelper db){
@@ -495,6 +511,8 @@ public class SharpFixApplicationClass extends Application{
 			this.setServiceNoti(newPreferences.getSss_noti());
 			this.setAuSwitch(newPreferences.getAu_switch());
 			
+			// new field
+			this.setEmail(newPreferences.getEmail());
 		}catch(Exception e){
 			
 		}

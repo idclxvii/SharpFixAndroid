@@ -20,6 +20,10 @@ public class FileProperties {
 		
 	}
 		
+	public static String formatLongToDate(long l){
+		return new SimpleDateFormat("MM-dd-yyyy ([hh][mm][ss] aaa - EEE)", Locale.getDefault()).format(l);
+		
+	}
 	
 	public static String getMagicNumber(File f, int bytes)throws Exception{
 		InputStream fis =  new FileInputStream(f.toString());

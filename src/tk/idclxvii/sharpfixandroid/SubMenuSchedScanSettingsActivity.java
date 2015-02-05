@@ -36,7 +36,10 @@ public class SubMenuSchedScanSettingsActivity extends GlobalExceptionHandlerActi
 	SQLiteHelper db;
 	
 	// layout fields
-	private CheckBox  chUpd, chAlert;
+	private CheckBox  /* ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER #############
+						chUpd,
+						 ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER #############
+					  */chAlert;
 	private TextView title, timeSelection, timeLabel, repeatSelection, repeatLabel, updLabel, alertLabel;
 	private int hour, minute, ampm;
 	private final String days[] = new String[] {"Sunday","Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" ,"Everyday"};
@@ -345,10 +348,13 @@ public class SubMenuSchedScanSettingsActivity extends GlobalExceptionHandlerActi
 			}
 			
 		});
-		
+		/*
+		############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 		chUpd = (CheckBox) findViewById(R.id.sssUpdateSelection3);
 		updLabel =  (TextView) findViewById(R.id.sssUpdateLabel3);
+		############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 		
+		*/
 		chAlert = (CheckBox) findViewById(R.id.sssUpdateSelection4);
 		alertLabel = (TextView) findViewById(R.id.sssUpdateLabel4);
 		 
@@ -360,7 +366,10 @@ public class SubMenuSchedScanSettingsActivity extends GlobalExceptionHandlerActi
 		if (android.os.Build.VERSION.SDK_INT > android.os.Build.VERSION_CODES.JELLY_BEAN) {
 					
 				}else{
+					/*############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 					chUpd = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, chUpd,50.0f);
+					############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+					*/
 					chAlert = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, chAlert,50.0f);
 				}
 	}
@@ -406,10 +415,17 @@ public class SubMenuSchedScanSettingsActivity extends GlobalExceptionHandlerActi
 		//  CheckBox  chUpd, chAlert;
 		try{
 			if( SF.getServiceUpdateSwitch() == 0){
+				/*
+				############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 				chUpd.setChecked(false);
-				
+				############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+				 */
 			}else{
+				/*
+				############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 				chUpd.setChecked(true);
+				############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+				 */
 			}
 			if( SF.getServiceNoti() == 0){
 				chAlert.setChecked(false);
@@ -436,6 +452,10 @@ public class SubMenuSchedScanSettingsActivity extends GlobalExceptionHandlerActi
 
 		// CheckBox  chUpd, chAlert;
 		// ###############################################################################################################
+		
+		/*
+				############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+		
 		 		if((chUpd.isChecked() && SF.getServiceUpdateSwitch() == 0 ) ||
 						(!chUpd.isChecked() && SF.getServiceUpdateSwitch() == 1)){
 					// update database 
@@ -538,6 +558,8 @@ public class SubMenuSchedScanSettingsActivity extends GlobalExceptionHandlerActi
 					// Toast.makeText(this, "File Duplication Detection Filtering Settings was not changed" ,Toast.LENGTH_LONG).show();
 				}
 		 		
+		 		 */
+		 		 
 		 		if((chAlert.isChecked() && SF.getServiceNoti() == 0 ) ||
 						(!chAlert.isChecked() && SF.getServiceNoti() == 1)){
 					// update database 

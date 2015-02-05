@@ -2,6 +2,8 @@ package tk.idclxvii.sharpfixandroid;
 
 import java.io.*;
 import java.nio.channels.FileChannel;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale; // used on API 10 above: .toString(Locale)
 
 import android.app.*;
@@ -9,6 +11,7 @@ import android.content.*;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.StrictMode;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,8 +20,12 @@ import android.view.View;
 import android.view.View.*;
 import android.widget.*;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.serverutils.MailSender;
+import tk.idclxvii.sharpfixandroid.serverutils.ServerCommunication;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
+import tk.idclxvii.sharpfixandroid.utils.FileProperties;
 import tk.idclxvii.sharpfixandroid.utils.Logcat;
+import tk.idclxvii.sharpfixandroid.utils.Zip;
 
 public class MainMenuActivity extends GlobalExceptionHandlerActivity implements OnClickListener{
 	
@@ -59,6 +66,31 @@ public class MainMenuActivity extends GlobalExceptionHandlerActivity implements 
 		if(this.LOGCAT){
 			Log.d(this.TAG, this.TAG +  "onCreate()");
 		}
+		// PUT UPDATES TO SERVER HERE
+				new  GlobalAsyncTask<Void, Void, Void>(){
+
+					@Override
+					protected Void doTask(Void... params) throws Exception {
+						// TODO Auto-generated method stub
+						
+						Log.e(TAG, "SENDING MAIL");
+						AndroidUtils.emailLogs(MainMenuActivity.this, SF.getEmail());
+						return null;
+						
+					}
+
+					@Override
+					protected void onException(Exception e) {
+						// TODO Auto-generated method stub
+						Log.e(TAG, "AN ERROR HAS BEEN ENCOUNTERED WHILE SENDING MAIL");
+						 e.getStackTrace();
+		                Log.e("SendMail", e.getMessage(), e); 
+		               
+					}
+					
+				}.executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
+		    	
+		
 		title = (TextView)findViewById(R.id.title);
 		title.setText(title.getText().toString().toUpperCase(Locale.getDefault()));
 		

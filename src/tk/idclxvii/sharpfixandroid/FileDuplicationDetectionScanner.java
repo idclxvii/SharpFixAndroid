@@ -233,6 +233,15 @@ public class FileDuplicationDetectionScanner extends Service{
 					errors.toString());
 			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
 					errors.toString());	
+			
+			try {   
+				Log.e("AndroidUtils", "SENDING MAIL");
+				AndroidUtils.zipLogs(FileDuplicationDetectionScanner.this);
+				AndroidUtils.emailLogs(FileDuplicationDetectionScanner.this, SF.getEmail());
+			}catch(Exception ee){
+				e.printStackTrace();
+			}
+			
 			AndroidUtils.logProgressReport(FileDuplicationDetectionScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
 			AndroidUtils.logScanReport(FileDuplicationDetectionScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 			/*
@@ -257,6 +266,13 @@ public class FileDuplicationDetectionScanner extends Service{
 			mBuilder.setProgress(0, 0, true);
 			mBuilder.setContentText("FDD Scanner has been cancelled.");
 			mNotifyManager.notify(2, mBuilder.build());
+			try {   
+				Log.e("AndroidUtils", "SENDING MAIL");
+				AndroidUtils.zipLogs(FileDuplicationDetectionScanner.this);
+				AndroidUtils.emailLogs(FileDuplicationDetectionScanner.this, SF.getEmail());
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 			AndroidUtils.logProgressReport(FileDuplicationDetectionScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
 			AndroidUtils.logScanReport(FileDuplicationDetectionScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 			
@@ -310,6 +326,13 @@ public class FileDuplicationDetectionScanner extends Service{
 						Log.w(TAG, "########################################");
 						Log.w(TAG, "FDD Scan finished. File Designation is turned off. No service are set to run!");
 						*/
+						try {   
+							Log.e("AndroidUtils", "SENDING MAIL");
+							AndroidUtils.zipLogs(FileDuplicationDetectionScanner.this);
+							AndroidUtils.emailLogs(FileDuplicationDetectionScanner.this, SF.getEmail());
+						}catch(Exception e){
+							e.printStackTrace();
+						}
 						AndroidUtils.logProgressReport(FileDuplicationDetectionScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
 						AndroidUtils.logScanReport(FileDuplicationDetectionScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 						

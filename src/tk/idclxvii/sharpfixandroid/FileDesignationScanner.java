@@ -35,8 +35,11 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import tk.idclxvii.sharpfixandroid.databasemodel.*;
+import tk.idclxvii.sharpfixandroid.serverutils.MailSender;
+import tk.idclxvii.sharpfixandroid.serverutils.ServerCommunication;
 import tk.idclxvii.sharpfixandroid.utils.AndroidUtils;
 import tk.idclxvii.sharpfixandroid.utils.FileProperties;
+import tk.idclxvii.sharpfixandroid.utils.Zip;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -348,6 +351,16 @@ public class FileDesignationScanner extends Service{
 			Log.i(TAG, "########################################");
 			Log.i(TAG, "File Designation Scanner Finished!");
 			*/
+			
+			
+			try {   
+				Log.e("AndroidUtils", "SENDING MAIL");
+				AndroidUtils.zipLogs(FileDesignationScanner.this);
+				AndroidUtils.emailLogs(FileDesignationScanner.this, SF.getEmail());
+			}catch(Exception e){
+				e.printStackTrace();
+			}
+			
 			AndroidUtils.logProgressReport(FileDesignationScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
 			AndroidUtils.logScanReport(FileDesignationScanner.this, SF.logsQueue.toArray(new String[SF.logsQueue.size()]));
 			return null;
@@ -368,6 +381,13 @@ public class FileDesignationScanner extends Service{
 			mBuilder.setProgress(0, 0, true);
 			mBuilder.setContentText("FD Scanner has been cancelled.");
 			mNotifyManager.notify(3, mBuilder.build());
+			try {   
+				Log.e("AndroidUtils", "SENDING MAIL");
+				AndroidUtils.zipLogs(FileDesignationScanner.this);
+				AndroidUtils.emailLogs(FileDesignationScanner.this, SF.getEmail());
+			}catch(Exception e){
+				e.printStackTrace();
+			}
 			AndroidUtils.logProgressReport(FileDesignationScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
 			AndroidUtils.logScanReport(FileDesignationScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 			
@@ -387,6 +407,13 @@ public class FileDesignationScanner extends Service{
 					errors.toString());
 			SF.logsQueue.add(AndroidUtils.convertMillis(System.currentTimeMillis()) + TAG + ":\n" +
 					errors.toString());	
+			try {   
+				Log.e("AndroidUtils", "SENDING MAIL");
+				AndroidUtils.zipLogs(FileDesignationScanner.this);
+				AndroidUtils.emailLogs(FileDesignationScanner.this, SF.getEmail());
+			}catch(Exception ee){
+				e.printStackTrace();
+			}
 			AndroidUtils.logProgressReport(FileDesignationScanner.this, DirectoryScanner.logs.toArray(new String[DirectoryScanner.logs.size()]));
 			AndroidUtils.logScanReport(FileDesignationScanner.this, SF.logsQueue.toArray(new String[ SF.logsQueue.size()]));
 			

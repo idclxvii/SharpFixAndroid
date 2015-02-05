@@ -32,8 +32,17 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 	SQLiteHelper db;
 	
 	// layout fields
-	CheckBox  chSchedScan, chAutoUpd;
-	TextView title, schedScanLabel, schedScanSettings, schedScanSettingsLabel, autoUpdLabel, directScanSettings, directScanSettingsLabel,
+	CheckBox  chSchedScan
+	/*
+	 	############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+	, chAutoUpd 
+		############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+	*/;
+	TextView title, schedScanLabel, schedScanSettings, schedScanSettingsLabel, 
+	/* ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+	 * autoUpdLabel,
+	 *  ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+	 * */ directScanSettings, directScanSettingsLabel,
 	 logs, logsLabel;
 	
 	// service Intents
@@ -102,21 +111,28 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 			}
 			
 		});
-		
+		/*
+		 * ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 		chAutoUpd = (CheckBox) findViewById(R.id.services_selection3);
+		   ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+		*/
 		
+		/*
+		 * ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 		autoUpdLabel = (TextView) findViewById(R.id.services_label3);
 		autoUpdLabel.setOnClickListener(new OnClickListener(){
 
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				
 				chAutoUpd.performClick();
 				
 			}
 			
 		});
-		
+		############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+		*/
 		
 		// ###########################################################
 		
@@ -176,7 +192,11 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 			
 		}else{
 			chSchedScan = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, chSchedScan,50.0f);
+			/*
+			 * ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 			chAutoUpd = AndroidLayoutUtils.fixCheckBoxPaddingLeft(this, chAutoUpd,50.0f);
+			############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+			*/
 		}
 		
 		
@@ -235,10 +255,17 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 				chSchedScan.setChecked(true);
 			}
 			if( SF.getAuSwitch() == 0){
+				/*
+				 * ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 				chAutoUpd.setChecked(false);
-				
+				############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+				*/
 			}else{
+				/*
+				 * ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
 				chAutoUpd.setChecked(true);
+				############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+				*/
 			}
 		}catch(Exception e){
 			
@@ -357,7 +384,8 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 		}else{
 			// Toast.makeText(this, "File Duplication Detection Filtering Settings was not changed" ,Toast.LENGTH_LONG).show();
 		}
- 		
+ 		/*
+ 		 ############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
  		if((chAutoUpd.isChecked() && SF.getAuSwitch() == 0 ) ||
 				(!chAutoUpd.isChecked() && SF.getAuSwitch() == 1)){
 			// update database 
@@ -404,7 +432,7 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 					/*
 					Toast.makeText(this, this.db.update(Tables.preferences, oldParams, newParams, null) ? "File Designation Settings have been updated!" :
 							"File Designation Settings failed to update!" ,Toast.LENGTH_LONG).show();
-						*/
+						
 					this.db.update(Tables.preferences, oldParams, newParams, null);
 					SF.setAuSwitch(1);
 				}catch(Exception e){
@@ -453,7 +481,7 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 					/*
 					Toast.makeText(this, this.db.update(Tables.preferences, oldParams, newParams, null) ? "File Designation Settings have been updated!" :
 							"File Designation Settings failed to update!" ,Toast.LENGTH_LONG).show();
-					*/
+					
 					this.db.update(Tables.preferences, oldParams, newParams, null);
 					SF.setAuSwitch(0);
 				}catch(Exception e){
@@ -465,6 +493,9 @@ public class SubMenuServicesActivity extends GlobalExceptionHandlerActivity impl
 		}else{
 			// Toast.makeText(this, "File Designation Settings was not changed" ,Toast.LENGTH_LONG).show();
 		}
+		
+		############# ALPHA 1.1.4 DISABLE UPDATE TO SERVER ############# 
+ 		*/
 	}
 
 	/* (non-Javadoc)

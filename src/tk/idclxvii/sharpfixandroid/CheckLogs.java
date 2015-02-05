@@ -105,13 +105,22 @@ public class CheckLogs extends GlobalExceptionHandlerActivity{
 
 		@Override
 		protected void onException(Exception e) {
+			
 			e.printStackTrace();
 		}
 		
 		@Override
 		protected void onProgressUpdate(Void... params){
-			log.setText(wholeLog);
-			seek.setMax(log.getLineCount());
+			try{
+				log.setText(wholeLog);
+				seek.setMax(log.getLineCount());
+			}catch(Exception e){
+				// general exception, usually encountered when log file is too large and phone memory's too small to output
+				log.setText("Progress Logs has been detected to overflow! This error has been encoutered because of Out of Memory Exception. "
+						+ "Previous progress logs has been deleted,");
+				//clearLogs.performClick();
+			}
+			
 		}
 		
 	}
@@ -135,12 +144,14 @@ public class CheckLogs extends GlobalExceptionHandlerActivity{
 			@Override
 			public void onClick(View v) {
 				// TODO Auto-generated method stub
+				log.setText("");
+				/*
 				File file = new File(CheckLogs.this.getExternalFilesDir(null).getParent(),
 						(logMode < 0 ? "error_logs.log" : (logMode == 0) ? "last_scan.log" : "sf_reports.log"));
 				if(file.delete()){
 					new TASK().executeOnExecutor(tk.idclxvii.sharpfixandroid.utils.AsyncTask.THREAD_POOL_EXECUTOR);
 				}
-				
+				*/
 			}
 			
 		});
@@ -188,7 +199,7 @@ public class CheckLogs extends GlobalExceptionHandlerActivity{
 		  //Get the text file
 		
 		  File file = new File(CheckLogs.this.getExternalFilesDir(null).getParent(),
-					(logMode < 0 ? "error_logs.log" : (logMode == 0) ? "last_scan.log" : "sf_reports.log"));
+					(logMode < 0 ? "error_logs.log" : (logMode == 0) ? "quick_logs.log" : "full_logs.log"));
 
 		  //Read text from file
 		  StringBuilder text = new StringBuilder();

@@ -14,6 +14,7 @@ public class ModelPreferences {
 	private Integer fddFilterSwitch;
 	private Integer fdFilterSwitch;
 	
+	private String email;
 	// new switches
 	/*
 	        "sss_switch INTEGER NOT NULL, sss_hh INTEGER NOT NULL, sss_mm INTEGER NOT NULL, sss_ampm INTEGER NOT NULL, sss_update INTEGER NOT NULL,"+
@@ -31,7 +32,7 @@ public class ModelPreferences {
 	
 	public enum fields{
 		Id, Account, Fdd_switch, Fd_switch,  Fdd_pref, Auto_login, Fdd_Filter_switch, Fd_Filter_switch,
-		Sss_switch, Sss_hh, Sss_mm, Sss_ampm, Sss_update, Sss_repeat, Sss_noti, Au_switch
+		Sss_switch, Sss_hh, Sss_mm, Sss_ampm, Sss_update, Sss_repeat, Sss_noti, Au_switch, Email
 	}
 	
 	public String[] getFields(){
@@ -101,6 +102,27 @@ public class ModelPreferences {
 		
 	}
 	
+	public ModelPreferences(Integer account, Integer fddSw, Integer fdSw, Integer fddPref, Integer autoLogin,
+			Integer fddFilterSwitch, Integer fdFilterSwitch, Integer srvcSw, Integer srvcHH, Integer srvcMM,
+			Integer srvcAMPM, Integer srvcUSw, Integer srvcRepeat, Integer srvcNoti, Integer auSw, String email){
+		this.accountId = account;
+		this.fddSwitch = fddSw;
+		this.fdSwitch = fdSw;
+		this.fdFilterSwitch = fdFilterSwitch;
+		this.fddFilterSwitch = fddFilterSwitch;
+		this.fddPref = fddPref;
+		this.autoLogin = autoLogin;
+		this.serviceSwitch = srvcSw;
+		this.serviceHour = srvcHH;
+		this.serviceMin = srvcMM;
+		this.serviceAMPM = srvcAMPM;
+		this.serviceUpdateSwitch = srvcUSw;
+		this.serviceRepeat = srvcRepeat;
+		this.serviceNoti = srvcNoti;
+		this.auSwitch = auSw;
+		this.email = email;
+	}
+	
 	// setters:
 	public void setId(Integer id){
 		this.id = id;
@@ -167,6 +189,11 @@ public class ModelPreferences {
 	public void setAu_switch(Integer sw){
 		this.auSwitch = sw;
 	}
+	
+	public void setEmail(String e){
+		this.email = e;
+	}
+	
 	// getters:
 	public Integer getId(){
 		return this.id;
@@ -236,6 +263,10 @@ public class ModelPreferences {
 	
 	public Integer getAu_switch(){
 		return this.auSwitch;
+	}
+	
+	public String getEmail(){
+		return this.email;
 	}
 	
 }
