@@ -68,6 +68,9 @@
     <string name="subMenuLogsProgressLogsLabel">This is for advanced users. View SharpFix\'s verbose Progress background activity logs</string>    
     <string name="subMenuLogsErrorLogs">Error Logs</string>    
     <string name="subMenuLogsErrorLogsLabel">This is for advanced users. View SharpFix\'s Errors which includes uncaught exceptions on global context.</string>    
+    <string name="subMenuLogsEmail">Send Logs via Email</string>    
+    <string name="subMenuLogsEmailLabel">When internet connection has been detected to be available upon SharpFix initialization, this email will receive
+        the three logs created by SharpFix as file attachments.</string>    
     
    
    
